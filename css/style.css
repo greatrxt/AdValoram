@@ -1,0 +1,97 @@
+html {
+	font-family: helvetica, arial, sans-serif;
+}
+
+body {
+	margin:0px;
+}
+
+.login_container {
+	overflow:hidden;
+}
+
+.grid-item {
+	float: left;
+	width: 100px;
+	height: 100px;
+	padding: 35px;
+	text-align: center;
+	border-color: #FFFFFF;
+	border-style: solid;
+    border-width: 4px 4px 4px 4px;
+}
+
+.menucontainer {
+	width:100%;
+	padding-top:10px;
+	padding-bottom:10px;
+	overflow: auto;
+}
+
+.menucontainer .menu {
+	width: 30px;
+	height: 30px;
+	float:right;	
+	padding-right: 35px;
+	border: none;
+    cursor: pointer;
+}
+
+#username {
+	float:right;
+	padding: 10px;
+}
+.menucontainer .menu:focus {
+    outline:none;
+}
+
+.grid-item:hover {
+	color:#DD0000;
+	border-color: #EEEEEE;
+}
+
+.grid-item img {
+	width: 80px;
+	height: 80px;
+}
+
+.grid-item span {	
+	padding-top: 5px;
+	font-size:15px;
+}
+.grid {
+    top: 30%;
+    left: 30%;
+}
+
+.bottomcontainer {
+	position:absolute;
+	bottom:0;
+	left:0;
+	width:100%;
+	text-align:center;
+}
+
+.datecontainer {
+	font-style:italic;
+	font-size: 15px;
+	float:left;
+	padding-left:10px;
+	padding-bottom:10px;
+}
+
+.tasks {
+	padding: 30px;
+	text-align:left;
+	/*border-color: #FFFFFF;
+	border-style: solid;
+	width:20%;
+    border-width: 4px 4px 4px 4px;*/
+}
+
+#companyname{
+	margin-left:-175px;
+}
+
+.grid-item--width2 { width: 160px; }
+.grid-item--height2 { height: 140px; }
