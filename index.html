@@ -1,116 +1,50 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>AdValoram</title>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script>
-		function startTime() {
-			var today = new Date();
-			var year = today.getFullYear();
-			var date = today.getDate();
-			var month = new Array();
-			month[0] = "January";
-			month[1] = "February";
-			month[2] = "March";
-			month[3] = "April";
-			month[4] = "May";
-			month[5] = "June";
-			month[6] = "July";
-			month[7] = "Aug";
-			month[8] = "Sept";
-			month[9] = "Oct";
-			month[10] = "Nov";
-			month[11] = "Dec";
-			var monthName = month[today.getMonth()];
-			var h = today.getHours();
-			var m = today.getMinutes();
-			var s = today.getSeconds();
-			var postFix = "a.m";
-			if(h > 12){
-				h = h-12;
-				postFix = "p.m";
-			}
-			m = checkTime(m);
-			s = checkTime(s);
-			document.getElementById('currentdate').innerHTML =
-			date + " " + monthName + " "  + year + " " + h + ":" + m + ":" + s + "  " + postFix;
-			var t = setTimeout(startTime, 500);
-		}
-		function checkTime(i) {
-			if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
-			return i;
-		}
-	</script>
-	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="css/menu.css">
-	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-  </head>
-  <body onload="startTime()">
-  <div class = "menucontainer">
-  <div class="dropdown" style="float:right;">
-	<input type="image" src="images/home_menu_icon.png" onclick="openMenu()" class="menu" />
-	<div id="home-menu" class="dropdown-content">
-		<a href="#FAQ">FAQ</a>
-		<a href="#Help">Help</a>
-		<a href="#Support">Support</a>
-		<a href="#Settings">Settings</a>
-		<a href="#EditProfile">Edit Profile</a>
-		<a href="#Logout">Logout</a>
-	</div>
-	</div>
-	<span id="username">Sukhbir Singh</span>
-  </div>
-	<div class="grid">
-		<div class="grid-item">
-			<img src="images/home_purchase.png">
-			<span>Purchase</span>
-		</div>
-		<div class="grid-item">
-			<img src="images/home_inventory.png">
-			<span>Inventory Management</span>
-		</div>
-		<div class="grid-item">
-			<img src="images/home_sales.png">
-			<span>Sales & Marketing</span>
-		</div>
-		<div class="grid-item">
-			<img src="images/home_tasks.png">
-			<span>Tasks</span>
-		</div>
-		<div class="grid-item">
-			<img src="images/home_finance.png">
-			<span>Finance & Accounts</span>
-		</div>
-		<div class="grid-item">
-			<img src="images/home_bar_code.png">
-			<span>Bar Code Generator</span>
-		</div>
-		
-		<div class="grid-item">
-			<img src="images/home_reports.png">
-			<span>Reports & Analytics</span>
-		</div>
-		<div class="grid-item">
-			<img src="images/home_masters.png">
-			<span>Master Data</span>
-		</div>
-		<!--<div class="grid-item grid-item--width2">grid2</div>
-		<div class="grid-item">grid3</div>-->
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>AdValoram Login</title>
   
-	</div>
-	
-	<div class = "bottomcontainer">
-	<div class = "tasks">
-		<i class="fa fa-bell fa-2x"></i>
-		<span> Task A Pending</span>
-	</div>
-	<hr>
-		<div class = "datecontainer">
-			<i class="fa fa fa-calendar fa-1x"></i>
-			<span id = "currentdate">Date</span>
-		</div>
-		<span id = "companyname" style="float:'right'">Ad Valoram Clothing Pvt Ltd</span>
-	</div>
-  </body>
+  
+  <link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,100,500'>
+<link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
+<link rel='stylesheet prefetch' href='https://www.google.com/fonts#UsePlace:use/Collection:Roboto+Slab:400,700,300,100'>
+<link rel="stylesheet" href="css/login_style.css">
+
+</head>
+
+<body>
+
+<div id="dialog" class="dialog dialog-effect-in">
+  <div class="dialog-front">
+    <div class="dialog-content">
+      <form id="login_form" class="dialog-form" action="home.html" method="POST">
+        <fieldset>
+          <legend>Log in</legend>
+          <div class="form-group">
+            <label for="user_username" class="control-label">Username:</label>
+            <input type="text" id="user_username" class="form-control" name="user_username" autofocus/>
+          </div>
+          <div class="form-group">
+            <label for="user_password" class="control-label">Password:</label>
+            <input type="password" id="user_password" class="form-control" name="user_password"/>
+          </div>
+          <!--<div class="text-center pad-top-20">
+            <p>Have you forgotten your<br><a href="home.html" class="link"><strong>username</strong></a> or <a href="#" class="link"><strong>password</strong></a>?</p>
+          </div>-->
+          <div class="pad-top-20 pad-btm-20">
+            <input type="submit" class="btn btn-default btn-block btn-lg" value="Continue">
+          </div>
+          <!--<div class="text-center">
+            <p>Do you wish to register<br> for <a href="#" class="link user-actions"><strong>a new account</strong></a>?</p>
+          </div>-->
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script src="js/login.js"></script>
+
+</body>
 </html>
