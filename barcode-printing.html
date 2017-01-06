@@ -990,17 +990,27 @@ function saveBarCodeentryAndClose(){
 }
 
 function compare(a,b) {
-  if (a.id < b.id)
+  if (parseInt(a.id) < parseInt(b.id))
     return -1;
-  if (a.id > b.id)
+  if (parseInt(a.id) > parseInt(b.id))
     return 1;
   return 0;
 }
 
 function saveBarCodeEntry(){
-	var barCodeEntry = new Object();
+	
+	var saveId = document.getElementById("barCodeId").innerHTML;
+	//if id exists pull barCodeEntry from array "barCodeEntries" else create new
+	var barCodeEntry = null;
+	barCodeEntry = barCodeEntries[saveId - 1];
+	
+	if(barCodeEntry == null){
+		 barCodeEntry = new Object();
+		 barCodeEntries.push(barCodeEntry);
+	}
+	
 	barCodeEntry.id = document.getElementById("barCodeId").innerHTML;
-	deleteBarCodeEntry(barCodeEntry.id);
+	//deleteBarCodeEntry(barCodeEntry.id);
 	var styleCode = document.getElementById("textStyleCode").value;
 	barCodeEntry.styleCode = String("00000" + styleCode).slice(-5);
 	
@@ -1038,7 +1048,7 @@ function saveBarCodeEntry(){
 	barCodeEntry.ean48 = document.getElementById("ean48").innerHTML;
 	barCodeEntry.printCopiesFor48 = document.getElementById("printCopiesFor48").value;
 	
-	barCodeEntries.splice(barCodeEntry.id, 0, barCodeEntry);
+	//barCodeEntries.splice(barCodeEntry.id, 0, barCodeEntry);
 	barCodeEntries.sort(compare);
 }
 </script>
@@ -1179,52 +1189,47 @@ function refreshBarCodeTable() {
 
 function editBarCodeRecord(id){
 	clearBarCodeModal();
-	var idToEdit = -1;
+	
 	for(var r = 0; r < barCodeEntries.length; r++){
 		if(barCodeEntries[r].id == id){
-			idToEdit = r;
-		}
-	}
-	
-	if(idToEdit > -1){
-		openBarCodeModal();
-		var barCodeEntry = barCodeEntries[idToEdit];
-		
-		document.getElementById("barCodeId").innerHTML = barCodeEntry.id;
-		document.getElementById("textStyleCode").value = barCodeEntry.styleCode;
-		
-		//ColorCode
-		var c = document.getElementById("dropDownColorCode");
-		for(var dc = 0; dc < c.length; dc++){
-			var colorCode = c.options[dc].value;
-			if(colorCode == barCodeEntry.colorCode){
-				c.selectedIndex = dc;
+			openBarCodeModal();
+			var barCodeEntry = barCodeEntries[r];
+			
+			document.getElementById("barCodeId").innerHTML = barCodeEntry.id;
+			document.getElementById("textStyleCode").value = barCodeEntry.styleCode;
+			
+			//ColorCode
+			var c = document.getElementById("dropDownColorCode");
+			for(var dc = 0; dc < c.length; dc++){
+				var colorCode = c.options[dc].value;
+				if(colorCode == barCodeEntry.colorCode){
+					c.selectedIndex = dc;
+				}
 			}
-		}
-		
-		
-		//Gender
-		var g = document.getElementById("dropDownGender");
-		for(var dg = 0; dg < g.length; dg++){
-			var gender = g.options[dg].text;
-			if(gender == barCodeEntry.gender){
-				g.selectedIndex = dg;
+			
+			
+			//Gender
+			var g = document.getElementById("dropDownGender");
+			for(var dg = 0; dg < g.length; dg++){
+				var gender = g.options[dg].text;
+				if(gender == barCodeEntry.gender){
+					g.selectedIndex = dg;
+				}
 			}
+			
+			document.getElementById("textMrp").value = barCodeEntry.mrp;			
+			document.getElementById("printCopiesFor28").value = barCodeEntry.printCopiesFor28;			
+			document.getElementById("printCopiesFor30").value = barCodeEntry.printCopiesFor30;			
+			document.getElementById("printCopiesFor32").value = barCodeEntry.printCopiesFor32;		
+			document.getElementById("printCopiesFor34").value = barCodeEntry.printCopiesFor34;			
+			document.getElementById("printCopiesFor36").value = barCodeEntry.printCopiesFor36;			
+			document.getElementById("printCopiesFor38").value = barCodeEntry.printCopiesFor38;			
+			document.getElementById("printCopiesFor40").value = barCodeEntry.printCopiesFor40;	
+			document.getElementById("printCopiesFor42").value = barCodeEntry.printCopiesFor42;	
+			document.getElementById("printCopiesFor44").value = barCodeEntry.printCopiesFor44;	
+			document.getElementById("printCopiesFor46").value = barCodeEntry.printCopiesFor46;	
+			document.getElementById("printCopiesFor48").value = barCodeEntry.printCopiesFor48;				
 		}
-		
-		document.getElementById("textMrp").value = barCodeEntry.mrp;			
-		document.getElementById("printCopiesFor28").value = barCodeEntry.printCopiesFor28;			
-		document.getElementById("printCopiesFor30").value = barCodeEntry.printCopiesFor30;			
-		document.getElementById("printCopiesFor32").value = barCodeEntry.printCopiesFor32;		
-		document.getElementById("printCopiesFor34").value = barCodeEntry.printCopiesFor34;			
-		document.getElementById("printCopiesFor36").value = barCodeEntry.printCopiesFor36;			
-		document.getElementById("printCopiesFor38").value = barCodeEntry.printCopiesFor38;			
-		document.getElementById("printCopiesFor40").value = barCodeEntry.printCopiesFor40;	
-		document.getElementById("printCopiesFor42").value = barCodeEntry.printCopiesFor42;	
-		document.getElementById("printCopiesFor44").value = barCodeEntry.printCopiesFor44;	
-		document.getElementById("printCopiesFor46").value = barCodeEntry.printCopiesFor46;	
-		document.getElementById("printCopiesFor48").value = barCodeEntry.printCopiesFor48;				
-		
 	}
 }
 
@@ -1234,14 +1239,10 @@ function clearBarCodeEntries(){
 }
 
 function deleteBarCodeEntry(id){
-	var idToDelete = -1;
 	for(var r = 0; r < barCodeEntries.length; r++){
 		if(barCodeEntries[r].id == id){
-			idToDelete = r;
+			barCodeEntries.splice(r, 1);
 		}
-	}
-	if(idToDelete > -1){
-		barCodeEntries.splice(idToDelete, 1);
 	}
 }
 
