@@ -667,13 +667,13 @@
 						C8 - Grey
 						C9 - Cream-->
 					  <option value="01">01 - Unicolour</option>
-					  <option value="C2">C1 - Black</option>
-					  <option value="C3">C2 - Charcoal</option>
-					  <option value="C4">C3 - Brown</option>
-					  <option value="C5">C4 - Burgundy</option>
-					  <option value="C6">C5 - Green</option>
-					  <option value="C7">C6 - Navy Blue</option>
-					  <option value="C9">C7 - Blue</option>
+					  <option value="C1">C1 - Black</option>
+					  <option value="C2">C2 - Charcoal</option>
+					  <option value="C3">C3 - Brown</option>
+					  <option value="C4">C4 - Burgundy</option>
+					  <option value="C5">C5 - Green</option>
+					  <option value="C6">C6 - Navy Blue</option>
+					  <option value="C7">C7 - Blue</option>
 					  <option value="C8">C8 - Grey</option>
 					  <option value="C9">C9 - Cream</option>
 					</select>
@@ -989,7 +989,6 @@ function saveBarCodeentryAndClose(){
 	clearBarCodeModal();
 }
 
-
 function compare(a,b) {
   if (a.id < b.id)
     return -1;
@@ -1001,7 +1000,7 @@ function compare(a,b) {
 function saveBarCodeEntry(){
 	var barCodeEntry = new Object();
 	barCodeEntry.id = document.getElementById("barCodeId").innerHTML;
-	deleteBarCodeRecord(barCodeEntry.id);
+	deleteBarCodeEntry(barCodeEntry.id);
 	var styleCode = document.getElementById("textStyleCode").value;
 	barCodeEntry.styleCode = String("00000" + styleCode).slice(-5);
 	
@@ -1052,6 +1051,10 @@ resetPrintCopiesIfEmpty('#printCopiesFor34');
 resetPrintCopiesIfEmpty('#printCopiesFor36');
 resetPrintCopiesIfEmpty('#printCopiesFor38');
 resetPrintCopiesIfEmpty('#printCopiesFor40');
+resetPrintCopiesIfEmpty('#printCopiesFor42');
+resetPrintCopiesIfEmpty('#printCopiesFor44');
+resetPrintCopiesIfEmpty('#printCopiesFor46');
+resetPrintCopiesIfEmpty('#printCopiesFor48');
 
 function resetPrintCopiesIfEmpty(id){
 	$(id).on('blur', function () {
@@ -1101,7 +1104,11 @@ function refreshBarCodeTable() {
 									parseInt(barCodeEntry.printCopiesFor34) + 
 										parseInt(barCodeEntry.printCopiesFor36) + 
 											parseInt(barCodeEntry.printCopiesFor38) + 
-												parseInt(barCodeEntry.printCopiesFor40);
+												parseInt(barCodeEntry.printCopiesFor40) +
+													parseInt(barCodeEntry.printCopiesFor42) +
+														parseInt(barCodeEntry.printCopiesFor44) +
+															parseInt(barCodeEntry.printCopiesFor46) +
+																parseInt(barCodeEntry.printCopiesFor48);
 		
 		totalPrintCopies = totalPrintCopies + printCopies;
 		
@@ -1113,7 +1120,7 @@ function refreshBarCodeTable() {
             barCodeEntry.gender,
 			printCopies,
 			"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editBarCodeRecord("+barCodeEntry.id+");'><i class='icmn-pencil5'></i> View</a>"
-										+ "<a href='javascript: void(0);' class='link-underlined' onclick='deleteBarCodeRecord("+barCodeEntry.id+");'><i class='icmn-cross2'></i> Remove</a>;"
+										+ "<a href='javascript: void(0);' class='link-underlined' onclick='deleteBarCodeRecordAndUpdateView("+barCodeEntry.id+");'><i class='icmn-cross2'></i> Remove</a>;"
         ]).draw(false);
 	}
 	
@@ -1149,7 +1156,7 @@ function refreshBarCodeTable() {
 		totalPrintCopies = totalPrintCopies + printCopies;
 
 		actionCell.innerHTML = "<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editBarCodeRecord("+barCodeEntry.id+");'><i class='icmn-pencil5'></i> View</a>"
-										+ "<a href='javascript: void(0);' class='link-underlined' onclick='deleteBarCodeRecord("+barCodeEntry.id+");'><i class='icmn-cross2'></i> Remove</a>;";
+										+ "<a href='javascript: void(0);' class='link-underlined' onclick='deleteBarCodeRecordAndUpdateView("+barCodeEntry.id+");'><i class='icmn-cross2'></i> Remove</a>;";
 		
 		srCell.className = 'tg-yw42';
 		styleCodeCell.className = 'tg-yw42';
@@ -1183,40 +1190,40 @@ function editBarCodeRecord(id){
 		openBarCodeModal();
 		var barCodeEntry = barCodeEntries[idToEdit];
 		
-			document.getElementById("barCodeId").innerHTML = barCodeEntry.id;
-			document.getElementById("textStyleCode").value = barCodeEntry.styleCode;
-			
-			//ColorCode
-			var c = document.getElementById("dropDownColorCode");
-			for(var dc = 0; dc < c.length; dc++){
-				var colorCode = c.options[dc].text;
-				if(colorCode == barCodeEntry.colorCode){
-					c.selectedIndex = dc;
-				}
+		document.getElementById("barCodeId").innerHTML = barCodeEntry.id;
+		document.getElementById("textStyleCode").value = barCodeEntry.styleCode;
+		
+		//ColorCode
+		var c = document.getElementById("dropDownColorCode");
+		for(var dc = 0; dc < c.length; dc++){
+			var colorCode = c.options[dc].value;
+			if(colorCode == barCodeEntry.colorCode){
+				c.selectedIndex = dc;
 			}
-			
-			
-			//Gender
-			var g = document.getElementById("dropDownGender");
-			for(var dg = 0; dg < g.length; dg++){
-				var gender = g.options[dg].text;
-				if(gender == barCodeEntry.gender){
-					g.selectedIndex = dg;
-				}
+		}
+		
+		
+		//Gender
+		var g = document.getElementById("dropDownGender");
+		for(var dg = 0; dg < g.length; dg++){
+			var gender = g.options[dg].text;
+			if(gender == barCodeEntry.gender){
+				g.selectedIndex = dg;
 			}
-			
-			document.getElementById("textMrp").value = barCodeEntry.mrp;			
-			document.getElementById("printCopiesFor28").value = barCodeEntry.printCopiesFor28;			
-			document.getElementById("printCopiesFor30").value = barCodeEntry.printCopiesFor30;			
-			document.getElementById("printCopiesFor32").value = barCodeEntry.printCopiesFor32;		
-			document.getElementById("printCopiesFor34").value = barCodeEntry.printCopiesFor34;			
-			document.getElementById("printCopiesFor36").value = barCodeEntry.printCopiesFor36;			
-			document.getElementById("printCopiesFor38").value = barCodeEntry.printCopiesFor38;			
-			document.getElementById("printCopiesFor40").value = barCodeEntry.printCopiesFor40;	
-			document.getElementById("printCopiesFor42").value = barCodeEntry.printCopiesFor42;	
-			document.getElementById("printCopiesFor44").value = barCodeEntry.printCopiesFor44;	
-			document.getElementById("printCopiesFor46").value = barCodeEntry.printCopiesFor46;	
-			document.getElementById("printCopiesFor48").value = barCodeEntry.printCopiesFor48;				
+		}
+		
+		document.getElementById("textMrp").value = barCodeEntry.mrp;			
+		document.getElementById("printCopiesFor28").value = barCodeEntry.printCopiesFor28;			
+		document.getElementById("printCopiesFor30").value = barCodeEntry.printCopiesFor30;			
+		document.getElementById("printCopiesFor32").value = barCodeEntry.printCopiesFor32;		
+		document.getElementById("printCopiesFor34").value = barCodeEntry.printCopiesFor34;			
+		document.getElementById("printCopiesFor36").value = barCodeEntry.printCopiesFor36;			
+		document.getElementById("printCopiesFor38").value = barCodeEntry.printCopiesFor38;			
+		document.getElementById("printCopiesFor40").value = barCodeEntry.printCopiesFor40;	
+		document.getElementById("printCopiesFor42").value = barCodeEntry.printCopiesFor42;	
+		document.getElementById("printCopiesFor44").value = barCodeEntry.printCopiesFor44;	
+		document.getElementById("printCopiesFor46").value = barCodeEntry.printCopiesFor46;	
+		document.getElementById("printCopiesFor48").value = barCodeEntry.printCopiesFor48;				
 		
 	}
 }
@@ -1226,7 +1233,7 @@ function clearBarCodeEntries(){
 	refreshBarCodeTable();
 }
 
-function deleteBarCodeRecord(id){
+function deleteBarCodeEntry(id){
 	var idToDelete = -1;
 	for(var r = 0; r < barCodeEntries.length; r++){
 		if(barCodeEntries[r].id == id){
@@ -1235,11 +1242,14 @@ function deleteBarCodeRecord(id){
 	}
 	if(idToDelete > -1){
 		barCodeEntries.splice(idToDelete, 1);
-		reassignIdToBarcodeEntries();
-		refreshBarCodeTable();
 	}
 }
 
+function deleteBarCodeRecordAndUpdateView(id){
+		deleteBarCodeEntry(id);
+		reassignIdToBarcodeEntries();
+		refreshBarCodeTable();
+}
 function reassignIdToBarcodeEntries(){
 	for(var r = 0; r < barCodeEntries.length; r++){
 		barCodeEntries[r].id = (r + 1);		
