@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html ng-app="cleanUI">
 <head lang="en">
     <meta charset="UTF-8">
@@ -49,6 +48,7 @@
 
     <!-- Vendors Scripts -->
     <!-- v1.0.0 -->
+	<!-- For Electron--><script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="assets/vendors/jquery/jquery.min.js"></script>
     <script src="assets/vendors/tether/dist/js/tether.min.js"></script>
     <script src="assets/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -112,254 +112,160 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
+		<!--For Electron--><script>if (window.module) module = window.module;</script>
+	<script>
+		try {
+			$ = jQuery = module.exports;
+			// If you want module.exports to be empty, uncomment:
+			// module.exports = {};
+		} catch(e) {
+		}
+	</script>
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
+	<div class="page-content-inner" style="background-image: url(assets/common/img/temp/login/4.jpg)">
 
-<nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
-    <div class="logo-container">
-        <a href="#/dashboards/alpha" class="logo">
-            <img src="assets/common/img/logo.png" alt="AdValoram Clothing" />
-            <img class="logo-inverse" src="assets/common/img/logo.png" alt="AdValoram Clothing" />
-        </a>
+    <!-- Login Omega Page -->
+    <div class="single-page-block-header">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="logo">
+                    <a href="javascript: history.back();">
+                        <img src="assets/common/img/logo.png" alt="Clean UI Admin Template" />
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="single-page-block-header-menu">
+                    <ul class="list-unstyled list-inline">
+                        <li><a href="javascript: void(0);">About</a></li>
+                        <li><a href="javascript: void(0);">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="left-menu-inner scroll-pane">
-        <ul class="left-menu-list left-menu-list-root list-unstyled">
-            <li class="left-menu-list-submenu">
-                <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon icmn-cog util-spin-delayed-pseudo"><!-- --></i>
-                    <span class="menu-top-hidden">Theme</span>Theme Settings
-                </a>
-                <ul class="left-menu-list list-unstyled">
-                    <li>
-                        <div class="left-menu-item">
-                            <div class="left-menu-block">
-                                <div class="left-menu-block-item">
-                                    <small>This menu gives possibility to construct custom blocks with any widgets, components and elements inside, like this theme settings</small>
-                                </div>
-                                <div class="left-menu-block-item">
-                                    <span class="font-weight-600">Theme Style:</span>
-                                </div>
-                                <div class="left-menu-block-item" id="options-theme">
-                                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                                        <div class="btn-group">
-                                            <label class="btn btn-default active">
-                                                <input type="radio" name="options-theme" value="theme-default" autocomplete="off" checked=""> Light
-                                            </label>
-                                        </div>
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="options-theme" value="theme-dark" autocomplete="off"> Dark
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="options-theme" value="theme-green" autocomplete="off"> Green
-                                            </label>
-                                        </div>
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="options-theme" value="theme-blue" autocomplete="off"> Blue
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="options-theme" value="theme-red" autocomplete="off"> Red
-                                            </label>
-                                        </div>
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="options-theme" value="theme-orange" autocomplete="off"> Orange
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="left-menu-block-item">
-                                    <span class="font-weight-600">Fixed Top Menu</sup>:</span>
-                                </div>
-                                <div class="left-menu-block-item" id="options-menu">
-                                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                                        <div class="btn-group">
-                                            <label class="btn btn-default active">
-                                                <input type="radio" name="options-menu" value="menu-fixed" checked=""> On
-                                            </label>
-                                        </div>
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="options-menu" value="menu-static"> Off
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="left-menu-block-item">
-                                    <span class="font-weight-600">Super Clean Mode:</span>
-                                </div>
-                                <div class="left-menu-block-item" id="options-mode">
-                                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="options-mode" value="mode-superclean"> On
-                                            </label>
-                                        </div>
-                                        <div class="btn-group">
-                                            <label class="btn btn-default active">
-                                                <input type="radio" name="options-mode" value="mode-default" checked=""> Off
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="left-menu-block-item">
-                                    <span class="font-weight-600">Colorful Menu:</span>
-                                </div>
-                                <div class="left-menu-block-item" id="options-colorful">
-                                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                                        <div class="btn-group">
-                                            <label class="btn btn-default active">
-                                                <input type="radio" name="options-colorful" value="colorful-enabled" checked=""> On
-                                            </label>
-                                        </div>
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="options-colorful" value="colorful-disabled"> Off
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="left-menu-block-item">
-                                    <span class="font-weight-600">Menu Shadow:</span>
-                                </div>
-                                <div class="left-menu-block-item" id="mode-box-shadow">
-                                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="mode-box-shadow" value="mode-box-shadow"> On
-                                            </label>
-                                        </div>
-                                        <div class="btn-group">
-                                            <label class="btn btn-default active">
-                                                <input type="radio" name="mode-box-shadow" value="mode-box-shadow-disabled" checked=""> Off
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="left-menu-block-item">
-                                    <span class="font-weight-600">Squared Corners:</span>
-                                </div>
-                                <div class="left-menu-block-item" id="mode-squared">
-                                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                                        <div class="btn-group">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name="mode-squared" value="mode-squared"> On
-                                            </label>
-                                        </div>
-                                        <div class="btn-group">
-                                            <label class="btn btn-default active">
-                                                <input type="radio" name="mode-squared" value="mode-squared-disabled" checked=""> Off
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-
-            
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-home2"><!-- --></i>
-                    Home
-                </a>
-            </li>
-
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li class="left-menu-list-submenu">
-                <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
-                    Dashboard
-                </a>
-                <ul class="left-menu-list list-unstyled">
-                    <li>
-                        <a class="left-menu-link" href="#">
-                            Sales
-                        </a>
-                    </li>
-                    <li>
-                        <a class="left-menu-link" href="#">
-                            Purchase
-                        </a>
-                    </li>
-                </ul>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Purchase
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Inventory
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Sales
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="products-list.html">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Barcode Printing
-                </a>
-            </li>
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Create
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Settings
-                </a>
-            </li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-bubbles5"><!-- --></i>
-                    Help
-                </a>
-            </li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-mail2"><!-- --></i>
-                    Support
-                </a>
-            </li>
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Sign Out
-                </a>
-            </li>
+    <div class="single-page-block">
+        <div class="single-page-block-inner effect-3d-element">
+            <div class="blur-placeholder"><!-- --></div>
+            <div class="single-page-block-form">
+                <h3 class="text-center">
+                    <i class="icmn-enter margin-right-10"></i>
+                    Login Form
+                </h3>
+                <br />
+                <div id="form-validation" name="form-validation" method="POST">
+                    <div class="form-group">
+                        <input id="validation-username"
+                               class="form-control"
+                               placeholder="Username"
+                               name="validation[username]"
+                               type="text"
+                               data-validation="[L>=3]"
+                               data-validation-message="$ must be at least 3 characters">
+                    </div>
+                    <div class="form-group">
+                        <input id="validation-password"
+                               class="form-control password"
+                               name="validation[password]"
+                               type="password" data-validation="[L>=6]"
+                               data-validation-message="$ must be at least 6 characters"
+                               placeholder="Password">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" onclick = "login();" class="btn btn-primary width-150">Sign In</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="single-page-block-footer text-center">
+        <ul class="list-unstyled list-inline">
+            <li><a href="javascript: void(0);">Terms of Use</a></li>
+            <li class="active"><a href="javascript: void(0);">Compliance</a></li>
+            <li><a href="javascript: void(0);">Confidential Information</a></li>
+            <li><a href="javascript: void(0);">Support</a></li>
+            <li><a href="javascript: void(0);">Contacts</a></li>
         </ul>
     </div>
-</nav>
+    <!-- End Login Omega Page -->
 
+</div>
+
+<!-- Page Scripts -->
+<script>
+    $(function() {
+
+        // Add class to body for change layout settings
+        $('body').addClass('single-page single-page-inverse');
+
+        // Form Validation
+        $('#form-validation').validate({
+            submit: {
+                settings: {
+                    inputContainer: '.form-group',
+                    errorListClass: 'form-control-error',
+                    errorClass: 'has-danger'
+                }
+            }
+        });
+
+        // Show/Hide Password
+        $('.password').password({
+            eyeClass: '',
+            eyeOpenClass: 'icmn-eye',
+            eyeCloseClass: 'icmn-eye-blocked'
+        });
+
+        // Set Background Image for Form Block
+        function setImage() {
+            var imgUrl = $('.page-content-inner').css('background-image');
+
+            $('.blur-placeholder').css('background-image', imgUrl);
+        };
+
+        function changeImgPositon() {
+            var width = $(window).width(),
+                    height = $(window).height(),
+                    left = - (width - $('.single-page-block-inner').outerWidth()) / 2,
+                    top = - (height - $('.single-page-block-inner').outerHeight()) / 2;
+
+
+            $('.blur-placeholder').css({
+                width: width,
+                height: height,
+                left: left,
+                top: top
+            });
+        };
+
+        setImage();
+        changeImgPositon();
+
+        $(window).on('resize', function(){
+            changeImgPositon();
+        });
+
+        // Mouse Move 3d Effect
+        var rotation = function(e){
+            var perX = (e.clientX/$(window).width())-0.5;
+            var perY = (e.clientY/$(window).height())-0.5;
+            TweenMax.to(".effect-3d-element", 0.4, { rotationY:15*perX, rotationX:15*perY,  ease:Linear.easeNone, transformPerspective:1000, transformOrigin:"center" })
+        };
+
+        if (!cleanUI.hasTouch) {
+            $('body').mousemove(rotation);
+        }
+
+    });
+	function login(){
+		if(document.getElementById('validation-username').value == 'sukhvir'
+			&& document.getElementById('validation-password').value == '123456'){
+				window.location = 'barcode-printing.html';
+			}
+	}
+</script>
+<!-- End Page Scripts -->
 </body>
 </html>

@@ -47,6 +47,7 @@
     <!-- Clean UI Styles -->
     <link rel="stylesheet" type="text/css" href="assets/common/css/source/main.css">
 
+	<!-- For Electron--><script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <!-- Vendors Scripts -->
     <!-- v1.0.0 -->
     <script src="assets/vendors/jquery/jquery.min.js"></script>
@@ -104,9 +105,9 @@
     <script src="assets/common/js/version_angular/app.js"></script>
 
     <!-- Angular Version Controllers -->
-    <script src="pages/register.ctrl.js"></script>
+    <!--<script src="pages/register.ctrl.js"></script>
     <script src="pages/login.ctrl.js"></script>
-    <script src="pages/lockscreen.ctrl.js"></script>
+    <script src="pages/lockscreen.ctrl.js"></script>-->
 
 
     <!-- Clean UI Scripts -->
@@ -114,7 +115,15 @@
     <script src="assets/common/js/demo.temp.js"></script>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 	<script src="js/JsBarcode.all.min.js"></script>
-
+	<!--For Electron--><script>if (window.module) module = window.module;</script>
+	<script>
+		try {
+			$ = jQuery = module.exports;
+			// If you want module.exports to be empty, uncomment:
+			// module.exports = {};
+		} catch(e) {
+		}
+	</script>
 	<style>
 	/* The Modal (background) */
 	.modal {
@@ -293,6 +302,10 @@
 		position: absolute;
 		right:10px;
 		bottom:15px;
+	}
+	
+	.printbox{
+		padding:10%;
 	}
 	</style>
 </head>
@@ -562,7 +575,7 @@
         <div class="panel-heading">
             <h2>
                 <div class="dropdown pull-right">
-				<button id = "buttonPrintBarcode" type="button" class="btn btn-primary"  onclick = "printBarcode();" disabled>
+				<button id = "buttonPrintBarcode" type="button" class="btn btn-primary"  style = "display:none" onclick = "openPrintModal();" disabled>
                         Print
                     </button>
 					<button type="button" class="btn btn-primary"  onclick = "addProduct();">
@@ -585,6 +598,8 @@
                 </div>
                 Bar Code Printing
             </h2>
+			<span style = "color:#FF0000" id = "serverMessageBox">Connecting To Server...</span></br>
+			<span style = "color:#00FF00" id = "printStatusBox"></span>
         </div>
         <div class="panel-body">
             <table class="table table-hover nowrap" id="displayBarCodeEntriesTable" width="100%">
@@ -631,7 +646,18 @@
     <!-- End Ecommerce Products List -->
 
 </div>
-
+<div id = "printModal" class = "modal printbox">
+    <div class="modal-content">
+		<div class="modal-header">
+			<h3 style="padding:5px;font-size:15px;">BarCode Printout</h3>
+		</div>
+		<div class="modal-body">
+		<span id = "printMessage"></span></br>
+			<button type="button" class="btn btn-primary"  style = "float:right" onclick = "closePrintModal();">No</button>
+			<button type="button" class="btn btn-primary"  style = "float:right" onclick = "createBarCodeBatchForPrinting();">Yes</button>
+		</div>
+	</div>
+</div>
 <!-- The Modal -->
 <div id="barcodeQuantity" class="modal">
 
@@ -997,6 +1023,137 @@ function compare(a,b) {
   return 0;
 }
 
+function createBarCodeBatchForPrinting(){
+	closePrintModal();
+	var barCodeBatch = [];
+	
+	for(var b = 0; b < barCodeEntries.length; b++){
+		var barCodeEntry = barCodeEntries[b];
+		
+		if(barCodeEntry.printCopiesFor28 > 0){
+			var barCode28 = new Object();
+			barCode28.quantity = barCodeEntry.printCopiesFor28;
+			barCode28.barCode = new Object();
+			barCode28.barCode.styleCode = barCodeEntry.styleCode;
+			barCode28.barCode.mrp = barCodeEntry.mrp;
+			barCode28.barCode.eanCode = barCodeEntry.ean28;
+			barCodeBatch.push(barCode28);
+		}
+		
+		if(barCodeEntry.printCopiesFor30 > 0){
+			var barCode30 = new Object();
+			barCode30.quantity = barCodeEntry.printCopiesFor30;
+			barCode30.barCode = new Object();
+			barCode30.barCode.styleCode = barCodeEntry.styleCode;
+			barCode30.barCode.mrp = barCodeEntry.mrp;
+			barCode30.barCode.eanCode = barCodeEntry.ean30;
+			barCodeBatch.push(barCode30)
+		}
+		
+		if(barCodeEntry.printCopiesFor32 > 0){
+			var barCode32 = new Object();
+			barCode32.quantity = barCodeEntry.printCopiesFor32;
+			barCode32.barCode = new Object();
+			barCode32.barCode.styleCode = barCodeEntry.styleCode;
+			barCode32.barCode.mrp = barCodeEntry.mrp;
+			barCode32.barCode.eanCode = barCodeEntry.ean32;
+			barCodeBatch.push(barCode32)
+		}
+		
+		if(barCodeEntry.printCopiesFor34 > 0){
+			var barCode34 = new Object();
+			barCode34.quantity = barCodeEntry.printCopiesFor34;
+			barCode34.barCode = new Object();
+			barCode34.barCode.styleCode = barCodeEntry.styleCode;
+			barCode34.barCode.mrp = barCodeEntry.mrp;
+			barCode34.barCode.eanCode = barCodeEntry.ean34;
+			barCodeBatch.push(barCode34)
+		}
+		
+		if(barCodeEntry.printCopiesFor36 > 0){
+			var barCode36 = new Object();
+			barCode36.quantity = barCodeEntry.printCopiesFor36;
+			barCode36.barCode = new Object();
+			barCode36.barCode.styleCode = barCodeEntry.styleCode;
+			barCode36.barCode.mrp = barCodeEntry.mrp;
+			barCode36.barCode.eanCode = barCodeEntry.ean36;
+			barCodeBatch.push(barCode36)
+		}			
+		
+		if(barCodeEntry.printCopiesFor38 > 0){		
+			var barCode38 = new Object();
+			barCode38.quantity = barCodeEntry.printCopiesFor38;
+			barCode38.barCode = new Object();
+			barCode38.barCode.styleCode = barCodeEntry.styleCode;
+			barCode38.barCode.mrp = barCodeEntry.mrp;
+			barCode38.barCode.eanCode = barCodeEntry.ean38;
+			barCodeBatch.push(barCode38)
+		}
+
+		if(barCodeEntry.printCopiesFor40 > 0){		
+			var barCode40 = new Object();
+			barCode40.quantity = barCodeEntry.printCopiesFor40;
+			barCode40.barCode = new Object();
+			barCode40.barCode.styleCode = barCodeEntry.styleCode;
+			barCode40.barCode.mrp = barCodeEntry.mrp;
+			barCode40.barCode.eanCode = barCodeEntry.ean40;
+			barCodeBatch.push(barCode40)
+		}
+		
+		if(barCodeEntry.printCopiesFor42 > 0){
+			var barCode42 = new Object();
+			barCode42.quantity = barCodeEntry.printCopiesFor42;
+			barCode42.barCode = new Object();
+			barCode42.barCode.styleCode = barCodeEntry.styleCode;
+			barCode42.barCode.mrp = barCodeEntry.mrp;
+			barCode42.barCode.eanCode = barCodeEntry.ean42;
+			barCodeBatch.push(barCode42)
+		}
+		
+		if(barCodeEntry.printCopiesFor44 > 0){
+			var barCode44 = new Object();
+			barCode44.quantity = barCodeEntry.printCopiesFor44;
+			barCode44.barCode = new Object();
+			barCode44.barCode.styleCode = barCodeEntry.styleCode;
+			barCode44.barCode.mrp = barCodeEntry.mrp;
+			barCode44.barCode.eanCode = barCodeEntry.ean44;
+			barCodeBatch.push(barCode44)
+		}	
+		
+		if(barCodeEntry.printCopiesFor46 > 0){
+			var barCode46 = new Object();
+			barCode46.quantity = barCodeEntry.printCopiesFor46;
+			barCode46.barCode = new Object();
+			barCode46.barCode.styleCode = barCodeEntry.styleCode;
+			barCode46.barCode.mrp = barCodeEntry.mrp;
+			barCode46.barCode.eanCode = barCodeEntry.ean46;
+			barCodeBatch.push(barCode46)
+		}
+
+		if(barCodeEntry.printCopiesFor48 > 0){		
+			var barCode48 = new Object();
+			barCode48.quantity = barCodeEntry.printCopiesFor28;
+			barCode48.barCode = new Object();
+			barCode48.barCode.styleCode = barCodeEntry.styleCode;
+			barCode48.barCode.mrp = barCodeEntry.mrp;
+			barCode48.barCode.eanCode = barCodeEntry.ean28;
+			barCodeBatch.push(barCode48);
+		}
+	}
+	
+	var request = new XMLHttpRequest();
+    request.onreadystatechange = function(){
+        if(request.readyState == 4 && request.status == 200){
+			document.getElementById('printStatusBox').innerHTML = request.response;
+        }
+    };
+
+    request.open ("POST", "http://localhost:8080/AdValoramBarCodePrinter/barcode/printer", true);
+    request.setRequestHeader("content-type", "application/json");
+    request.send(JSON.stringify(barCodeBatch));
+	document.getElementById('printStatusBox').innerHTML = "Barcode printing initiated";
+}
+
 function saveBarCodeEntry(){
 	
 	var saveId = document.getElementById("barCodeId").innerHTML;
@@ -1087,10 +1244,20 @@ function addProduct(){
 	}
 }
 
+function openPrintModal(){
+	document.getElementById("printModal").style.display = "block";
+	document.getElementById("printMessage").innerHTML = "Print " + totalPrintCopies + " barcodes ?";
+}
+
+function closePrintModal(){
+	document.getElementById("printModal").style.display = "none";
+}
+
 function openBarCodeModal(){
 	modal.style.display = "block";
 }
 
+var totalPrintCopies = 0;
 function refreshBarCodeTable() {
 
 	//$("#displayBarCodeEntriesTableBody").empty();
@@ -1100,7 +1267,7 @@ function refreshBarCodeTable() {
 	//var table = document.getElementById("displayBarCodeEntriesTable").getElementsByTagName('tbody')[0];
 	
 	//var rowCount = table.rows.length;
-	var totalPrintCopies = 0;
+	totalPrintCopies = 0;
 	
 	for(var r = 0; r < barCodeEntries.length; r++){
 	
@@ -1279,6 +1446,27 @@ function clearBarCodeModal(){
 	document.getElementById("printCopiesFor48").value = "0";
 }
 
+setInterval(function(){
+		var request = new XMLHttpRequest();
+    request.onreadystatechange = function(){
+        if(request.readyState == 4 && request.status == 200){
+			document.getElementById("serverMessageBox").innerHTML = request.response;
+			document.getElementById("buttonPrintBarcode").style.display = "inline-block";
+			document.getElementById("serverMessageBox").style.color = '#00AA00';
+        } else if (request.readyState == 4 && request.status == 0){
+			document.getElementById("serverMessageBox").innerHTML = "Print Server Offline";
+			document.getElementById("buttonPrintBarcode").style.display = "none";
+			document.getElementById("serverMessageBox").style.color = '#FF0000';
+		} if(request.readyState == 4 && request.status == 404){
+			document.getElementById("serverMessageBox").innerHTML = "Printer Application Not Found";
+			document.getElementById("buttonPrintBarcode").style.display = "none";
+			document.getElementById("serverMessageBox").style.color = '#FF0000';
+		}
+    };
+
+    request.open ("GET", "http://localhost:8080/AdValoramBarCodePrinter/barcode/status", true);
+    request.send();
+}, 1000);
 
 
 setInterval(function() { 
@@ -1379,9 +1567,7 @@ function updateEanCodes(styleCode, colorCode, gender, mrp){
  
 </script>
 <script>
-function goBack(){
-	window.location = "home.html";
-}
+
 function closeBarCodeModal(){
 	modal.style.display = "none";
 }
