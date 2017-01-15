@@ -304,6 +304,11 @@
 		bottom:15px;
 	}
 	
+	.modal-right-body-middle {
+		position: absolute;
+		right:40px;
+		bottom:300px;
+	}
 	.printbox{
 		padding:10%;
 	}
@@ -560,7 +565,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" href="#">
+                <a class="left-menu-link" onclick = "signOut();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -598,8 +603,8 @@
                 </div>
                 Bar Code Printing
             </h2>
-			<span style = "color:#FF0000" id = "serverMessageBox">Connecting To Server...</span></br>
-			<span style = "color:#00FF00" id = "printStatusBox"></span>
+			<div id = "serverMessageBox" style = "display:none;"><span style = "color:#FF0000;"></span></br></div>
+			<div id = "printStatusBox" style = "display:none;"><span style = "color:#222222;"></span></div>
         </div>
         <div class="panel-body">
             <table class="table table-hover nowrap" id="displayBarCodeEntriesTable" width="100%">
@@ -692,24 +697,24 @@
 						C7 - Blue
 						C8 - Grey
 						C9 - Cream-->
-					  <option value="01">01 - Unicolour</option>
-					  <option value="C1">C1 - Black</option>
-					  <option value="C2">C2 - Charcoal</option>
-					  <option value="C3">C3 - Brown</option>
-					  <option value="C4">C4 - Burgundy</option>
-					  <option value="C5">C5 - Green</option>
-					  <option value="C6">C6 - Navy Blue</option>
-					  <option value="C7">C7 - Blue</option>
-					  <option value="C8">C8 - Grey</option>
-					  <option value="C9">C9 - Cream</option>
+					  <option value="O1">O1</option>
+					  <option value="C1">C1</option>
+					  <option value="C2">C2</option>
+					  <option value="C3">C3</option>
+					  <option value="C4">C4</option>
+					  <option value="C5">C5</option>
+					  <option value="C6">C6</option>
+					  <option value="C7">C7</option>
+					  <option value="C8">C8</option>
+					  <option value="C9">C9</option>
 					</select>
 				</td>
 				<td class="tg-yw42">
 					<select id = "dropDownGender">
-					  <option value="male">Men</option>
-					  <option value="female">Women</option>
-					  <option value="kids">Kids</option>
-					  <option value="kids">Unisex</option>
+					  <option value="1">Men</option>
+					  <option value="2">Women</option>
+					  <option value="3">Kids</option>
+					  <option value="4">Unisex</option>
 					</select>
 				</td>
 				<td class="tg-yw42">
@@ -792,7 +797,9 @@
 			  
 			</table>
 		</div>
+		
 		<div class="modal-right-body">
+			<div class = "modal-right-body-middle"><input type="checkbox" id="isSampleSticker" checked><span style = "padding:5px;">Sample Sticker</span></div>
 			<div class = "modal-right-body-bottom">
 				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndClose()">Save & Close</button></br>
 				<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndGoToNext()">Save & Go To Next</button>
@@ -1033,6 +1040,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor28 > 0){
 			var barCode28 = new Object();
 			barCode28.quantity = barCodeEntry.printCopiesFor28;
+			barCode28.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode28.barCode = new Object();
 			barCode28.barCode.styleCode = barCodeEntry.styleCode;
 			barCode28.barCode.mrp = barCodeEntry.mrp;
@@ -1043,6 +1051,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor30 > 0){
 			var barCode30 = new Object();
 			barCode30.quantity = barCodeEntry.printCopiesFor30;
+			barCode30.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode30.barCode = new Object();
 			barCode30.barCode.styleCode = barCodeEntry.styleCode;
 			barCode30.barCode.mrp = barCodeEntry.mrp;
@@ -1053,6 +1062,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor32 > 0){
 			var barCode32 = new Object();
 			barCode32.quantity = barCodeEntry.printCopiesFor32;
+			barCode32.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode32.barCode = new Object();
 			barCode32.barCode.styleCode = barCodeEntry.styleCode;
 			barCode32.barCode.mrp = barCodeEntry.mrp;
@@ -1063,6 +1073,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor34 > 0){
 			var barCode34 = new Object();
 			barCode34.quantity = barCodeEntry.printCopiesFor34;
+			barCode34.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode34.barCode = new Object();
 			barCode34.barCode.styleCode = barCodeEntry.styleCode;
 			barCode34.barCode.mrp = barCodeEntry.mrp;
@@ -1073,6 +1084,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor36 > 0){
 			var barCode36 = new Object();
 			barCode36.quantity = barCodeEntry.printCopiesFor36;
+			barCode36.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode36.barCode = new Object();
 			barCode36.barCode.styleCode = barCodeEntry.styleCode;
 			barCode36.barCode.mrp = barCodeEntry.mrp;
@@ -1083,6 +1095,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor38 > 0){		
 			var barCode38 = new Object();
 			barCode38.quantity = barCodeEntry.printCopiesFor38;
+			barCode38.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode38.barCode = new Object();
 			barCode38.barCode.styleCode = barCodeEntry.styleCode;
 			barCode38.barCode.mrp = barCodeEntry.mrp;
@@ -1093,6 +1106,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor40 > 0){		
 			var barCode40 = new Object();
 			barCode40.quantity = barCodeEntry.printCopiesFor40;
+			barCode40.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode40.barCode = new Object();
 			barCode40.barCode.styleCode = barCodeEntry.styleCode;
 			barCode40.barCode.mrp = barCodeEntry.mrp;
@@ -1103,6 +1117,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor42 > 0){
 			var barCode42 = new Object();
 			barCode42.quantity = barCodeEntry.printCopiesFor42;
+			barCode42.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode42.barCode = new Object();
 			barCode42.barCode.styleCode = barCodeEntry.styleCode;
 			barCode42.barCode.mrp = barCodeEntry.mrp;
@@ -1113,6 +1128,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor44 > 0){
 			var barCode44 = new Object();
 			barCode44.quantity = barCodeEntry.printCopiesFor44;
+			barCode44.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode44.barCode = new Object();
 			barCode44.barCode.styleCode = barCodeEntry.styleCode;
 			barCode44.barCode.mrp = barCodeEntry.mrp;
@@ -1123,6 +1139,7 @@ function createBarCodeBatchForPrinting(){
 		if(barCodeEntry.printCopiesFor46 > 0){
 			var barCode46 = new Object();
 			barCode46.quantity = barCodeEntry.printCopiesFor46;
+			barCode46.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode46.barCode = new Object();
 			barCode46.barCode.styleCode = barCodeEntry.styleCode;
 			barCode46.barCode.mrp = barCodeEntry.mrp;
@@ -1132,11 +1149,12 @@ function createBarCodeBatchForPrinting(){
 
 		if(barCodeEntry.printCopiesFor48 > 0){		
 			var barCode48 = new Object();
-			barCode48.quantity = barCodeEntry.printCopiesFor28;
+			barCode48.quantity = barCodeEntry.printCopiesFor48;
+			barCode48.isSampleSticker = barCodeEntry.isSampleSticker;
 			barCode48.barCode = new Object();
 			barCode48.barCode.styleCode = barCodeEntry.styleCode;
 			barCode48.barCode.mrp = barCodeEntry.mrp;
-			barCode48.barCode.eanCode = barCodeEntry.ean28;
+			barCode48.barCode.eanCode = barCodeEntry.ean48;
 			barCodeBatch.push(barCode48);
 		}
 	}
@@ -1144,7 +1162,9 @@ function createBarCodeBatchForPrinting(){
 	var request = new XMLHttpRequest();
     request.onreadystatechange = function(){
         if(request.readyState == 4 && request.status == 200){
+			document.getElementById('printStatusBox').style.display = "inline-block";
 			document.getElementById('printStatusBox').innerHTML = request.response;
+			setTimeout(clearPrintStatusBox, 60000);
         }
     };
 
@@ -1154,6 +1174,10 @@ function createBarCodeBatchForPrinting(){
 	document.getElementById('printStatusBox').innerHTML = "Barcode printing initiated";
 }
 
+function clearPrintStatusBox(){
+	document.getElementById('printStatusBox').innerHTML = "";
+	document.getElementById('printStatusBox').style.display = "none";
+}
 function saveBarCodeEntry(){
 	
 	var saveId = document.getElementById("barCodeId").innerHTML;
@@ -1181,6 +1205,7 @@ function saveBarCodeEntry(){
 	
 	barCodeEntry.colorCode = colorCode;
 	barCodeEntry.gender = gender;
+	barCodeEntry.isSampleSticker = document.getElementById("isSampleSticker").checked;
 	barCodeEntry.mrp = document.getElementById("textMrp").value;
 	barCodeEntry.ean28 = document.getElementById("ean28").innerHTML;
 	barCodeEntry.printCopiesFor28 = document.getElementById("printCopiesFor28").value;
@@ -1384,6 +1409,7 @@ function editBarCodeRecord(id){
 				}
 			}
 			
+			document.getElementById("isSampleSticker").checked = barCodeEntry.isSampleSticker;
 			document.getElementById("textMrp").value = barCodeEntry.mrp;			
 			document.getElementById("printCopiesFor28").value = barCodeEntry.printCopiesFor28;			
 			document.getElementById("printCopiesFor30").value = barCodeEntry.printCopiesFor30;			
@@ -1450,14 +1476,21 @@ setInterval(function(){
 		var request = new XMLHttpRequest();
     request.onreadystatechange = function(){
         if(request.readyState == 4 && request.status == 200){
+			if(request.response.trim().length == 0){
+				document.getElementById("serverMessageBox").style.display = "none";
+			} else {
+				document.getElementById("serverMessageBox").style.display = "inline-block";
+			}
 			document.getElementById("serverMessageBox").innerHTML = request.response;
 			document.getElementById("buttonPrintBarcode").style.display = "inline-block";
 			document.getElementById("serverMessageBox").style.color = '#00AA00';
         } else if (request.readyState == 4 && request.status == 0){
+			document.getElementById("serverMessageBox").style.display = "inline-block";
 			document.getElementById("serverMessageBox").innerHTML = "Print Server Offline";
 			document.getElementById("buttonPrintBarcode").style.display = "none";
 			document.getElementById("serverMessageBox").style.color = '#FF0000';
 		} if(request.readyState == 4 && request.status == 404){
+			document.getElementById("serverMessageBox").style.display = "inline-block";
 			document.getElementById("serverMessageBox").innerHTML = "Printer Application Not Found";
 			document.getElementById("buttonPrintBarcode").style.display = "none";
 			document.getElementById("serverMessageBox").style.color = '#FF0000';
@@ -1480,9 +1513,9 @@ setInterval(function() {
 	
 	//Gender
 	var g = document.getElementById("dropDownGender");
-	var gender = g.options[g.selectedIndex].text;
+	var gender = g.options[g.selectedIndex].value;
 	
-	if(gender == "Men"){
+/*	if(gender == "Men"){
 		gender = "M";
 	} else if (gender == "Women"){
 		gender = "W";
@@ -1490,7 +1523,7 @@ setInterval(function() {
 		gender = "K";
 	} else {
 		gender = "U";
-	}
+	}*/
 	//MRP
 	var mrp = document.getElementById("textMrp").value;
 	var totalPrintCopies = parseInt(document.getElementById("printCopiesFor28").value) +
@@ -1568,6 +1601,9 @@ function updateEanCodes(styleCode, colorCode, gender, mrp){
 </script>
 <script>
 
+function signOut(){
+	window.location = "index.html";
+}
 function closeBarCodeModal(){
 	modal.style.display = "none";
 }
