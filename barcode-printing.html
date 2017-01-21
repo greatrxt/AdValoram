@@ -611,10 +611,12 @@
                 <thead class="thead-default">
                 <tr>
                     <th>Item No</th>
-					<th>BarCode Sticker</th>
+					<!--<th>BarCode Sticker</th>-->
                     <th>Style Code</th>
                     <th>Color Code</th>					
                     <th>Gender</th>
+					<th>MRP</th>
+					<th>Sample Sticker</th>
                     <th>Quantity</th>
 					<th>Action</th>
                 </tr>
@@ -622,10 +624,12 @@
                 <tfoot>
                 <tr>
                     <th>Item No</th>
-					<th>BarCode Sticker</th>
+					<!--<th>BarCode Sticker</th>-->
                     <th>Style Code</th>
                     <th>Color Code</th>
                     <th>Gender</th>
+					<th>MRP</th>
+					<th>Sample Sticker</th>
                     <th>Quantity</th>
                     <th>Action</th>
                 </tr>
@@ -802,7 +806,7 @@
 			<div class = "modal-right-body-middle"><input type="checkbox" id="isSampleSticker" checked><span style = "padding:5px;">Sample Sticker</span></div>
 			<div class = "modal-right-body-bottom">
 				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndClose()">Save & Close</button></br>
-				<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndGoToNext()">Save & Go To Next</button>
+				<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndGoToNext()">Save & Add New</button>
 			</div>
 		</div>
     </div>
@@ -1045,6 +1049,7 @@ function createBarCodeBatchForPrinting(){
 			barCode28.barCode.styleCode = barCodeEntry.styleCode;
 			barCode28.barCode.mrp = barCodeEntry.mrp;
 			barCode28.barCode.eanCode = barCodeEntry.ean28;
+			barCode28.barCode.size = "28";
 			barCodeBatch.push(barCode28);
 		}
 		
@@ -1056,6 +1061,7 @@ function createBarCodeBatchForPrinting(){
 			barCode30.barCode.styleCode = barCodeEntry.styleCode;
 			barCode30.barCode.mrp = barCodeEntry.mrp;
 			barCode30.barCode.eanCode = barCodeEntry.ean30;
+			barCode30.barCode.size = "30";
 			barCodeBatch.push(barCode30)
 		}
 		
@@ -1067,6 +1073,7 @@ function createBarCodeBatchForPrinting(){
 			barCode32.barCode.styleCode = barCodeEntry.styleCode;
 			barCode32.barCode.mrp = barCodeEntry.mrp;
 			barCode32.barCode.eanCode = barCodeEntry.ean32;
+			barCode32.barCode.size = "32";
 			barCodeBatch.push(barCode32)
 		}
 		
@@ -1078,6 +1085,7 @@ function createBarCodeBatchForPrinting(){
 			barCode34.barCode.styleCode = barCodeEntry.styleCode;
 			barCode34.barCode.mrp = barCodeEntry.mrp;
 			barCode34.barCode.eanCode = barCodeEntry.ean34;
+			barCode34.barCode.size = "34";
 			barCodeBatch.push(barCode34)
 		}
 		
@@ -1089,6 +1097,7 @@ function createBarCodeBatchForPrinting(){
 			barCode36.barCode.styleCode = barCodeEntry.styleCode;
 			barCode36.barCode.mrp = barCodeEntry.mrp;
 			barCode36.barCode.eanCode = barCodeEntry.ean36;
+			barCode36.barCode.size = "36";
 			barCodeBatch.push(barCode36)
 		}			
 		
@@ -1100,6 +1109,7 @@ function createBarCodeBatchForPrinting(){
 			barCode38.barCode.styleCode = barCodeEntry.styleCode;
 			barCode38.barCode.mrp = barCodeEntry.mrp;
 			barCode38.barCode.eanCode = barCodeEntry.ean38;
+			barCode38.barCode.size = "38";
 			barCodeBatch.push(barCode38)
 		}
 
@@ -1111,6 +1121,7 @@ function createBarCodeBatchForPrinting(){
 			barCode40.barCode.styleCode = barCodeEntry.styleCode;
 			barCode40.barCode.mrp = barCodeEntry.mrp;
 			barCode40.barCode.eanCode = barCodeEntry.ean40;
+			barCode40.barCode.size = "40";
 			barCodeBatch.push(barCode40)
 		}
 		
@@ -1122,6 +1133,7 @@ function createBarCodeBatchForPrinting(){
 			barCode42.barCode.styleCode = barCodeEntry.styleCode;
 			barCode42.barCode.mrp = barCodeEntry.mrp;
 			barCode42.barCode.eanCode = barCodeEntry.ean42;
+			barCode42.barCode.size = "42";
 			barCodeBatch.push(barCode42)
 		}
 		
@@ -1133,6 +1145,7 @@ function createBarCodeBatchForPrinting(){
 			barCode44.barCode.styleCode = barCodeEntry.styleCode;
 			barCode44.barCode.mrp = barCodeEntry.mrp;
 			barCode44.barCode.eanCode = barCodeEntry.ean44;
+			barCode44.barCode.size = "44";
 			barCodeBatch.push(barCode44)
 		}	
 		
@@ -1144,6 +1157,7 @@ function createBarCodeBatchForPrinting(){
 			barCode46.barCode.styleCode = barCodeEntry.styleCode;
 			barCode46.barCode.mrp = barCodeEntry.mrp;
 			barCode46.barCode.eanCode = barCodeEntry.ean46;
+			barCode46.barCode.size = "46";
 			barCodeBatch.push(barCode46)
 		}
 
@@ -1155,6 +1169,7 @@ function createBarCodeBatchForPrinting(){
 			barCode48.barCode.styleCode = barCodeEntry.styleCode;
 			barCode48.barCode.mrp = barCodeEntry.mrp;
 			barCode48.barCode.eanCode = barCodeEntry.ean48;
+			barCode48.barCode.size = "48";
 			barCodeBatch.push(barCode48);
 		}
 	}
@@ -1314,12 +1329,15 @@ function refreshBarCodeTable() {
 		
 		totalPrintCopies = totalPrintCopies + printCopies;
 		
+		var sampleSticker = barCodeEntry.isSampleSticker ? "Yes" : "No";
 		dataTable.row.add([
             barCodeEntry.id,
-            "<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
+            //"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
 			barCodeEntry.styleCode,
             barCodeEntry.colorCode,
             barCodeEntry.gender,
+			barCodeEntry.mrp,
+			sampleSticker,
 			printCopies,
 			"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editBarCodeRecord("+barCodeEntry.id+");'><i class='icmn-pencil5'></i> View</a>"
 										+ "<a href='javascript: void(0);' class='link-underlined' onclick='deleteBarCodeRecordAndUpdateView("+barCodeEntry.id+");'><i class='icmn-cross2'></i> Remove</a>;"
@@ -1585,17 +1603,17 @@ function updateEanCodes(styleCode, colorCode, gender, mrp){
 	mrp = String("00000" + mrp).slice(-4);
 	
 	//colorCode + styleCode + mrp + size + gender
-	document.getElementById("ean28").innerHTML = colorCode + styleCode + mrp + "28" + gender;
-	document.getElementById("ean30").innerHTML = colorCode + styleCode + mrp + "30" + gender;
-	document.getElementById("ean32").innerHTML = colorCode + styleCode + mrp + "32" + gender;
-	document.getElementById("ean34").innerHTML = colorCode + styleCode + mrp + "34" + gender;
-	document.getElementById("ean36").innerHTML = colorCode + styleCode + mrp + "36" + gender;
-	document.getElementById("ean38").innerHTML = colorCode + styleCode + mrp + "38" + gender;
-	document.getElementById("ean40").innerHTML = colorCode + styleCode + mrp + "40" + gender;
-	document.getElementById("ean42").innerHTML = colorCode + styleCode + mrp + "42" + gender;
-	document.getElementById("ean44").innerHTML = colorCode + styleCode + mrp + "44" + gender;
-	document.getElementById("ean46").innerHTML = colorCode + styleCode + mrp + "46" + gender;
-	document.getElementById("ean48").innerHTML = colorCode + styleCode + mrp + "48" + gender;
+	document.getElementById("ean28").innerHTML = colorCode + styleCode + "28" + gender;
+	document.getElementById("ean30").innerHTML = colorCode + styleCode + "30" + gender;
+	document.getElementById("ean32").innerHTML = colorCode + styleCode + "32" + gender;
+	document.getElementById("ean34").innerHTML = colorCode + styleCode + "34" + gender;
+	document.getElementById("ean36").innerHTML = colorCode + styleCode + "36" + gender;
+	document.getElementById("ean38").innerHTML = colorCode + styleCode + "38" + gender;
+	document.getElementById("ean40").innerHTML = colorCode + styleCode + "40" + gender;
+	document.getElementById("ean42").innerHTML = colorCode + styleCode + "42" + gender;
+	document.getElementById("ean44").innerHTML = colorCode + styleCode + "44" + gender;
+	document.getElementById("ean46").innerHTML = colorCode + styleCode + "46" + gender;
+	document.getElementById("ean48").innerHTML = colorCode + styleCode + "48" + gender;
 }
  
 </script>
