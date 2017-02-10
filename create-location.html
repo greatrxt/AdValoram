@@ -554,11 +554,6 @@
                     </div>
                 </div>
             </div>
-            <div class="right example-buy-btn hidden-xs-down">
-                <a href="https://themeforest.net/item/clean-ui-premium-bootstrap-4-admin-template-angular-starter-kit/16678285?s_rank=4&amp;ref=mediatec_software" target="_blank" class="btn btn-success-outline btn-rounded">
-                    Buy Now 25$
-                </a>
-            </div>
         </div>
     </div>
 </nav>
@@ -569,26 +564,14 @@
     <section class="panel panel-with-borders" style="overflow:auto">
         <div class="panel-heading">
             <h2>
-                Create New Customer
+                Create New Location
             </h2>
         </div>
         <div class="panel-body">
 			<div class="nav-tabs-horizontal">
 				<ul class="nav nav-tabs" role="tablist">
 					<li class="nav-item">
-						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Company Details</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Trade Terms</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Taxation & Related</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Transport</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Alerts & Uploads</a>
+						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Location Details</a>
 					</li>
 				</ul>
 				<div class="tab-content padding-vertical-20">
@@ -596,28 +579,18 @@
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
-                                <label for="companyName">Customer / Company Name</label>
-                                <input class="form-control" id="companyName" type="text">
-                            </div>
-							<div class="form-group">
-                                <label for="linkedDistributor">Linked Distributor, if any</label>
-								<select class="form-control" id="linkedDistributor">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
+                                <label for="cityName">City Name*</label>
+                                <input class="form-control" id="cityName" type="text">
                             </div>
 
 							<div class="form-group">
-								<label class="form-control-label" for="billingAddress">Billing Address</label>
-								<textarea class="form-control" rows="3" id="billingAddress"></textarea>
+								<label class="form-control-label" for="taluka">Taluka</label>
+								<input class="form-control" id="taluka" type="text">
 							</div>
 						
 							<div class="form-group">
-                                <label for="city">City</label>
-								<select class="form-control" id="city">
+                                <label for="country">Country</label>
+								<select class="form-control" id="country">
 											<option value="Option 1">Option 1</option>
 											<option value="Option 2">Option 2</option>
 											<option value="Option 3">Option 3</option>
@@ -626,143 +599,18 @@
 								</select>
                             </div>
 							
-							<div class="form-group">
-                                <label for="district">District</label>
-                                <input class="form-control" id="district" type="text">
-                            </div>
-						
-							<div class="form-group">
-                                <label for="contactPerson">Contact Person*</label>
-                                <input class="form-control" id="contactPerson" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="emailAddress">Email Address</label>
-                                <input class="form-control" id="emailAddress" type="text">
-                            </div>
 						</div>
 						
 						
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
-								<label class="form-control-label" for="customerType">Customer Type</label><br/>
-                                <input id="radioRetailer" name = "customerType" type="radio" value="Retailer" style="margin:11px">Retailer
-								<input id="radioDistributor" name = "customerType" type="radio" value="Distributor" style="margin:11px">Distributor
-								<input id="radioBroker" name = "customerType" type="radio" value="Broker" style="margin:11px">Broker
-                            </div>
-							
-							<div class="form-group">
-                                <label for="linkedBroker">Linked Broker, if any</label>
-								<select class="form-control" id="linkedBroker">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
-                            </div>
-							
-							<div class="form-group">
-								<label class="form-control-label" for="deliveryAddress">Delivery Address</label>
-								<textarea class="form-control" rows="3" id="deliveryAddress"></textarea>
+								<label class="form-control-label" for="district">District</label>
+								<input class="form-control" id="district" type="text">
 							</div>
-							
-							<div class="form-group">
-                                <label for="pinCode">Pin Code</label>
-                                <input class="form-control" id="pinCode" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="dropDownState">State</label>
-								<select class="form-control" id="dropDownState">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
-                            </div>
-							
-							<div class="form-group">
-                                <label for="contactNumber">Contact Number</label>
-                                <input class="form-control" id="contactNumber" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="linkedEmployee">Linked Employee</label>
-								<select class="form-control" id="linkedEmployee">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
-                            </div>
-							
-						</div>
-					</div>
-					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
-						<div class = "col-lg-5">
-								
-							<div class="form-group">
-                                <label for="markDown">Mark Down(%)</label>
-                                <input class="form-control" id="markDown" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="ufppDiscount">Upfront / Prompt Payment Discount(%)</label>
-                                <input class="form-control" id="ufppDiscount" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="creditPeriod">Credit Period (Days)</label>
-                                <input class="form-control" id="creditPeriod" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="distributorCommission">Distributor Commission (%)</label>
-                                <input class="form-control" id="distributorCommission" type="text">
-                            </div>
-							
-						
-						</div>
-						<div class = "col-lg-5" style="padding-left:100px;">
 						
 							<div class="form-group">
-                                <label for="cashDiscount">Cash Discount(%)</label>
-                                <input class="form-control" id="cashDiscount" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="specialDiscount">Special Discount(%)</label>
-                                <input class="form-control" id="specialDiscount" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="creditLimit">Credit Limit (INR)</label>
-                                <input class="form-control" id="creditLimit" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="brokerCommission">Broker Commission (%)</label>
-                                <input class="form-control" id="brokerCommission" type="text">
-                            </div>
-							
-						</div>
-						
-						<div class = "col-lg-10">
-							<div class="form-group">
-								<label class="form-control-label" for="paymentTerms">Payment Terms</label>
-								<textarea class="form-control" rows="7" id="paymentTerms"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
-						<div class = "col-lg-5">
-						
-							<div class="form-group">
-                                <label for="financialGrouping">Financial Grouping</label>
-								<select class="form-control" id="financialGrouping">
+                                <label for="state">State</label>
+								<select class="form-control" id="state">
 											<option value="Option 1">Option 1</option>
 											<option value="Option 2">Option 2</option>
 											<option value="Option 3">Option 3</option>
@@ -770,133 +618,12 @@
 											<option value="Option 5">Option 5</option>
 								</select>
                             </div>
-							<div class="form-group">
-                                <label for="vatTinNumber">VAT TIN No.</label>
-                                <input class="form-control" id="vatTinNumber" type="text">
-                            </div>
-							<div class="form-group">
-                                <label for="cstTinNumber">CST TIN No.</label>
-                                <input class="form-control" id="cstTinNumber" type="text">
-                            </div>
-							<div class="form-group">
-                                <label for="otherApplicableTax">Octroi / LBT / Entry Tax Rate applicable (%)</label>
-                                <input class="form-control" id="otherApplicableTax" type="text">
-                            </div>
-							<div class="form-group">
-                                <label for="serviceTaxNumber">Service Tax No.</label>
-                                <input class="form-control" id="serviceTaxNumber" type="text">
-                            </div>
-						
-						</div>
-						<div class = "col-lg-5" style="padding-left:100px;">
-							<div class="form-group">
-								<label class="form-control-label" for="taxApplicable">Tax Applicable</label><br/>
-                                <input id="checkBoxVat" name = "taxApplicable" type="checkbox" value="vat" style="margin:11px">VAT
-								<input id="checkBoxCst" name = "taxApplicable" type="checkbox" value="cst" style="margin:11px">CST
-								<input id="checkBoxGst" name = "taxApplicable" type="checkbox" value="gst" style="margin:11px">GST
-								<input id="checkBoxGst" name = "taxApplicable" type="checkbox" value="gst" style="margin:11px">Octroi / LBT / Entry Tax
-                            </div>
-							
-							<div class="form-group">
-                                <label for="vatRateApplicable">VAT Rate Applicable (%)</label>
-                                <input class="form-control" id="vatRateApplicable" type="text">
-                            </div>
-							<div class = "row">
-								<div class = "col-lg-6">
-									<div class="form-group">
-										<label for="cstRateApplicable">CST Rate Applicable (%)</label>
-										<input class="form-control" id="cstRateApplicable" type="text">
-									</div>
-								</div>
-								<div class = "col-lg-6">
-									<div class="form-group">
-										<label for="cstRateAgainstFormC">CST Rate against FORM C (%)</label>
-										<input class="form-control" id="cstRateAgainstFormC" type="text">
-									</div>
-								</div>
-							</div>
-							
-							<div class="form-group">
-                                <label for="gstRateApplicable">GST Rate Applicable (%)</label>
-                                <input class="form-control" id="gstRateApplicable" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="panNumber">PAN Number</label>
-                                <input class="form-control" id="panNumber" type="text">
-                            </div>
-						</div>
-					</div>
-					<div class="tab-pane" id="tab4" role="tabpanel" aria-expanded="true">
-						<div class = "col-lg-5">
-							<div class="form-group">
-                                <label for="linkedTransport">Linked Transport</label>
-								<select class="form-control" id="linkedTransport">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
-                            </div>
-							<div class="form-group">
-                                <label for="contactNumber">Contact Number</label>
-                                <input class="form-control" id="contactNumber" type="text">
-                            </div>
-							<div class="form-group">
-								<label class="form-control-label" for="contractTerms">Contract Terms</label>
-								<textarea class="form-control" rows="7" id="contractTerms"></textarea>
-							</div>
-						</div>
-						<div class = "col-lg-5" style="padding-left:100px;">
-							<div class="form-group">
-                                <label for="contactPerson">Contact Person</label>
-                                <input class="form-control" id="contactPerson" type="text">
-                            </div>
-							<div class="form-group">
-                                <label for="emailAddress">Email Address</label>
-                                <input class="form-control" id="emailAddress" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="paymentTerms">Payment Terms</label>
-								<select class="form-control" id="paymentTerms">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
-                            </div>
-							
-						</div>
-					</div>
-					<div class="tab-pane" id="tab5" role="tabpanel" aria-expanded="true">
-						<div class = "col-lg-10">
-							<div class="form-group">
-                                <label for="specialInstructions">Special Instructions</label>
-                                <input class="form-control" id="specialInstructions" type="text">
-                            </div>
-							
-							<div class="form-group">
-								<label class="form-control-label" for="notes">Notes</label>
-								<textarea class="form-control" rows="7" id="notes"></textarea>
-							</div>
-							
-							<div class="form-group">
-								<label class="form-control-label" for="uploadDocuments">Upload Documents</label>
-								<input id="uploadDocuments" type="file">
-								<br>
-								<small>Add Files</small>
-							</div>
 							
 						</div>
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>
