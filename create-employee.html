@@ -625,17 +625,13 @@
 							<div class="form-group">
                                 <label for="city">City</label>
 								<select class="form-control" id="city">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+									<option value="Option 1">Unable to retrieve data</option>
 								</select>
                             </div>
 							
 							<div class="form-group">
                                 <label for="district">District</label>
-                                <input class="form-control" id="district" type="text">
+                                <input class="form-control" id="district" type="text" readonly>
                             </div>
 						
 							<div class="form-group">
@@ -675,14 +671,8 @@
 							
 														
 							<div class="form-group">
-                                <label for="employeeState">State</label>
-								<select class="form-control" id="employeeState">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
+                                <label for="state">State</label>
+                                <input class="form-control" id="state" type="text" readonly>
                             </div>
 							
 							<div class="form-group">
@@ -830,6 +820,102 @@
 
 		</div>
 	</section>
+	
+	
+	
+<script>
+	var locationsArray = null;
+	function refreshLocationDistrictAndState(){
+		var district = document.getElementById('district');
+		var state = document.getElementById('state');
+		var city = document.getElementById('city');
+		if(locationsArray!=null){
+			for(var i = 0; i < locationsArray.length; i++){
+				var location = locationsArray[i];
+				if(city.options[city.selectedIndex].text.localeCompare(location.cityName) == 0){
+					district.value = location.district;
+					state.value = location.state;
+				}
+			}
+		}
+	}
+	
+	function removeOptions(selectbox){
+		var i;
+		for(i = selectbox.options.length - 1 ; i >= 0 ; i--){
+			selectbox.remove(i);
+		}
+	}
+	
+	function fetchLocations(){							
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			if(request.readyState == 4 && request.status == 200){
+				locationsArray = JSON.parse(request.responseText).result;
+				var city = document.getElementById('city');
+				removeOptions(city);
+				for(var i = 0; i < locationsArray.length; i++){
+					var location = locationsArray[i];
+						var opt = document.createElement('option');
+						opt.value = location.id;
+						opt.innerHTML = location.cityName;
+						city.appendChild(opt);
+				}
+				refreshLocationDistrictAndState();
+			}
+		};
+		
+		request.open ("GET", "http://localhost:8080/AdValoramAdmin/location", true);
+		request.send();
+	}
+	
+	
+	function createTransporter(){
+	
+		var transporter = new Object();
+		transporter.companyName = document.getElementById("companyName").value;
+		transporter.billingAddress = document.getElementById("billingAddress").value;
+		transporter.city = document.getElementById("city").value;
+		transporter.contactPerson = document.getElementById("contactPerson").value;
+		transporter.alternateContactPerson = document.getElementById("alternateContactPerson").value;
+		transporter.emailAddress = document.getElementById("emailAddress").value;
+		if (document.getElementById("radioTransporterTypeLocal").checked) {
+			transporter.permitType = document.getElementById("radioTransporterTypeLocal").value;
+		} else if (document.getElementById("radioTransporterTypeNational").checked) {
+			transporter.permitType = document.getElementById("radioTransporterTypeNational").value;
+		} else if (document.getElementById("radioTransporterTypeWithinState").checked) {
+			transporter.permitType = document.getElementById("radioTransporterTypeWithinState").value;
+		}
+
+		transporter.localHubAddress = document.getElementById("localHubAddress").value;
+		transporter.pinCode = document.getElementById("pinCode").value;
+		transporter.contactNumber = document.getElementById("contactNumber").value;
+		transporter.alternateContactNumber = document.getElementById("alternateContactNumber").value;
+		transporter.numberOfVehicles = document.getElementById("numberOfVehicles").value;
+		transporter.bankingName = document.getElementById("bankingName").value;
+		transporter.bankName = document.getElementById("bankName").value;
+		transporter.bankAccountNumber = document.getElementById("bankAccountNumber").value;
+		transporter.bankIfscCode = document.getElementById("bankIfscCode").value;
+		transporter.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
+		transporter.panNumber = document.getElementById("panNumber").value;
+		transporter.modeOfPayment = document.getElementById("modeOfPayment").value;
+		transporter.taxIsInclusive = document.getElementById("checkBoxTaxInclusive").checked;
+		transporter.taxIsExclusive = document.getElementById("checkBoxTaxExclusive").checked;
+		transporter.notes = document.getElementById("notes").value;
+		
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			console.log(request.readyState+" " + request.status)
+			if(request.readyState == 4 && request.status == 200){
+				
+			}
+		};
+		
+		request.open ("POST", "http://localhost:8080/AdValoramAdmin/transporter", true);
+		request.setRequestHeader("content-type", "application/json");
+		request.send(JSON.stringify(transporter));
+	}
+</script>
 </div>	
 </section>
 </body>

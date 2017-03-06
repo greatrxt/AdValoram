@@ -112,9 +112,11 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
+	<script src="js/load-locations.js"></script>
+	<script src="js/fetch-transporters.js"></script>
 </head>
 
-<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
+<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations();fetchTransporters();">
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
@@ -618,17 +620,13 @@
 							<div class="form-group">
                                 <label for="city">City</label>
 								<select class="form-control" id="city">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+									<option value="Option 1">Unable to retrieve data</option>
 								</select>
                             </div>
 							
 							<div class="form-group">
                                 <label for="district">District</label>
-                                <input class="form-control" id="district" type="text">
+                                <input class="form-control" id="district" type="text" readonly>
                             </div>
 						
 							<div class="form-group">
@@ -646,7 +644,7 @@
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
 								<label class="form-control-label" for="customerType">Customer Type</label><br/>
-                                <input id="radioRetailer" name = "customerType" type="radio" value="Retailer" style="margin:11px">Retailer
+                                <input id="radioRetailer" name = "customerType" type="radio" value="Retailer" style="margin:11px" checked>Retailer
 								<input id="radioDistributor" name = "customerType" type="radio" value="Distributor" style="margin:11px">Distributor
 								<input id="radioBroker" name = "customerType" type="radio" value="Broker" style="margin:11px">Broker
                             </div>
@@ -673,14 +671,8 @@
                             </div>
 							
 							<div class="form-group">
-                                <label for="dropDownState">State</label>
-								<select class="form-control" id="dropDownState">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
+                                <label for="state">State</label>
+								<input class="form-control" id="state" type="text" readonly>
                             </div>
 							
 							<div class="form-group">
@@ -706,22 +698,22 @@
 								
 							<div class="form-group">
                                 <label for="markDown">Mark Down(%)</label>
-                                <input class="form-control" id="markDown" type="text">
+                                <input class="form-control" id="markDown" type="number" step="0.01">
                             </div>
 							
 							<div class="form-group">
-                                <label for="ufppDiscount">Upfront / Prompt Payment Discount(%)</label>
-                                <input class="form-control" id="ufppDiscount" type="text">
+                                <label for="promptPaymentDiscount">Upfront / Prompt Payment Discount(%)</label>
+                                <input class="form-control" id="promptPaymentDiscount" type="number" step="0.01">
                             </div>
 							
 							<div class="form-group">
                                 <label for="creditPeriod">Credit Period (Days)</label>
-                                <input class="form-control" id="creditPeriod" type="text">
+                                <input class="form-control" id="creditPeriod" type="number" step="1">
                             </div>
 							
 							<div class="form-group">
                                 <label for="distributorCommission">Distributor Commission (%)</label>
-                                <input class="form-control" id="distributorCommission" type="text">
+                                <input class="form-control" id="distributorCommission" type="number" step="0.01">
                             </div>
 							
 						
@@ -730,22 +722,22 @@
 						
 							<div class="form-group">
                                 <label for="cashDiscount">Cash Discount(%)</label>
-                                <input class="form-control" id="cashDiscount" type="text">
+                                <input class="form-control" id="cashDiscount" type="number" step="0.01">
                             </div>
 							
 							<div class="form-group">
                                 <label for="specialDiscount">Special Discount(%)</label>
-                                <input class="form-control" id="specialDiscount" type="text">
+                                <input class="form-control" id="specialDiscount" type="number" step="0.01">
                             </div>
 							
 							<div class="form-group">
                                 <label for="creditLimit">Credit Limit (INR)</label>
-                                <input class="form-control" id="creditLimit" type="text">
+                                <input class="form-control" id="creditLimit" type="number" step="1">
                             </div>
 							
 							<div class="form-group">
                                 <label for="brokerCommission">Broker Commission (%)</label>
-                                <input class="form-control" id="brokerCommission" type="text">
+                                <input class="form-control" id="brokerCommission" type="number" step="0.01">
                             </div>
 							
 						</div>
@@ -772,16 +764,19 @@
                             </div>
 							<div class="form-group">
                                 <label for="vatTinNumber">VAT TIN No.</label>
-                                <input class="form-control" id="vatTinNumber" type="text">
+                                <input class="form-control" id="vatTinNumber" type="text" disabled>
                             </div>
 							<div class="form-group">
                                 <label for="cstTinNumber">CST TIN No.</label>
-                                <input class="form-control" id="cstTinNumber" type="text">
+                                <input class="form-control" id="cstTinNumber" type="text" disabled>
                             </div>
+							
 							<div class="form-group">
-                                <label for="otherApplicableTax">Octroi / LBT / Entry Tax Rate applicable (%)</label>
-                                <input class="form-control" id="otherApplicableTax" type="text">
+                                <label for="gstRateApplicable">GST Rate Applicable (%)</label>
+                                <input class="form-control" id="gstRateApplicable"  type="number" step="0.01" disabled>
                             </div>
+							
+							
 							<div class="form-group">
                                 <label for="serviceTaxNumber">Service Tax No.</label>
                                 <input class="form-control" id="serviceTaxNumber" type="text">
@@ -791,36 +786,53 @@
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
 								<label class="form-control-label" for="taxApplicable">Tax Applicable</label><br/>
-                                <input id="checkBoxVat" name = "taxApplicable" type="checkbox" value="vat" style="margin:11px">VAT
-								<input id="checkBoxCst" name = "taxApplicable" type="checkbox" value="cst" style="margin:11px">CST
-								<input id="checkBoxGst" name = "taxApplicable" type="checkbox" value="gst" style="margin:11px">GST
-								<input id="checkBoxGst" name = "taxApplicable" type="checkbox" value="gst" style="margin:11px">Octroi / LBT / Entry Tax
+                                <input id="vatIsApplicable" name = "taxApplicable" type="checkbox" value="vat" style="margin:11px" 
+								onclick="document.getElementById('vatRateApplicable').disabled=!this.checked;
+										document.getElementById('vatRateApplicable').value ='';
+										document.getElementById('vatTinNumber').disabled=!this.checked;
+										document.getElementById('vatTinNumber').value =''">VAT
+								
+								<input id="cstIsApplicable" name = "taxApplicable" type="checkbox" value="cst" style="margin:11px" 
+								onclick="document.getElementById('cstRateApplicable').disabled=!this.checked;
+										document.getElementById('cstRateApplicable').value='';
+										document.getElementById('cstTinNumber').disabled=!this.checked;
+										document.getElementById('cstTinNumber').value='';
+										document.getElementById('cstRateAgainstFormC').disabled=!this.checked;
+										document.getElementById('cstRateAgainstFormC').value='';">CST
+								
+								<input id="gstIsApplicable" name = "taxApplicable" type="checkbox" value="gst" style="margin:11px"
+								onclick="document.getElementById('gstRateApplicable').disabled=!this.checked;
+										document.getElementById('gstRateApplicable').value='';">GST
+								
+								<input id="octroiLbtEntryTaxIsApplicable" name = "taxApplicable" type="checkbox" value="gst" style="margin:11px"
+								onclick="document.getElementById('octroiLbtEntryTaxApplicable').disabled=!this.checked;
+										document.getElementById('octroiLbtEntryTaxApplicable').value='';">Octroi / LBT / Entry Tax
                             </div>
 							
 							<div class="form-group">
                                 <label for="vatRateApplicable">VAT Rate Applicable (%)</label>
-                                <input class="form-control" id="vatRateApplicable" type="text">
+                                <input class="form-control" id="vatRateApplicable"  type="number" step="0.01" disabled>
                             </div>
 							<div class = "row">
 								<div class = "col-lg-6">
 									<div class="form-group">
 										<label for="cstRateApplicable">CST Rate Applicable (%)</label>
-										<input class="form-control" id="cstRateApplicable" type="text">
+										<input class="form-control" id="cstRateApplicable"  type="number" step="0.01" disabled>
 									</div>
 								</div>
 								<div class = "col-lg-6">
 									<div class="form-group">
 										<label for="cstRateAgainstFormC">CST Rate against FORM C (%)</label>
-										<input class="form-control" id="cstRateAgainstFormC" type="text">
+										<input class="form-control" id="cstRateAgainstFormC"  type="number" step="0.01" disabled>
 									</div>
 								</div>
 							</div>
 							
 							<div class="form-group">
-                                <label for="gstRateApplicable">GST Rate Applicable (%)</label>
-                                <input class="form-control" id="gstRateApplicable" type="text">
+                                <label for="octroiLbtEntryTaxIsApplicable">Octroi / LBT / Entry Tax Rate applicable (%)</label>
+                                <input class="form-control" id="octroiLbtEntryTaxApplicable" type="text" disabled>
                             </div>
-							
+			
 							<div class="form-group">
                                 <label for="panNumber">PAN Number</label>
                                 <input class="form-control" id="panNumber" type="text">
@@ -830,8 +842,8 @@
 					<div class="tab-pane" id="tab4" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-5">
 							<div class="form-group">
-                                <label for="linkedTransport">Linked Transport</label>
-								<select class="form-control" id="linkedTransport">
+                                <label for="linkedTransporter">Linked Transport</label>
+								<select class="form-control" id="linkedTransporter">
 											<option value="Option 1">Option 1</option>
 											<option value="Option 2">Option 2</option>
 											<option value="Option 3">Option 3</option>
@@ -840,27 +852,27 @@
 								</select>
                             </div>
 							<div class="form-group">
-                                <label for="contactNumber">Contact Number</label>
-                                <input class="form-control" id="contactNumber" type="text">
+                                <label for="transportContactNumber">Contact Number</label>
+                                <input class="form-control" id="transportContactNumber" type="text">
                             </div>
 							<div class="form-group">
-								<label class="form-control-label" for="contractTerms">Contract Terms</label>
-								<textarea class="form-control" rows="7" id="contractTerms"></textarea>
+								<label class="form-control-label" for="transportContractTerms">Contract Terms</label>
+								<textarea class="form-control" rows="7" id="transportContractTerms"></textarea>
 							</div>
 						</div>
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
-                                <label for="contactPerson">Contact Person</label>
-                                <input class="form-control" id="contactPerson" type="text">
+                                <label for="transportContactPerson">Contact Person</label>
+                                <input class="form-control" id="transportContactPerson" type="text">
                             </div>
 							<div class="form-group">
-                                <label for="emailAddress">Email Address</label>
-                                <input class="form-control" id="emailAddress" type="text">
+                                <label for="transportEmailAddress">Email Address</label>
+                                <input class="form-control" id="transportEmailAddress" type="text">
                             </div>
 							
 							<div class="form-group">
-                                <label for="paymentTerms">Payment Terms</label>
-								<select class="form-control" id="paymentTerms">
+                                <label for="transportPaymentTerms">Payment Terms</label>
+								<select class="form-control" id="transportPaymentTerms">
 											<option value="Option 1">Option 1</option>
 											<option value="Option 2">Option 2</option>
 											<option value="Option 3">Option 3</option>
@@ -894,7 +906,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createCustomer()">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
@@ -907,5 +919,79 @@
 	</section>
 </div>	
 </section>
+
+<script>
+	
+	function createCustomer(){
+
+		var customer = new Object();	
+		customer.companyName = document.getElementById("companyName").value;
+		
+		if (document.getElementById("radioRetailer").checked) {
+			customer.customerType = document.getElementById("radioRetailer").value;
+		} else if (document.getElementById("radioDistributor").checked) {
+			customer.customerType = document.getElementById("radioDistributor").value;
+		} else if (document.getElementById("radioBroker").checked) {
+			customer.customerType = document.getElementById("radioBroker").value;
+		}
+		customer.linkedDistributor = document.getElementById("linkedDistributor").value;
+		customer.linkedBroker = document.getElementById("linkedBroker").value;
+		customer.billingAddress = document.getElementById("billingAddress").value;
+		customer.deliveryAddress = document.getElementById("deliveryAddress").value;
+		customer.city = document.getElementById("city").value;
+		customer.pinCode = document.getElementById("pinCode").value;
+		customer.contactPerson = document.getElementById("contactPerson").value;
+		customer.contactNumber	 = document.getElementById("contactNumber").value;
+		customer.emailAddress = document.getElementById("emailAddress").value;
+		customer.markDown = document.getElementById("markDown").value;
+		customer.cashDiscount = document.getElementById("cashDiscount").value;
+		customer.promptPaymentDiscount = document.getElementById("promptPaymentDiscount").value;
+		customer.specialDiscount = document.getElementById("specialDiscount").value;
+		customer.distributorCommission = document.getElementById("distributorCommission").value;
+		customer.brokerCommission = document.getElementById("brokerCommission").value;
+		customer.creditPeriod = document.getElementById("creditPeriod").value;
+		customer.creditLimit = document.getElementById("creditLimit").value;
+		customer.paymentTerms = document.getElementById("paymentTerms").value;
+		customer.financialGrouping = document.getElementById("financialGrouping").value;
+		customer.vatTinNumber = document.getElementById("vatTinNumber").value;
+		customer.cstTinNumber = document.getElementById("cstTinNumber").value;
+		customer.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
+		customer.panNumber = document.getElementById("panNumber").value;
+		
+		vatIsApplicable = document.getElementById("vatIsApplicable").checked;
+		cstIsApplicable = document.getElementById("cstIsApplicable").checked;
+		gstIsApplicable = document.getElementById("gstIsApplicable").checked;
+		octroiLbtEntryTaxIsApplicable = document.getElementById("octroiLbtEntryTaxIsApplicable").checked;
+		
+		if(cstIsApplicable) customer.cstRateApplicable = document.getElementById("cstRateApplicable").value;
+		if(vatIsApplicable) customer.vatRateApplicable = document.getElementById("vatRateApplicable").value;
+		if(cstIsApplicable) customer.cstRateAgainstFormC = document.getElementById("cstRateAgainstFormC").value;
+		if(gstIsApplicable) customer.gstRateApplicable = document.getElementById("gstRateApplicable").value;
+		if(octroiLbtEntryTaxIsApplicable) customer.octroiLbtEntryTaxApplicable = document.getElementById("octroiLbtEntryTaxApplicable").value;
+		
+		customer.linkedTransporter = document.getElementById("linkedTransporter").value;
+		
+		customer.transportContactPerson = document.getElementById("transportContactPerson").value;
+		customer.transportContactNumber = document.getElementById("transportContactNumber").value;
+		customer.transportEmailAddress = document.getElementById("transportEmailAddress").value;
+		customer.transportContractTerms = document.getElementById("transportContractTerms").value;
+		customer.transportPaymentTerms = document.getElementById("transportPaymentTerms").value;
+		
+		customer.specialInstructions = document.getElementById("specialInstructions").value;
+		customer.notes = document.getElementById("notes").value;
+		
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			console.log(request.readyState+" " + request.status)
+			if(request.readyState == 4 && request.status == 200){
+				console.log("Success");
+			}
+		};
+		
+		request.open ("POST", "http://localhost:8080/AdValoramAdmin/customer", true);
+		request.setRequestHeader("content-type", "application/json");
+		request.send(JSON.stringify(customer));
+	}
+</script>
 </body>
 </html>

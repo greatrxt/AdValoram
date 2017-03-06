@@ -112,9 +112,11 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
+	
+	<script src="js/load-locations.js"></script>
 </head>
 
-<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
+<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations()">
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
@@ -587,20 +589,16 @@
                             </div>
 						
 							<div class="form-group">
-                                <label for="country">Country</label>
-								<select class="form-control" id="country">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+                                <label for="city">City</label>
+								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()">
+									<option value="Option 1">Unable to retrieve data</option>
 								</select>
                             </div>
 							
 							
 							<div class="form-group">
 								<label class="form-control-label" for="branchAddress">Branch Address</label>
-								<textarea class="form-control" rows="3" id="localHubAddress"></textarea>
+								<textarea class="form-control" rows="3" id="branchAddress" style = "margin-top: 0px; margin-bottom: 0px; height: 125px;"></textarea>
 							</div>
 							
 							<div class="form-group">
@@ -622,19 +620,18 @@
 						
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
-								<label class="form-control-label" for="branchName">District</label>
+								<label class="form-control-label" for="branchName">Branch Name</label>
 								<input class="form-control" id="branchName" type="text">
 							</div>
 						
 							<div class="form-group">
-                                <label for="state">Branch Name</label>
-								<select class="form-control" id="state">
-									<option value="Option 1">Option 1</option>
-									<option value="Option 2">Option 2</option>
-									<option value="Option 3">Option 3</option>
-									<option value="Option 4">Option 4</option>
-									<option value="Option 5">Option 5</option>
-								</select>
+                                <label for="district">District</label>
+                                <input class="form-control" id="district" type="text" readonly>
+                            </div>
+							
+							<div class="form-group">
+                                <label for="state">State</label>
+                                <input class="form-control" id="state" type="text" readonly>
                             </div>
 							
 							<div class="form-group">
@@ -646,11 +643,16 @@
 								<label class="form-control-label" for="contactNumber">Contact Number</label>
 								<input class="form-control" id="contactNumber" type="text">
 							</div>
+							
+							<div class="form-group">
+								<label class="form-control-label" for="alternateContactNumber">Alternate Contact Number</label>
+								<input class="form-control" id="alternateContactNumber" type="text">
+							</div>
 						</div>
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createBank();">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>
@@ -661,5 +663,35 @@
 	</section>
 </div>	
 </section>
+<script>
+	
+	function createBank(){
+
+		var bank = new Object();
+		
+		bank.bankName  = document.getElementById("bankName").value;
+		bank.branchName = document.getElementById("branchName").value;
+		bank.branchAddress = document.getElementById("branchAddress").value;
+		bank.city = document.getElementById("city").value;
+		bank.emailAddress = document.getElementById("emailAddress").value;
+		bank.relationshipManagerName = document.getElementById("relationshipManagerName").value;
+		bank.contactNumber = document.getElementById("contactNumber").value;
+		bank.alternateContact = document.getElementById("alternateContact").value;
+		bank.alternateContactNumber = document.getElementById("alternateContactNumber").value;
+		bank.ifscCode = document.getElementById("ifscCode").value;
+		
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			console.log(request.readyState+" " + request.status)
+			if(request.readyState == 4 && request.status == 200){
+				console.log("Success");
+			}
+		};
+		
+		request.open ("POST", "http://localhost:8080/AdValoramAdmin/bank", true);
+		request.setRequestHeader("content-type", "application/json");
+		request.send(JSON.stringify(bank));
+	}
+</script>
 </body>
 </html>

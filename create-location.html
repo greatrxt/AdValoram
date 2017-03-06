@@ -579,23 +579,19 @@
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
-                                <label for="cityName">City Name*</label>
-                                <input class="form-control" id="cityName" type="text">
+                                <label for="textCityName">City Name*</label>
+                                <input class="form-control" id="textCityName" type="text">
                             </div>
 
 							<div class="form-group">
-								<label class="form-control-label" for="taluka">Taluka</label>
-								<input class="form-control" id="taluka" type="text">
+								<label class="form-control-label" for="textTaluka">Taluka</label>
+								<input class="form-control" id="textTaluka" type="text">
 							</div>
 						
 							<div class="form-group">
-                                <label for="country">Country</label>
-								<select class="form-control" id="country">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+                                <label for="selectCountry">Country</label>
+								<select class="form-control" id="selectCountry">
+											<option value="India">India</option>
 								</select>
                             </div>
 							
@@ -604,18 +600,53 @@
 						
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
-								<label class="form-control-label" for="district">District</label>
-								<input class="form-control" id="district" type="text">
+								<label class="form-control-label" for="textDistrict">District</label>
+								<input class="form-control" id="textDistrict" type="text">
 							</div>
 						
 							<div class="form-group">
-                                <label for="state">State</label>
-								<select class="form-control" id="state">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+                                <label for="selectState">State</label>
+								<select class="form-control" id="selectState">
+									<optgroup label="States">
+										<option>Andhra Pradesh</option>
+										<option>Arunachal Pradesh</option>
+										<option>Assam</option>
+										<option>Bihar</option>
+										<option>Chhattisgarh</option>
+										<option>Goa</option>
+										<option>Gujarat</option>
+										<option>Haryana</option>
+										<option>Himachal Pradesh</option>
+										<option>Jammu and Kashmir</option>
+										<option>Jharkhand</option>
+										<option>Karnataka</option>
+										<option>Kerala</option>
+										<option>Madhya Pradesh</option>
+										<option selected>Maharashtra</option>
+										<option>Manipur</option>
+										<option>Meghalaya</option>
+										<option>Mizoram</option>
+										<option>Nagaland</option>
+										<option>Odisha</option>
+										<option>Punjab</option>
+										<option>Rajasthan</option>
+										<option>Sikkim</option>
+										<option>Tamil Nadu</option>
+										<option>Telangana</option>
+										<option>Tripura</option>
+										<option>Uttar Pradesh</option>
+										<option>Uttarakhand</option>
+										<option>West Bengal</option>
+									</optgroup>
+									<optgroup label="Union Territories">
+										<option>Andaman and Nicobar Islands</option>
+										<option>Chandigarh</option>
+										<option>Dadar and Nagar</option>
+										<option>Daman and Diu</option>
+										<option>Delhi</option>
+										<option>Lakshadweep</option>
+										<option>Puducherry</option>
+									</optgroup>
 								</select>
                             </div>
 							
@@ -623,10 +654,43 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createLocation();">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>
+					<script>
+						function createLocation(){
+							
+							var location = new Object();
+							var city = document.getElementById("textCityName").value;
+							var district = document.getElementById("textDistrict").value;
+							var taluka = document.getElementById("textTaluka").value;
+							
+							var selectState = document.getElementById("selectState").value;
+							//var state = selectState.options[selectState.selectedIndex].value;
+							
+							var selectCountry = document.getElementById("selectCountry").value;
+							//var country = selectCountry.options[selectCountry.selectedIndex].value;
+							
+							var request = new XMLHttpRequest();
+							request.onreadystatechange = function(){
+								console.log(request.readyState+" " + request.status)
+								if(request.readyState == 4 && request.status == 200){
+									
+								}
+							};
+
+							location.cityName = city;
+							location.district = district;
+							location.taluka = taluka;
+							location.state = selectState;
+							location.country = selectCountry;
+							
+							request.open ("POST", "http://localhost:8080/AdValoramAdmin/location", true);
+							request.setRequestHeader("content-type", "application/json");
+							request.send(JSON.stringify(location));
+						}
+					</script>
 				</div>
 			</div>
 

@@ -110,9 +110,17 @@
 -->
 
     <!-- Clean UI Scripts -->
+	<script>
+		try {
+			$ = jQuery = module.exports;
+			// If you want module.exports to be empty, uncomment:
+			// module.exports = {};
+		} catch(e) {
+		}
+	</script>
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
-	
+	<script src="js/populateDropdown.js"></script>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 </head>
 
@@ -729,32 +737,26 @@
 							
 							<div class="form-group">
 								<label class="form-control-label" for="genderCode">Gender Code*</label><br/>
-                                <input id="checkBoxGenderMale" name = "genderCode" type="checkbox" value="genderMale" style="margin:11px">Male
+								<div id = "availableGender">
+								</div>
+                                <!--<input id="checkBoxGenderMale" name = "genderCode" type="checkbox" value="genderMale" style="margin:11px">Male
 								<input id="checkBoxGenderMale" name = "genderCode" type="checkbox" value="genderMale" style="margin:11px">Female
 								<input id="checkBoxGenderKids" name = "genderCode" type="checkbox" value="genderKids" style="margin:11px">Kids
-								<input id="checkBoxGenderUnisex" name = "genderCode" type="checkbox" value="genderUnisex" style="margin:11px">Unisex
+								<input id="checkBoxGenderUnisex" name = "genderCode" type="checkbox" value="genderUnisex" style="margin:11px">Unisex-->
                             </div>
 						
 							<div class="form-group">
                                 <label for="season">Season</label>
-								<select class="form-control" id="city">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+								<select class="form-control" id="season">
+											<option value="Option 1">No Data</option>
 								</select>
                             </div>
 
 							
 							<div class="form-group">
                                 <label for="unitOfMeasurement">Unit Of Measurement</label>
-								<select class="form-control" id="city">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+								<select class="form-control" id="unitOfMeasurement">
+											<option value="Option 1">No Data</option>
 								</select>
                             </div>
 
@@ -765,18 +767,15 @@
 							<div class="form-group">
                                 <label for="productCategory">Product Category*</label>
 								<select class="form-control" id="productCategory">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+											<option value="Option 1">No Data</option>
 								</select>
                             </div>
 			
-							
-							<div class="form-group">
+							<div class="form-group" >
 								<label class="form-control-label" for="productSize">Size*</label><br/>
-                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px">28
+								<div id = "availableSizes">
+								</div>
+                                <!--<input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px">28
 								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px">30
 								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px">32
 								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px">34
@@ -786,27 +785,19 @@
 								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px">42
 								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px">44
 								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px">46
-								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px">48
+								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px">48-->
                             </div>
 							<div class="form-group">
                                 <label for="brand">Brand</label>
 								<select class="form-control" id="brand">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+									<option value="Option 1">No Data</option>
 								</select>
                             </div>
 							
 							<div class="form-group">
                                 <label for="productStatus">Product Status</label>
 								<select class="form-control" id="productStatus">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+									<option value="Option 1">No Data</option>
 								</select>
                             </div>
 
