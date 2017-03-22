@@ -114,9 +114,10 @@
     <script src="assets/common/js/demo.temp.js"></script>
 	
 	<script src="js/load-locations.js"></script>
+	<script src="js/common.js"></script>
 </head>
 
-<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations()">
+<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
@@ -566,7 +567,7 @@
     <section class="panel panel-with-borders" style="overflow:auto">
         <div class="panel-heading">
             <h2>
-                Create New Bank
+                <div id = "bankTitle">Create New Bank</div>
             </h2>
         </div>
         <div class="panel-body">
@@ -652,7 +653,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createBank();">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateBank();">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>
@@ -664,8 +665,49 @@
 </div>	
 </section>
 <script>
+var bankId = -1;
+$(window).load(function() {
+	fetchLocations();
+	if(getParameterByName('id')!=null){
+		bankId = getParameterByName('id');
+		document.getElementById('bankTitle').innerHTML  = "Edit Bank";
+		$.getJSON("http://localhost:8080/AdValoramAdmin/common/bank/"+bankId, function(data){
+			var result = data.result;
+			if(result!='error'){
+				var bank = result[0];
+				document.getElementById("bankName").value = bank.bankName;
+				document.getElementById("branchName").value = bank.branchName;
+				document.getElementById("branchAddress").value = bank.branchAddress;
+				document.getElementById("emailAddress").value = bank.emailAddress;
+				document.getElementById("relationshipManagerName").value = bank.relationshipManagerName;
+				document.getElementById("contactNumber").value = bank.contactNumber;
+				document.getElementById("alternateContact").value = bank.alternateContact;
+				document.getElementById("alternateContactNumber").value = bank.alternateContactNumber; 
+				document.getElementById("ifscCode").value = bank.ifscCode;
+				var waitToSelectLocation = setInterval(function(){
+					if(locationsArray!=null){
+						var city = document.getElementById("city");
+						for(var i = 0; i < city.length; i++){
+							if(city.options[i].text.localeCompare(bank.city.cityName) == 0){
+								city.selectedIndex = i;
+								refreshLocationDistrictAndState();
+								clearInterval(waitToSelectLocation);
+								break;
+							}
+						}
+					}
+				}, 100);
+				
+			}
+		});
+	}
+});
+
+</script>
+
+<script>
 	
-	function createBank(){
+	function createOrUpdateBank(){
 
 		var bank = new Object();
 		
@@ -687,8 +729,11 @@
 				console.log("Success");
 			}
 		};
-		
-		request.open ("POST", "http://localhost:8080/AdValoramAdmin/bank", true);
+		if(bankId > 0){
+			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/bank/" + bankId, true);
+		} else {
+			request.open ("POST", "http://localhost:8080/AdValoramAdmin/bank", true);
+		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(bank));
 	}

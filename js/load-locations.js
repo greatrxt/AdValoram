@@ -1,5 +1,8 @@
 	var locationsArray = null;
 	function refreshLocationDistrictAndState(){
+		if(document.getElementById('city') == null || document.getElementById('state') == null
+			|| document.getElementById('district') == null)
+			return;
 		var district = document.getElementById('district');
 		var state = document.getElementById('state');
 		var city = document.getElementById('city');
@@ -14,15 +17,18 @@
 		}
 	}
 	
+
 	function removeOptions(selectbox){
-    var i;
-    for(i = selectbox.options.length - 1 ; i >= 0 ; i--)
+		var i;
+		for(i = selectbox.options.length - 1 ; i >= 0 ; i--)
 		{
 			selectbox.remove(i);
 		}
 	}
 	
-	function fetchLocations(){							
+	function fetchLocations(){
+		if(document.getElementById('city') == null)
+			return;
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
 			if(request.readyState == 4 && request.status == 200){

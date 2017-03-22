@@ -112,9 +112,11 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
+	<script src="js/load-locations.js"></script>
+	<script src="js/common.js"></script>
 </head>
 
-<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations()">
+<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations();">
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
@@ -569,7 +571,7 @@
     <section class="panel panel-with-borders" style="overflow:auto">
         <div class="panel-heading">
             <h2>
-                Create New Transporter
+                <div id = "customerTitle">Create New Customer</div>
             </h2>
         </div>
         <div class="panel-body">
@@ -579,7 +581,13 @@
 						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Company Details</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Payment Details</a>
+						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Trade Terms</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Taxation & Related</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Transport</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Alerts & Uploads</a>
@@ -590,8 +598,18 @@
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
-                                <label for="companyName">Company Name*</label>
+                                <label for="companyName">Customer / Company Name</label>
                                 <input class="form-control" id="companyName" type="text">
+                            </div>
+							<div class="form-group">
+                                <label for="linkedDistributor">Linked Distributor, if any</label>
+								<select class="form-control" id="linkedDistributor">
+											<option value="Option 1">Option 1</option>
+											<option value="Option 2">Option 2</option>
+											<option value="Option 3">Option 3</option>
+											<option value="Option 4">Option 4</option>
+											<option value="Option 5">Option 5</option>
+								</select>
                             </div>
 
 							<div class="form-group">
@@ -617,11 +635,6 @@
                             </div>
 							
 							<div class="form-group">
-                                <label for="alternateContactPerson">Alternate Contact Person</label>
-                                <input class="form-control" id="alternateContactPerson" type="text">
-                            </div>
-							
-							<div class="form-group">
                                 <label for="emailAddress">Email Address</label>
                                 <input class="form-control" id="emailAddress" type="text">
                             </div>
@@ -630,16 +643,26 @@
 						
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
-								<label class="form-control-label" for="permitType">Permit Type</label><br/>
-                                <input id="radioTransporterTypeLocal" name = "permitType" type="radio" value="local" style="margin:11px">Local
-								<input id="radioTransporterTypeWithinState" name = "permitType" type="radio" value="withinState" style="margin:11px">Within State
-								<input id="radioTransporterTypeNational" name = "permitType" type="radio" value="national" style="margin:11px">National
+								<label class="form-control-label" for="customerType" >Customer Type</label><br/>
+                                <input id="radioRetailer" name = "customerType" type="radio" value="Retailer" style="margin:11px" checked onclick="displayHideDistBrokerRow();">Retailer
+								<input id="radioDistributor" name = "customerType" type="radio" value="Distributor" style="margin:11px" onclick="displayHideDistBrokerRow();;">Distributor
+								<input id="radioBroker" name = "customerType" type="radio" value="Broker" style="margin:11px" onclick="displayHideDistBrokerRow();;">Broker
                             </div>
 							
+							<div class="form-group">
+                                <label for="linkedBroker">Linked Broker, if any</label>
+								<select class="form-control" id="linkedBroker">
+											<option value="Option 1">Option 1</option>
+											<option value="Option 2">Option 2</option>
+											<option value="Option 3">Option 3</option>
+											<option value="Option 4">Option 4</option>
+											<option value="Option 5">Option 5</option>
+								</select>
+                            </div>
 							
 							<div class="form-group">
-								<label class="form-control-label" for="localHubAddress">Local Hub Address</label>
-								<textarea class="form-control" rows="3" id="localHubAddress"></textarea>
+								<label class="form-control-label" for="deliveryAddress">Delivery Address</label>
+								<textarea class="form-control" rows="3" id="deliveryAddress"></textarea>
 							</div>
 							
 							<div class="form-group">
@@ -649,7 +672,7 @@
 							
 							<div class="form-group">
                                 <label for="state">State</label>
-                                <input class="form-control" id="state" type="text" readonly>
+								<input class="form-control" id="state" type="text" readonly>
                             </div>
 							
 							<div class="form-group">
@@ -658,13 +681,14 @@
                             </div>
 							
 							<div class="form-group">
-                                <label for="alternateContactNumber">Alternate Contact Number</label>
-                                <input class="form-control" id="alternateContactNumber" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="numberOfVehicles">Number Of Vehicles</label>
-                                <input class="form-control" id="numberOfVehicles" type="number">
+                                <label for="linkedEmployee">Linked Employee</label>
+								<select class="form-control" id="linkedEmployee">
+											<option value="Option 1">Option 1</option>
+											<option value="Option 2">Option 2</option>
+											<option value="Option 3">Option 3</option>
+											<option value="Option 4">Option 4</option>
+											<option value="Option 5">Option 5</option>
+								</select>
                             </div>
 							
 						</div>
@@ -673,26 +697,23 @@
 						<div class = "col-lg-5">
 								
 							<div class="form-group">
-                                <label for="bankingName">Banking Name / Name On Cheque</label>
-                                <input class="form-control" id="bankingName" type="text">
+                                <label for="markDown">Mark Down(%)</label>
+                                <input class="form-control" id="markDown" type="number" step="0.01">
                             </div>
 							
 							<div class="form-group">
-                                <label for="bankAccountNumber">Bank Account Number</label>
-                                <input class="form-control" id="bankAccountNumber" type="text">
+                                <label for="promptPaymentDiscount">Upfront / Prompt Payment Discount(%)</label>
+                                <input class="form-control" id="promptPaymentDiscount" type="number" step="0.01">
                             </div>
 							
 							<div class="form-group">
-                                <label for="serviceTaxNumber">Service Tax Number</label>
-                                <input class="form-control" id="serviceTaxNumber" type="text">
+                                <label for="creditPeriod">Credit Period (Days)</label>
+                                <input class="form-control" id="creditPeriod" type="number" step="1">
                             </div>
 							
 							<div class="form-group">
-                                <label for="modeOfPayment">Mode Of Payment</label>
-								<select class="form-control" id="modeOfPayment">
-											<option value="cash">Cash</option>
-											<option value="cheque">Cheque</option>
-								</select>
+                                <label for="distributorCommission">Distributor Commission (%)</label>
+                                <input class="form-control" id="distributorCommission" type="number" step="0.01">
                             </div>
 							
 						
@@ -700,32 +721,169 @@
 						<div class = "col-lg-5" style="padding-left:100px;">
 						
 							<div class="form-group">
-                                <label for="bankName">Bank Name</label>
-                                <input class="form-control" id="bankName" type="text">
+                                <label for="cashDiscount">Cash Discount(%)</label>
+                                <input class="form-control" id="cashDiscount" type="number" step="0.01">
                             </div>
 							
 							<div class="form-group">
-                                <label for="bankIfscCode">Bank IFSC Code</label>
-                                <input class="form-control" id="bankIfscCode" type="text">
+                                <label for="specialDiscount">Special Discount(%)</label>
+                                <input class="form-control" id="specialDiscount" type="number" step="0.01">
                             </div>
 							
 							<div class="form-group">
-                                <label for="panNumber">PAN Number</label>
-                                <input class="form-control" id="panNumber" type="text">
+                                <label for="creditLimit">Credit Limit (INR)</label>
+                                <input class="form-control" id="creditLimit" type="number" step="1">
                             </div>
 							
 							<div class="form-group">
-								<label class="form-control-label" for="taxApplicable">Tax Applicable</label><br/>
-                                <input id="checkBoxTaxInclusive" name = "taxApplicable" type="checkbox" value="taxInclusive" style="margin:11px">Inclusive
-								<input id="checkBoxTaxExclusive" name = "taxApplicable" type="checkbox" value="taxExclusive" style="margin:11px">Exclusive
+                                <label for="brokerCommission">Broker Commission (%)</label>
+                                <input class="form-control" id="brokerCommission" type="number" step="0.01">
                             </div>
 							
 						</div>
 						
+						<div class = "col-lg-10">
+							<div class="form-group">
+								<label class="form-control-label" for="paymentTerms">Payment Terms</label>
+								<textarea class="form-control" rows="7" id="paymentTerms"></textarea>
+							</div>
+						</div>
 					</div>
-					
+					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
+						<div class = "col-lg-5">
+						
+							<div class="form-group">
+                                <label for="financialGrouping">Financial Grouping</label>
+								<select class="form-control" id="financialGrouping">
+											<option value="Option 1">Option 1</option>
+											<option value="Option 2">Option 2</option>
+											<option value="Option 3">Option 3</option>
+											<option value="Option 4">Option 4</option>
+											<option value="Option 5">Option 5</option>
+								</select>
+                            </div>
+							<div class="form-group">
+                                <label for="vatTinNumber">VAT TIN No.</label>
+                                <input class="form-control" id="vatTinNumber" type="text" disabled>
+                            </div>
+							<div class="form-group">
+                                <label for="cstTinNumber">CST TIN No.</label>
+                                <input class="form-control" id="cstTinNumber" type="text" disabled>
+                            </div>
+							
+							<div class="form-group">
+                                <label for="gstRateApplicable">GST Rate Applicable (%)</label>
+                                <input class="form-control" id="gstRateApplicable"  type="number" step="0.01" disabled>
+                            </div>
+							
+							
+							<div class="form-group">
+                                <label for="serviceTaxNumber">Service Tax No.</label>
+                                <input class="form-control" id="serviceTaxNumber" type="text">
+                            </div>
+						
+						</div>
+						<div class = "col-lg-5" style="padding-left:100px;">
+							<div class="form-group">
+								<label class="form-control-label" for="taxApplicable">Tax Applicable</label><br/>
+                                <input id="vatIsApplicable" name = "taxApplicable" type="checkbox" value="vat" style="margin:11px" 
+								onclick="document.getElementById('vatRateApplicable').disabled=!this.checked;
+										document.getElementById('vatRateApplicable').value ='';
+										document.getElementById('vatTinNumber').disabled=!this.checked;
+										document.getElementById('vatTinNumber').value =''">VAT
+								
+								<input id="cstIsApplicable" name = "taxApplicable" type="checkbox" value="cst" style="margin:11px" 
+								onclick="document.getElementById('cstRateApplicable').disabled=!this.checked;
+										document.getElementById('cstRateApplicable').value='';
+										document.getElementById('cstTinNumber').disabled=!this.checked;
+										document.getElementById('cstTinNumber').value='';
+										document.getElementById('cstRateAgainstFormC').disabled=!this.checked;
+										document.getElementById('cstRateAgainstFormC').value='';">CST
+								
+								<input id="gstIsApplicable" name = "taxApplicable" type="checkbox" value="gst" style="margin:11px"
+								onclick="document.getElementById('gstRateApplicable').disabled=!this.checked;
+										document.getElementById('gstRateApplicable').value='';">GST
+								
+								<input id="octroiLbtEntryTaxIsApplicable" name = "taxApplicable" type="checkbox" value="gst" style="margin:11px"
+								onclick="document.getElementById('octroiLbtEntryTaxApplicable').disabled=!this.checked;
+										document.getElementById('octroiLbtEntryTaxApplicable').value='';">Octroi / LBT / Entry Tax
+                            </div>
+							
+							<div class="form-group">
+                                <label for="vatRateApplicable">VAT Rate Applicable (%)</label>
+                                <input class="form-control" id="vatRateApplicable"  type="number" step="0.01" disabled>
+                            </div>
+							<div class = "row">
+								<div class = "col-lg-6">
+									<div class="form-group">
+										<label for="cstRateApplicable">CST Rate Applicable (%)</label>
+										<input class="form-control" id="cstRateApplicable"  type="number" step="0.01" disabled>
+									</div>
+								</div>
+								<div class = "col-lg-6">
+									<div class="form-group">
+										<label for="cstRateAgainstFormC">CST Rate against FORM C (%)</label>
+										<input class="form-control" id="cstRateAgainstFormC"  type="number" step="0.01" disabled>
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+                                <label for="octroiLbtEntryTaxIsApplicable">Octroi / LBT / Entry Tax Rate applicable (%)</label>
+                                <input class="form-control" id="octroiLbtEntryTaxApplicable" type="text" disabled>
+                            </div>
+			
+							<div class="form-group">
+                                <label for="panNumber">PAN Number</label>
+                                <input class="form-control" id="panNumber" type="text">
+                            </div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tab4" role="tabpanel" aria-expanded="true">
+						<div class = "col-lg-5">
+							<div class="form-group">
+                                <label for="linkedTransporter">Linked Transport</label>
+								<select class="form-control" id="linkedTransporter">
+								</select>
+                            </div>
+							<div class="form-group">
+                                <label for="transportContactNumber">Contact Number</label>
+                                <input class="form-control" id="transportContactNumber" type="text">
+                            </div>
+							<div class="form-group">
+								<label class="form-control-label" for="transportContractTerms">Contract Terms</label>
+								<textarea class="form-control" rows="7" id="transportContractTerms"></textarea>
+							</div>
+						</div>
+						<div class = "col-lg-5" style="padding-left:100px;">
+							<div class="form-group">
+                                <label for="transportContactPerson">Contact Person</label>
+                                <input class="form-control" id="transportContactPerson" type="text">
+                            </div>
+							<div class="form-group">
+                                <label for="transportEmailAddress">Email Address</label>
+                                <input class="form-control" id="transportEmailAddress" type="text">
+                            </div>
+							
+							<div class="form-group">
+                                <label for="transportPaymentTerms">Payment Terms</label>
+								<select class="form-control" id="transportPaymentTerms">
+											<option value="Option 1">Option 1</option>
+											<option value="Option 2">Option 2</option>
+											<option value="Option 3">Option 3</option>
+											<option value="Option 4">Option 4</option>
+											<option value="Option 5">Option 5</option>
+								</select>
+                            </div>
+							
+						</div>
+					</div>
 					<div class="tab-pane" id="tab5" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-10">
+							<div class="form-group">
+                                <label for="specialInstructions">Special Instructions</label>
+                                <input class="form-control" id="specialInstructions" type="text">
+                            </div>
 							
 							<div class="form-group">
 								<label class="form-control-label" for="notes">Notes</label>
@@ -743,7 +901,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick = "createTransporter()">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateCustomer()">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
@@ -758,97 +916,190 @@
 </section>
 
 <script>
-	var locationsArray = null;
-	function refreshLocationDistrictAndState(){
-		var district = document.getElementById('district');
-		var state = document.getElementById('state');
-		var city = document.getElementById('city');
-		if(locationsArray!=null){
-			for(var i = 0; i < locationsArray.length; i++){
-				var location = locationsArray[i];
-				if(city.options[city.selectedIndex].text.localeCompare(location.cityName) == 0){
-					district.value = location.district;
-					state.value = location.state;
-				}
-			}
-		}
+function displayHideDistBrokerRow(){
+	if (document.getElementById("radioRetailer").checked) {
+		document.getElementById("linkedDistributor").disabled = false;
+		document.getElementById("linkedBroker").disabled = false;
+	} else if (document.getElementById("radioDistributor").checked) {
+		document.getElementById("linkedDistributor").disabled = true;
+		document.getElementById("linkedBroker").disabled = true;
+	} else if (document.getElementById("radioBroker").checked) {
+		document.getElementById("linkedDistributor").disabled = true;
+		document.getElementById("linkedBroker").disabled = true;
 	}
-	
-	function removeOptions(selectbox){
-    var i;
-    for(i = selectbox.options.length - 1 ; i >= 0 ; i--)
-		{
-			selectbox.remove(i);
-		}
-	}
-	
-	function fetchLocations(){							
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function(){
-			if(request.readyState == 4 && request.status == 200){
-				locationsArray = JSON.parse(request.responseText).result;
-				var city = document.getElementById('city');
-				removeOptions(city);
-				for(var i = 0; i < locationsArray.length; i++){
-					var location = locationsArray[i];
-						var opt = document.createElement('option');
-						opt.value = location.id;
-						opt.innerHTML = location.cityName;
-						city.appendChild(opt);
+}
+
+var customerId = -1;
+$(window).load(function() {
+	fetchLocations();
+	if(getParameterByName('id')!=null){
+		customerId = getParameterByName('id');
+		document.getElementById('customerTitle').innerHTML  = "Edit Customer";
+		$.getJSON("http://localhost:8080/AdValoramAdmin/common/customer/"+customerId, function(data){
+			var result = data.result;
+			if(result!='error'){
+				var customer = result[0];
+				
+				//
+				
+				document.getElementById("companyName").value = customer.companyName;
+				
+				if ((document.getElementById("radioRetailer").value).localeCompare(customer.customerType) == 0) {//radioRetailer
+					document.getElementById("radioRetailer").checked = true;
+				} else if ((document.getElementById("radioDistributor").value).localeCompare(customer.customerType) == 0)  {//radioDistributor
+					document.getElementById("radioDistributor").checked = true;
+				} else if ((document.getElementById("radioBroker").value).localeCompare(customer.customerType) == 0) {//radioBroker
+					document.getElementById("radioBroker").checked = true;
 				}
-				refreshLocationDistrictAndState();
-			}
-		};
+				document.getElementById("linkedDistributor").value = customer.linkedDistributor;
+				document.getElementById("linkedBroker").value = customer.linkedBroker;
+				document.getElementById("billingAddress").value = customer.billingAddress;
+				document.getElementById("deliveryAddress").value = customer.deliveryAddress;
+				document.getElementById("city").value = customer.city;
+				document.getElementById("pinCode").value = customer.pinCode;
+				document.getElementById("contactPerson").value = customer.contactPerson;
+				document.getElementById("contactNumber").value = customer.contactNumber;
+				document.getElementById("emailAddress").value = customer.emailAddress;
+				document.getElementById("markDown").value = customer.markDown;
+				document.getElementById("cashDiscount").value = customer.cashDiscount;
+				document.getElementById("promptPaymentDiscount").value = customer.promptPaymentDiscount;
+				document.getElementById("specialDiscount").value = customer.specialDiscount;
+				document.getElementById("distributorCommission").value = customer.distributorCommission;
+				document.getElementById("brokerCommission").value = customer.brokerCommission;
+				document.getElementById("creditPeriod").value = customer.creditPeriod;
+				document.getElementById("creditLimit").value = customer.creditLimit;
+				document.getElementById("paymentTerms").value = customer.paymentTerms;
+				document.getElementById("financialGrouping").value = customer.financialGrouping;
+				document.getElementById("vatTinNumber").value = customer.vatTinNumber;
+				document.getElementById("cstTinNumber").value = customer.cstTinNumber;
+				document.getElementById("serviceTaxNumber").value = customer.serviceTaxNumber;
+				document.getElementById("panNumber").value = customer.panNumber;
+				
+				document.getElementById("vatIsApplicable").checked = customer.vatIsApplicable;
+				document.getElementById("cstIsApplicable").checked = customer.cstIsApplicable;
+				document.getElementById("gstIsApplicable").checked = customer.gstIsApplicable;
+				document.getElementById("octroiLbtEntryTaxIsApplicable").checked = customer.octroiLbtEntryTaxIsApplicable;
+				
+				if(customer.cstIsApplicable) document.getElementById("cstRateApplicable").value = customer.cstRateApplicable;
+				if(customer.vatIsApplicable) document.getElementById("vatRateApplicable").value = customer.vatRateApplicable;
+				if(customer.cstIsApplicable) document.getElementById("cstRateAgainstFormC").value = customer.cstRateAgainstFormC;
+				if(customer.gstIsApplicable) document.getElementById("gstRateApplicable").value = customer.gstRateApplicable;
+				if(customer.octroiLbtEntryTaxIsApplicable) document.getElementById("octroiLbtEntryTaxApplicable").value = customer.octroiLbtEntryTaxApplicable;
+				
+				document.getElementById("linkedTransporter").value = customer.linkedTransporter;
+				
+				document.getElementById("transportContactPerson").value = customer.transportContactPerson;
+				document.getElementById("transportContactNumber").value = customer.transportContactNumber;
+				document.getElementById("transportEmailAddress").value = customer.transportEmailAddress;
+				document.getElementById("transportContractTerms").value = customer.transportContractTerms;
+				document.getElementById("transportPaymentTerms").value = customer.transportPaymentTerms;
+				
+				document.getElementById("specialInstructions").value = customer.specialInstructions;
+				document.getElementById("notes").value = customer.notes;
+				
+				//				
+				
+				var waitToSelectLocation = setInterval(function(){
+					if(locationsArray!=null){
+						var city = document.getElementById("city");
+						for(var i = 0; i < city.length; i++){
+							if(city.options[i].text.localeCompare(customer.city.cityName) == 0){
+								city.selectedIndex = i;
+								refreshLocationDistrictAndState();
+								clearInterval(waitToSelectLocation);
+								break;
+							}
+						}
+					}
+				}, 100);
+				}
+		});
+	}
+
+});
+
+</script>
+
+<script>
+	
+	
+	function createOrUpdateCustomer(){
+
+		var customer = new Object();	
+		customer.companyName = document.getElementById("companyName").value;
 		
-		request.open ("GET", "http://localhost:8080/AdValoramAdmin/location", true);
-		request.send();
-	}
-	
-	
-	function createTransporter(){
-	
-		var transporter = new Object();
-		transporter.companyName = document.getElementById("companyName").value;
-		transporter.billingAddress = document.getElementById("billingAddress").value;
-		transporter.city = document.getElementById("city").value;
-		transporter.contactPerson = document.getElementById("contactPerson").value;
-		transporter.alternateContactPerson = document.getElementById("alternateContactPerson").value;
-		transporter.emailAddress = document.getElementById("emailAddress").value;
-		if (document.getElementById("radioTransporterTypeLocal").checked) {
-			transporter.permitType = document.getElementById("radioTransporterTypeLocal").value;
-		} else if (document.getElementById("radioTransporterTypeNational").checked) {
-			transporter.permitType = document.getElementById("radioTransporterTypeNational").value;
-		} else if (document.getElementById("radioTransporterTypeWithinState").checked) {
-			transporter.permitType = document.getElementById("radioTransporterTypeWithinState").value;
+		if (document.getElementById("radioRetailer").checked) {
+			customer.customerType = document.getElementById("radioRetailer").value;
+			customer.linkedDistributor = document.getElementById("linkedDistributor").value;
+			customer.linkedBroker = document.getElementById("linkedBroker").value;
+		} else if (document.getElementById("radioDistributor").checked) {
+			customer.customerType = document.getElementById("radioDistributor").value;
+			customer.linkedDistributor = '';
+			customer.linkedBroker = '';
+		} else if (document.getElementById("radioBroker").checked) {
+			customer.customerType = document.getElementById("radioBroker").value;
+			customer.linkedDistributor = '';
+			customer.linkedBroker = '';
 		}
 
-		transporter.localHubAddress = document.getElementById("localHubAddress").value;
-		transporter.pinCode = document.getElementById("pinCode").value;
-		transporter.contactNumber = document.getElementById("contactNumber").value;
-		transporter.alternateContactNumber = document.getElementById("alternateContactNumber").value;
-		transporter.numberOfVehicles = document.getElementById("numberOfVehicles").value;
-		transporter.bankingName = document.getElementById("bankingName").value;
-		transporter.bankName = document.getElementById("bankName").value;
-		transporter.bankAccountNumber = document.getElementById("bankAccountNumber").value;
-		transporter.bankIfscCode = document.getElementById("bankIfscCode").value;
-		transporter.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
-		transporter.panNumber = document.getElementById("panNumber").value;
-		transporter.modeOfPayment = document.getElementById("modeOfPayment").value;
-		transporter.taxIsInclusive = document.getElementById("checkBoxTaxInclusive").checked;
-		transporter.taxIsExclusive = document.getElementById("checkBoxTaxExclusive").checked;
-		transporter.notes = document.getElementById("notes").value;
+		customer.billingAddress = document.getElementById("billingAddress").value;
+		customer.deliveryAddress = document.getElementById("deliveryAddress").value;
+		customer.city = document.getElementById("city").value;
+		customer.pinCode = document.getElementById("pinCode").value;
+		customer.contactPerson = document.getElementById("contactPerson").value;
+		customer.contactNumber	 = document.getElementById("contactNumber").value;
+		customer.emailAddress = document.getElementById("emailAddress").value;
+		customer.markDown = document.getElementById("markDown").value;
+		customer.cashDiscount = document.getElementById("cashDiscount").value;
+		customer.promptPaymentDiscount = document.getElementById("promptPaymentDiscount").value;
+		customer.specialDiscount = document.getElementById("specialDiscount").value;
+		customer.distributorCommission = document.getElementById("distributorCommission").value;
+		customer.brokerCommission = document.getElementById("brokerCommission").value;
+		customer.creditPeriod = document.getElementById("creditPeriod").value;
+		customer.creditLimit = document.getElementById("creditLimit").value;
+		customer.paymentTerms = document.getElementById("paymentTerms").value;
+		customer.financialGrouping = document.getElementById("financialGrouping").value;
+		customer.vatTinNumber = document.getElementById("vatTinNumber").value;
+		customer.cstTinNumber = document.getElementById("cstTinNumber").value;
+		customer.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
+		customer.panNumber = document.getElementById("panNumber").value;
+		
+		customer.vatIsApplicable = document.getElementById("vatIsApplicable").checked;
+		customer.cstIsApplicable = document.getElementById("cstIsApplicable").checked;
+		customer.gstIsApplicable = document.getElementById("gstIsApplicable").checked;
+		customer.octroiLbtEntryTaxIsApplicable = document.getElementById("octroiLbtEntryTaxIsApplicable").checked;
+		
+		if(cstIsApplicable) customer.cstRateApplicable = document.getElementById("cstRateApplicable").value;
+		if(vatIsApplicable) customer.vatRateApplicable = document.getElementById("vatRateApplicable").value;
+		if(cstIsApplicable) customer.cstRateAgainstFormC = document.getElementById("cstRateAgainstFormC").value;
+		if(gstIsApplicable) customer.gstRateApplicable = document.getElementById("gstRateApplicable").value;
+		if(octroiLbtEntryTaxIsApplicable) customer.octroiLbtEntryTaxApplicable = document.getElementById("octroiLbtEntryTaxApplicable").value;
+		
+		customer.linkedTransporter = document.getElementById("linkedTransporter").value;
+		
+		customer.transportContactPerson = document.getElementById("transportContactPerson").value;
+		customer.transportContactNumber = document.getElementById("transportContactNumber").value;
+		customer.transportEmailAddress = document.getElementById("transportEmailAddress").value;
+		customer.transportContractTerms = document.getElementById("transportContractTerms").value;
+		customer.transportPaymentTerms = document.getElementById("transportPaymentTerms").value;
+		customer.filesMetaData = '';
+		customer.specialInstructions = document.getElementById("specialInstructions").value;
+		customer.notes = document.getElementById("notes").value;
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
-				
+				console.log("Success");
 			}
 		};
-		
-		request.open ("POST", "http://localhost:8080/AdValoramAdmin/transporter", true);
+		if(customerId < 0){
+			request.open ("POST", "http://localhost:8080/AdValoramAdmin/customer", true);
+		} else {
+			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/customer/" + customerId, true);
+		}
 		request.setRequestHeader("content-type", "application/json");
-		request.send(JSON.stringify(transporter));
+		request.send(JSON.stringify(customer));
 	}
 </script>
 </body>

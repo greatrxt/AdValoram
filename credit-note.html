@@ -112,9 +112,11 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
+	<script src="js/load-locations.js"></script>
+	<script src="js/fetch-transporters.js"></script>
 </head>
 
-<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
+<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations();fetchTransporters();">
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
@@ -554,6 +556,11 @@
                     </div>
                 </div>
             </div>
+            <div class="right example-buy-btn hidden-xs-down">
+                <a href="https://themeforest.net/item/clean-ui-premium-bootstrap-4-admin-template-angular-starter-kit/16678285?s_rank=4&amp;ref=mediatec_software" target="_blank" class="btn btn-success-outline btn-rounded">
+                    Buy Now 25$
+                </a>
+            </div>
         </div>
     </div>
 </nav>
@@ -564,133 +571,256 @@
     <section class="panel panel-with-borders" style="overflow:auto">
         <div class="panel-heading">
             <h2>
-                Create New Location
+				<div class="dropdown pull-right">
+					<button id = "buttonAddProduct" type="button" class="btn btn-primary" style = "display:none" onclick = "addColorToTable();" >
+                        Add Product
+                    </button>
+					</div>
+                Create New Credit Note
             </h2>
         </div>
         <div class="panel-body">
 			<div class="nav-tabs-horizontal">
 				<ul class="nav nav-tabs" role="tablist">
-					<li class="nav-item">
-						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Location Details</a>
+					<li class="nav-item" id = "tab-billing-details">
+						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Billing Details</a>
+					</li>
+					<li class="nav-item" id = "tab-add-product">
+						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Add Product</a>
+					</li>
+					<li class="nav-item" id = "tab-others">
+						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Others</a>
 					</li>
 				</ul>
+				<script>
+				$(document).ready(function(){
+						
+						$('#tab-billing-details').click(function(){
+							$('#buttonAddProduct').hide();
+						});
+
+						$('#tab-add-product').click(function(){
+							$('#buttonAddProduct').show();
+						});
+
+						$('#tab-others').click(function(){
+							$('#buttonAddProduct').hide();
+						});
+
+				});
+				</script>
 				<div class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
-                                <label for="textCityName">City Name*</label>
-                                <input class="form-control" id="textCityName" type="text">
+                                <label for="selectInvoice">Select Invoice For Returns*</label>
+								<select class="form-control" id="selectInvoice">
+											<option value="Option 1">Option 1</option>
+											<option value="Option 2">Option 2</option>
+											<option value="Option 3">Option 3</option>
+											<option value="Option 4">Option 4</option>
+											<option value="Option 5">Option 5</option>
+								</select>
+                            </div>
+							<div class="form-group">
+                                <label for="purchaseOrderReference">Purchase Order Reference</label>
+                                <input class="form-control" id="purchaseOrderReference" type="text" readonly>
                             </div>
 
 							<div class="form-group">
-								<label class="form-control-label" for="textTaluka">Taluka</label>
-								<input class="form-control" id="textTaluka" type="text">
+								<label class="form-control-label" for="billingAddress">Billing Address</label>
+								<textarea class="form-control" rows="3" id="billingAddress" readonly></textarea>
 							</div>
 						
 							<div class="form-group">
-                                <label for="selectCountry">Country</label>
-								<select class="form-control" id="selectCountry">
-											<option value="India">India</option>
-								</select>
+                                <label for="city">City</label>
+								<input class="form-control" id="city" type="text" readonly>
                             </div>
 							
+							<div class="form-group">
+                                <label for="district">District</label>
+                                <input class="form-control" id="district" type="text" readonly>
+                            </div>
+						
+							<div class="form-group">
+                                <label for="contactPerson">Contact Person*</label>
+                                <input class="form-control" id="contactPerson" type="text" readonly>
+                            </div>
+							
+							<div class="form-group">
+                                <label for="emailAddress">Email Address</label>
+                                <input class="form-control" id="emailAddress" type="text" readonly>
+                            </div>
 						</div>
 						
 						
 						<div class = "col-lg-5" style="padding-left:100px;">
-							<div class="form-group">
-								<label class="form-control-label" for="textDistrict">District</label>
-								<input class="form-control" id="textDistrict" type="text">
+							<div class = "row">	
+								<div class = "col-lg-6">	
+									<div class="form-group">
+										<label for="invoiceRevisionNumber">Invoice Revision Number</label>
+										<input class="form-control" id="salesOrderRevisionNumber" type="number" readonly>
+									</div>
+								</div>
+								<div class = "col-lg-6">	
+									<div class="form-group">
+										<label for="invoiceDate">Invoice Date</label>
+										<input class="form-control" id="invoiceDate" type="text" readonly>
+									</div>
+								</div>
 							</div>
-						
+							
 							<div class="form-group">
-                                <label for="selectState">State</label>
-								<select class="form-control" id="selectState">
-									<optgroup label="States">
-										<option>Andhra Pradesh</option>
-										<option>Arunachal Pradesh</option>
-										<option>Assam</option>
-										<option>Bihar</option>
-										<option>Chhattisgarh</option>
-										<option>Goa</option>
-										<option>Gujarat</option>
-										<option>Haryana</option>
-										<option>Himachal Pradesh</option>
-										<option>Jammu and Kashmir</option>
-										<option>Jharkhand</option>
-										<option>Karnataka</option>
-										<option>Kerala</option>
-										<option>Madhya Pradesh</option>
-										<option selected>Maharashtra</option>
-										<option>Manipur</option>
-										<option>Meghalaya</option>
-										<option>Mizoram</option>
-										<option>Nagaland</option>
-										<option>Odisha</option>
-										<option>Punjab</option>
-										<option>Rajasthan</option>
-										<option>Sikkim</option>
-										<option>Tamil Nadu</option>
-										<option>Telangana</option>
-										<option>Tripura</option>
-										<option>Uttar Pradesh</option>
-										<option>Uttarakhand</option>
-										<option>West Bengal</option>
-									</optgroup>
-									<optgroup label="Union Territories">
-										<option>Andaman and Nicobar Islands</option>
-										<option>Chandigarh</option>
-										<option>Dadar and Nagar</option>
-										<option>Daman and Diu</option>
-										<option>Delhi</option>
-										<option>Lakshadweep</option>
-										<option>Puducherry</option>
-									</optgroup>
-								</select>
+                                <label for="clientName">Client Name</label>
+								<input class="form-control" id="clientName" type="text" readonly>
                             </div>
 							
+							<div class="form-group">
+								<label class="form-control-label" for="deliveryAddress">Delivery Address</label>
+								<input id="deliveryAddressSameAsBillingAddress" type="checkbox" style="margin:11px" >Same as Billing Address
+								<textarea class="form-control" rows="3" id="deliveryAddress" readonly></textarea>
+							</div>
+							
+							<div class="form-group">
+                                <label for="pinCode">Pin Code</label>
+                                <input class="form-control" id="pinCode" type="text" readonly>
+                            </div>
+							
+							<div class="form-group">
+                                <label for="state">State</label>
+								<input class="form-control" id="state" type="text" readonly>
+                            </div>
+							
+							<div class="form-group">
+                                <label for="contactNumber">Contact Number</label>
+                                <input class="form-control" id="contactNumber" type="text" readonly>
+                            </div>							
 						</div>
 					</div>
+					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
+						<div class = "col-lg-12">
+							<table class="table table-hover nowrap" id="productsTable" width="100%">
+								<thead class="thead-default">
+									<tr>
+										<th rowspan = "2">Product No.</th>
+										<th rowspan = "2">Style Code</th>
+										<th rowspan = "2">Color Code</th>					
+										<th rowspan = "2">Gender</th>
+										<th colspan = "11">
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										Size
+										</th>
+									</tr>
+									<tr>
+										<th>28</th>
+										<th>30</th>
+										<th>32</th>
+										<th>34</th>
+										<th>36</th>
+										<th>38</th>
+										<th>40</th>
+										<th>42</th>
+										<th>44</th>
+										<th>46</th>
+										<th>48</th>
+									</tr>
+								</thead>
+								<tfoot>
+																<tr>
+										<th rowspan = "2">Product No.</th>
+										<th rowspan = "2">Style Code</th>
+										<th rowspan = "2">Color Code</th>					
+										<th rowspan = "2">Gender</th>
+										<th colspan = "11">
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										Size
+										</th>
+									</tr>
+									<tr>
+										<th>28</th>
+										<th>30</th>
+										<th>32</th>
+										<th>34</th>
+										<th>36</th>
+										<th>38</th>
+										<th>40</th>
+										<th>42</th>
+										<th>44</th>
+										<th>46</th>
+										<th>48</th>
+									</tr>
+								</tfoot>
+									<tbody id = 'colorCodesTableBody'>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<script>
+						$(function () {
+							dataTable = $('#productsTable').DataTable();
+						});
+					</script>
+					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
+						<div class = "col-lg-5">
+							<div class="form-group">
+                                <label for="transportName">Transport Name</label>
+                                <input class="form-control" id="transportName" readonly>
+                            </div>
+							<div class="form-group">
+                                <label for="numberOfPackages">Number Of Packages</label>
+                                <input class="form-control" id="numberOfPackages" type="number">
+                            </div>
+							<div class="form-group">
+                                <label for="lorryReceiptNumber">Lorry Receipt Number</label>
+                                <input class="form-control" id="lorryReceiptNumber">
+                            </div>
+						</div>
+						<div class = "col-lg-5" style="padding-left:100px;">
+							
+							<div class="form-group">
+                                <label for="returnDate">Return Date</label>
+                                <input class="form-control" id="returnDate" type="date" >
+                            </div>
+							
+							<div class="form-group">
+                                <label for="grossWeight">Gross Weight (kgs)*</label>
+                                <input class="form-control" id="grossWeight" type="number">
+                            </div>
+							
+							<div class="form-group">
+                                <label for="returnReason">Return Reason</label>
+                                <input class="form-control" id="returnReason" type="number">
+                            </div>
+						</div>
+						<div class = "col-lg-10">
+							<div class="form-group">
+								<label class="form-control-label" for="returnNotes">Return Notes</label>
+								<textarea class="form-control" rows="7" id="returnNotes"></textarea>
+							</div>							
+						</div>
+					</div>
+
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createLocation();">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createCustomer()">Save</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>
-					<script>
-						function createLocation(){
-							
-							var location = new Object();
-							var city = document.getElementById("textCityName").value;
-							var district = document.getElementById("textDistrict").value;
-							var taluka = document.getElementById("textTaluka").value;
-							
-							var selectState = document.getElementById("selectState").value;
-							//var state = selectState.options[selectState.selectedIndex].value;
-							
-							var selectCountry = document.getElementById("selectCountry").value;
-							//var country = selectCountry.options[selectCountry.selectedIndex].value;
-							
-							var request = new XMLHttpRequest();
-							request.onreadystatechange = function(){
-								console.log(request.readyState+" " + request.status)
-								if(request.readyState == 4 && request.status == 200){
-									
-								}
-							};
-
-							location.cityName = city;
-							location.district = district;
-							location.taluka = taluka;
-							location.state = selectState;
-							location.country = selectCountry;
-							
-							request.open ("POST", "http://localhost:8080/AdValoramAdmin/location", true);
-							request.setRequestHeader("content-type", "application/json");
-							request.send(JSON.stringify(location));
-						}
-					</script>
 				</div>
 			</div>
 
@@ -698,5 +828,79 @@
 	</section>
 </div>	
 </section>
+
+<script>
+	
+	function createCustomer(){
+
+		var customer = new Object();	
+		customer.companyName = document.getElementById("companyName").value;
+		
+		if (document.getElementById("radioRetailer").checked) {
+			customer.customerType = document.getElementById("radioRetailer").value;
+		} else if (document.getElementById("radioDistributor").checked) {
+			customer.customerType = document.getElementById("radioDistributor").value;
+		} else if (document.getElementById("radioBroker").checked) {
+			customer.customerType = document.getElementById("radioBroker").value;
+		}
+		customer.linkedDistributor = document.getElementById("linkedDistributor").value;
+		customer.linkedBroker = document.getElementById("linkedBroker").value;
+		customer.billingAddress = document.getElementById("billingAddress").value;
+		customer.deliveryAddress = document.getElementById("deliveryAddress").value;
+		customer.city = document.getElementById("city").value;
+		customer.pinCode = document.getElementById("pinCode").value;
+		customer.contactPerson = document.getElementById("contactPerson").value;
+		customer.contactNumber	 = document.getElementById("contactNumber").value;
+		customer.emailAddress = document.getElementById("emailAddress").value;
+		customer.markDown = document.getElementById("markDown").value;
+		customer.cashDiscount = document.getElementById("cashDiscount").value;
+		customer.promptPaymentDiscount = document.getElementById("promptPaymentDiscount").value;
+		customer.specialDiscount = document.getElementById("specialDiscount").value;
+		customer.distributorCommission = document.getElementById("distributorCommission").value;
+		customer.brokerCommission = document.getElementById("brokerCommission").value;
+		customer.creditPeriod = document.getElementById("creditPeriod").value;
+		customer.creditLimit = document.getElementById("creditLimit").value;
+		customer.paymentTerms = document.getElementById("paymentTerms").value;
+		customer.financialGrouping = document.getElementById("financialGrouping").value;
+		customer.vatTinNumber = document.getElementById("vatTinNumber").value;
+		customer.cstTinNumber = document.getElementById("cstTinNumber").value;
+		customer.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
+		customer.panNumber = document.getElementById("panNumber").value;
+		
+		vatIsApplicable = document.getElementById("vatIsApplicable").checked;
+		cstIsApplicable = document.getElementById("cstIsApplicable").checked;
+		gstIsApplicable = document.getElementById("gstIsApplicable").checked;
+		octroiLbtEntryTaxIsApplicable = document.getElementById("octroiLbtEntryTaxIsApplicable").checked;
+		
+		if(cstIsApplicable) customer.cstRateApplicable = document.getElementById("cstRateApplicable").value;
+		if(vatIsApplicable) customer.vatRateApplicable = document.getElementById("vatRateApplicable").value;
+		if(cstIsApplicable) customer.cstRateAgainstFormC = document.getElementById("cstRateAgainstFormC").value;
+		if(gstIsApplicable) customer.gstRateApplicable = document.getElementById("gstRateApplicable").value;
+		if(octroiLbtEntryTaxIsApplicable) customer.octroiLbtEntryTaxApplicable = document.getElementById("octroiLbtEntryTaxApplicable").value;
+		
+		customer.linkedTransporter = document.getElementById("linkedTransporter").value;
+		
+		customer.transportContactPerson = document.getElementById("transportContactPerson").value;
+		customer.transportContactNumber = document.getElementById("transportContactNumber").value;
+		customer.transportEmailAddress = document.getElementById("transportEmailAddress").value;
+		customer.transportContractTerms = document.getElementById("transportContractTerms").value;
+		customer.transportPaymentTerms = document.getElementById("transportPaymentTerms").value;
+		
+		customer.specialInstructions = document.getElementById("specialInstructions").value;
+		customer.notes = document.getElementById("notes").value;
+		
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			console.log(request.readyState+" " + request.status)
+			if(request.readyState == 4 && request.status == 200){
+				console.log("Success");
+			}
+		};
+		
+		request.open ("POST", "http://localhost:8080/AdValoramAdmin/customer", true);
+		request.setRequestHeader("content-type", "application/json");
+		request.send(JSON.stringify(customer));
+	}
+</script>
 </body>
 </html>
