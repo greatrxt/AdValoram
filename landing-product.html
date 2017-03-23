@@ -402,6 +402,7 @@
             <table class="table table-hover nowrap" id="displayProductTable" width="100%">
                 <thead class="thead-default">
                 <tr>
+					<th></th>
                     <th>Product ID</th>
                     <th>Product Image</th>			
 					<th>Status</th>					
@@ -415,6 +416,7 @@
                 </thead>
                 <tfoot>
                 <tr>
+					<th></th>
                     <th>Product ID</th>
                     <th>Product Image</th>			
 					<th>Status</th>					
@@ -446,7 +448,15 @@
 		</div>
 	</div>
 </div>
-
+<style>
+details-control {
+    background: url('resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown details-control {
+    background: url('resources/details_close.png') no-repeat center center;
+}
+</style>
 <script>
 
 
@@ -460,15 +470,21 @@
 	console.log( 'An error has been reported by DataTables: ', message );
 	} ) .DataTable();
 	
-	 $.getJSON("http://localhost:8080/AdValoramAdmin/common/product", function(data){
-			//var dataTable = $('#displayProductTable').DataTable();			
+	var dataTable = $('#displayProductTable').DataTable();		
+	
+	var productArray = null;
+	$.getJSON("http://localhost:8080/AdValoramAdmin/common/product", function(data){
+		
 			if(data.result == 'error'){
 				return;
 			}
 			var productArray = data.result;
-			/*for(var i = 0; i < productArray.length; i++){
+			var skuTables = new Array();
+			
+			for(var i = 0; i < productArray.length; i++){
 				var productJson = productArray[i];					
 				dataTable.row.add([
+					"<img id = 'expand-row-" + i + "' src='resources/details_open.png'/>",
 					productJson.id,
 					"<img style='width:50px;height:50px;' src=''/>",
 					productJson.status,
@@ -477,66 +493,83 @@
 					productJson.stockKeepingUnits.length,
 					productJson.createdByUser.username,
 					productJson.lastUpdate,
-					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editLocation("+productJson.id+");'><i class='icmn-pencil5'></i> View</a>"
+					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProduct("+productJson.id+");'><i class='icmn-pencil5'></i> View</a>"
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteLocationDialog("+productJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
-			}*/
-			$('#displayProductTable').dataTable({
-				"columns": [
-							{
-								"className":      'details-control',
-								"orderable":      false,
-								"data":           null,
-								"defaultContent": ''
-							},
-							{ "data": "id" },
-							{ "data": "status" },
-							{ "data": "styleCode" },
-							{ "data": "salary" }
-						]
-			}).fnAddData(productArray);
+				
+				//create sku rows
+				var skuArray = productJson.stockKeepingUnits;
+				var skuTableId = "table_sku_"+i;
+				var skuData = '<table cellpadding="5" id = "' + skuTableId + '" cellspacing="0" border="0" style="padding-left:50px;">'+
+							'<thead>'+
+							'<tr>'+
+								'<th></th>'+
+								'<th>EAN Code</th>'+
+								'<th>Color Code</th>'+
+								'<th>Size Code</th>'+
+								'<th>Gender Code</th>'+
+								'<th>Quantity In Stock</th>'+
+							'</tr>'+
+							'</thead>'+
+							'<tfoot>'+
+							'<tr>'+
+								'<th></th>'+
+								'<th>EAN Code</th>'+
+								'<th>Color Code</th>'+
+								'<th>Size Code</th>'+
+								'<th>Gender Code</th>'+
+								'<th>Quantity In Stock</th>'+
+							'</tr>'+
+							'</tfoot>';
+				for(var s = 0; s < skuArray.length; s++){
+					skuData+='<tr>'+
+								'<td>'+(s+1)+'</td>'+
+								'<td>'+skuArray[s].eanCode+'</td>'+
+								'<td>'+skuArray[s].colorCode.colorCode+'</td>'+
+								'<td>'+skuArray[s].sizeCode.sizeCode+'</td>'+
+								'<td>'+skuArray[s].genderCode.gender+'</td>'+
+								'<td>'+skuArray[s].quantityInStock+'</td>'+
+							 '</tr>';
+				}
+				skuData+='</table>';
+				skuTables.push(skuData);
+			}
+			
+			
+			
+			dataTable.rows().every(function () {
+					this
+						.child(
+							skuTables[dataTable.row(this).index()]
+						);
+				});
+			$('#'+skuTableId).DataTable();
+			
 			}
 		);
 		
-	
-	function format ( d ) {
-			// `d` is the original data object for the row
-			return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-				'<tr>'+
-					'<td>Full name:</td>'+
-					'<td>'+d.name+'</td>'+
-				'</tr>'+
-				'<tr>'+
-					'<td>Extension number:</td>'+
-					'<td>'+d.extn+'</td>'+
-				'</tr>'+
-				'<tr>'+
-					'<td>Extra info:</td>'+
-					'<td>And any further details here (images etc)...</td>'+
-				'</tr>'+
-			'</table>';
-		}
+
 
 	 // Add event listener for opening and closing details
-    $('#displayLocationsTable displayProductsTableBody').on('click', 'td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row( tr );
- 
-        if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        }
-        else {
-            // Open this row
-            row.child( format(row.data()) ).show();
-            tr.addClass('shown');
-        }
-    } );
+    $('#displayProductsTableBody').on( 'click', 'tr', function () {
+		var child = dataTable.row(this).child;	 
+			if (child.isShown()) {
+				child.hide();
+				document.getElementById('expand-row-' + dataTable.row(this).index()).src = "resources/details_open.png";
+			} else {
+				child.show();
+				document.getElementById('expand-row-' + dataTable.row(this).index()).src = "resources/details_close.png";
+			}
+		});
+	 
 	 });
 
 </script>
 <script>
+
+function editProduct(id){
+	window.location = "product.html?id="+id;
+}
 
 function signOut(){
 	window.location = "index.html";

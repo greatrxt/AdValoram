@@ -24,6 +24,11 @@
 	 //alert("document is ready");
 	});
 	
+	var gendersArray = null;
+	var seasonsArray = null;
+	var colorsArray = null;
+	var sizesArray = null;
+	
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
 	 //alert("window is loaded");
@@ -33,7 +38,7 @@
 			 if(data.result=='error'){
 				return;
 			 }
-			var sizesArray = data.result;
+			sizesArray = data.result;
 			var container = document.getElementById('availableSizes');
 			for(var i = 0; i < sizesArray.length; i++){
 				var sizeJson = sizesArray[i];
@@ -52,14 +57,15 @@
 			}
 		 });
 	 }
-	 
+	
+	
 	if(document.getElementById('availableGender')!=null){
 		 //load genderCodes
 		 $.getJSON("http://localhost:8080/AdValoramAdmin/gender", function(data){
 			 if(data.result=='error'){
 				return;
 			 }
-				var gendersArray = data.result;
+				gendersArray = data.result;
 				var container = document.getElementById('availableGender');
 				for(var i = 0; i < gendersArray.length; i++){
 					var genderJson = gendersArray[i];
@@ -86,7 +92,7 @@
 			 if(data.result=='error'){
 				return;
 			 }
-				var seasonsArray = data.result;
+				seasonsArray = data.result;
 				var seasonSelect = document.getElementById('season');
 				removeOptions(seasonSelect);
 				for(var i = 0; i < seasonsArray.length; i++){

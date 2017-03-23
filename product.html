@@ -120,7 +120,7 @@
 	</script>
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
-	<script src="js/populateDropdown.js"></script>
+	<script src="js/common.js"></script>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 </head>
 
@@ -595,7 +595,7 @@
 							var request = new XMLHttpRequest();
 							request.onreadystatechange = function(){
 								if(request.readyState == 4 && request.status == 200){
-									var colorsArray = JSON.parse(request.responseText).result;
+									colorsArray = JSON.parse(request.responseText).result;
 									colorList = [];
 									for(var i = 0; i < colorsArray.length; i++){
 										var color = new Object();
@@ -686,7 +686,7 @@
 						}
 					</script>
                 </div>
-                Create New Product
+                <div id = "productTitle">Create New Product</div>
             </h2>
         </div>
 
@@ -978,7 +978,109 @@
 						</div>
                     </div>
 					<script>
-						
+					var productId = -1;
+					$(window).load(function() {
+						if(getParameterByName('id')!=null){
+							productId = getParameterByName('id');
+							document.getElementById('productTitle').innerHTML  = "Edit Product";
+							$.getJSON("http://localhost:8080/AdValoramAdmin/common/product/"+productId, function(data){
+								var result = data.result;
+								if(result!='error'){
+									var product = result[0];
+
+									//
+									
+									document.getElementById('styleCode').value = product.styleCode;
+									
+									var waitToSelectGender = setInterval(function(){
+										if(gendersArray!=null){
+											var genderContainer = document.getElementById('availableGender');
+											if(genderContainer!=null){
+											
+												var productGenderCodesArray = product.genderCodes;
+												for(var g = 0; g < productGenderCodesArray.length; g++){
+													var children = genderContainer.childNodes;
+									
+													for(var c = 0; c < children.length; c++){
+														if(children[c].value == productGenderCodesArray[g].id){
+															children[c].checked = true;
+														}
+													}
+													
+												}
+												clearInterval(waitToSelectGender);
+											}
+										}
+									}, 100);
+									
+									var waitToSelectSize = setInterval(function(){
+										if(sizesArray!=null){
+											var sizeContainer = document.getElementById('availableSizes');
+											if(sizeContainer!=null){
+											
+												var productSizeCodesArray = product.sizeCodes;
+												for(var g = 0; g < productSizeCodesArray.length; g++){
+													var children = sizeContainer.childNodes;
+									
+													for(var c = 0; c < children.length; c++){
+														if(children[c].value == productSizeCodesArray[g].id){
+															children[c].checked = true;
+														}
+													}
+													
+												}
+												clearInterval(waitToSelectSize);
+											}
+										}
+									}, 100);
+
+									var waitToSetColors = setInterval(function(){
+										if(colorList.length > 0){
+										for(var c = 0; c < product.colors.length; c++){
+											addColorToTable();
+											dataTable.column(2).nodes().each(function (cell, i) {
+												if(i == c){
+													for(var ca = 0; ca < product.colors.length; ca++){
+														
+														var key = product.colors.length > 1 ? ('C'+(c+1)) : 'O1';
+														var colorJson = product.colors[ca][key];
+														if(colorJson == null){
+															continue;
+														}
+														var dropDown = cell.getElementsByTagName('select')[0];	
+
+														if(dropDown!=null){
+															for(var d = 0; d < dropDown.options.length; d++){
+																if(dropDown.options[d].value == colorJson.colorName){
+																	dropDown.selectedIndex = d;
+																}
+																//var selectedStr = dropDown.options[dropDown.selectedIndex].value;
+															}
+															
+														} 
+														
+													}												
+												}
+											});
+										}
+										clearInterval(waitToSetColors);
+										}
+									}, 100);
+									
+									
+									document.getElementById('season').value = product.seasonCode;
+									document.getElementById('brand').value = product.brand;
+									document.getElementById('productCategory').value = product.productCategory;
+									document.getElementById('unitOfMeasurement').value = product.unitOfMeasurement;
+									document.getElementById('mrp').value = product.mrp;
+									document.getElementById('tradePrice').value = product.tradePrice;
+									document.getElementById('productStatus').value = product.status;
+									
+									//									
+								}
+							});
+						}
+					});
 					function createProduct(){
 
 						var product = new Object();
@@ -998,21 +1100,21 @@
 							public String status;
 						*/
 						product.styleCode = document.getElementById('styleCode').value;
-						product.colorCodes = [];
+						product.colors = [];
 						dataTable.column(2).nodes().each(function (cell, i) {
 							var dropDown = cell.getElementsByTagName('select')[0];	
 
 							if(dropDown!=null){
 								var selectedStr = dropDown.options[dropDown.selectedIndex].value;
 								if(dataTable.column(0).data().length < 2){
-									product.colorCodes.push({
+									product.colors.push({
 										"O1":selectedStr
 									});
 								} else {
 									var obj = {};
 									var key = "C" + (i+1);
 									obj[key] = selectedStr;
-									product.colorCodes.push(obj);
+									product.colors.push(obj);
 								}
 							} 
 						});
