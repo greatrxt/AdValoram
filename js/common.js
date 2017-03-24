@@ -28,6 +28,8 @@
 	var seasonsArray = null;
 	var colorsArray = null;
 	var sizesArray = null;
+	var productCategoryArray = null;
+	var brandsArray = null;
 	
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
@@ -111,7 +113,7 @@
 			 if(data.result=='error'){
 				return;
 			 }
-				var brandsArray = data.result;
+				brandsArray = data.result;
 				var brandSelect = document.getElementById('brand');
 				removeOptions(brandSelect);
 				for(var i = 0; i < brandsArray.length; i++){
@@ -149,7 +151,7 @@
 				if(data.result=='error'){
 					return;
 				 }
-				var productCategoryArray = data.result;
+				productCategoryArray = data.result;
 				var productCategorySelect = document.getElementById('productCategory');
 				removeOptions(productCategorySelect);
 				for(var i = 0; i < productCategoryArray.length; i++){

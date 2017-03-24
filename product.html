@@ -683,6 +683,23 @@
 							dataTable.column(3).nodes().each(function (cell, i) {
 								cell.innerHTML = "<a href='javascript: void(0);' class='link-underlined' onclick='removeColorFromTable("+i+");'><i class='icmn-cross2'></i> Remove</a>";
 							});
+							
+							//In case product is being edited, disabled certain rows
+							if(loadedProductData!=null){								
+								dataTable.column(2).nodes().each(function (cell, i) {							
+									if(i < loadedProductData.colors.length){
+										var dropDown = cell.getElementsByTagName('select')[0];								
+										dropDown.disabled = true;
+									}
+								});
+								
+								dataTable.column(3).nodes().each(function (cell, i) {
+									if(i < loadedProductData.colors.length){
+										cell.innerHTML = "";
+									}
+								});
+								
+							}
 						}
 					</script>
                 </div>
@@ -979,18 +996,75 @@
                     </div>
 					<script>
 					var productId = -1;
+					var loadedProductData = null;
 					$(window).load(function() {
 						if(getParameterByName('id')!=null){
 							productId = getParameterByName('id');
 							document.getElementById('productTitle').innerHTML  = "Edit Product";
-							$.getJSON("http://localhost:8080/AdValoramAdmin/common/product/"+productId, function(data){
+							$.getJSON("http://localhost:8080/AdValoramAdmin/common/product/" + productId, function(data){
 								var result = data.result;
 								if(result!='error'){
 									var product = result[0];
-
+									loadedProductData = product;
 									//
-									
 									document.getElementById('styleCode').value = product.styleCode;
+									
+									var waitToSelectSeason = setInterval(function(){
+										if(seasonsArray!=null){
+											var season = document.getElementById("season");
+											for(var i = 0; i < season.options.length; i++){
+												if(parseInt(season.options[i].value) == (product.seasonCode.id)){
+													season.selectedIndex = i;
+													season.disabled = true;
+													clearInterval(waitToSelectSeason);
+													break;
+												}
+											}
+										}
+									}, 100);
+									
+									var waitToSelectUnitOfMeasurement = setInterval(function(){
+										if(seasonsArray!=null){
+											var unitOfMeasurement = document.getElementById("unitOfMeasurement");
+											for(var i = 0; i < unitOfMeasurement.options.length; i++){
+												if(parseInt(unitOfMeasurement.options[i].value) == (product.unitOfMeasurement.id)){
+													unitOfMeasurement.selectedIndex = i;
+													unitOfMeasurement.disabled = true;
+													clearInterval(waitToSelectUnitOfMeasurement);
+													break;
+												}
+											}
+										}
+									}, 100);
+									
+									var waitToSelectProductCategory = setInterval(function(){
+										if(productCategoryArray!=null){
+											var productCategory = document.getElementById("productCategory");
+											for(var i = 0; i < productCategory.options.length; i++){
+												if(parseInt(productCategory.options[i].value) == (product.productCategory.id)){
+													productCategory.selectedIndex = i;
+													productCategory.disabled = true;
+													clearInterval(waitToSelectProductCategory);
+													break;
+												}
+											}
+										}
+									}, 100);
+									
+									
+									var waitToSelectBrand = setInterval(function(){
+										if(brandsArray!=null){
+											var brand = document.getElementById("brand");
+											for(var i = 0; i < brand.options.length; i++){
+												if(parseInt(brand.options[i].value) == (product.brand.id)){
+													brand.selectedIndex = i;
+													brand.disabled = true;
+													clearInterval(waitToSelectBrand);
+													break;
+												}
+											}
+										}
+									}, 100);
 									
 									var waitToSelectGender = setInterval(function(){
 										if(gendersArray!=null){
@@ -1004,6 +1078,7 @@
 													for(var c = 0; c < children.length; c++){
 														if(children[c].value == productGenderCodesArray[g].id){
 															children[c].checked = true;
+															children[c].disabled = true;
 														}
 													}
 													
@@ -1013,6 +1088,7 @@
 										}
 									}, 100);
 									
+
 									var waitToSelectSize = setInterval(function(){
 										if(sizesArray!=null){
 											var sizeContainer = document.getElementById('availableSizes');
@@ -1025,6 +1101,7 @@
 													for(var c = 0; c < children.length; c++){
 														if(children[c].value == productSizeCodesArray[g].id){
 															children[c].checked = true;
+															children[c].disabled = true;
 														}
 													}
 													
@@ -1063,6 +1140,15 @@
 												}
 											});
 										}
+										
+										dataTable.column(2).nodes().each(function (cell, i) {							
+											var dropDown = cell.getElementsByTagName('select')[0];								
+											dropDown.disabled = true;
+										});
+										
+										dataTable.column(3).nodes().each(function (cell, i) {
+											cell.innerHTML = "";
+										});
 										clearInterval(waitToSetColors);
 										}
 									}, 100);
@@ -1074,8 +1160,15 @@
 									document.getElementById('unitOfMeasurement').value = product.unitOfMeasurement;
 									document.getElementById('mrp').value = product.mrp;
 									document.getElementById('tradePrice').value = product.tradePrice;
-									document.getElementById('productStatus').value = product.status;
 									
+									var dropDownProductStatus = document.getElementById('productStatus');
+									for(var d = 0; d < dropDownProductStatus.options.length; d++){
+										if(dropDownProductStatus.options[d].innerText == product.status){
+											dropDownProductStatus.selectedIndex = d;
+										}
+									}
+									
+									document.getElementById('costPrice').value = product.costPrice;
 									//									
 								}
 							});
@@ -1145,6 +1238,7 @@
 						product.unitOfMeasurement = document.getElementById('unitOfMeasurement').value;
 						product.mrp = document.getElementById('mrp').value;
 						product.tradePrice = document.getElementById('tradePrice').value;
+						product.costPrice = document.getElementById('costPrice').value;
 						product.status = document.getElementById('productStatus').value;
 						
 						var request = new XMLHttpRequest();
@@ -1154,8 +1248,11 @@
 								console.log("Success");
 							}
 						};
-						
-						request.open ("POST", "http://localhost:8080/AdValoramAdmin/product", true);
+						if(productId < 0){
+							request.open ("POST", "http://localhost:8080/AdValoramAdmin/product", true);
+						} else {
+							request.open ("PUT", "http://localhost:8080/AdValoramAdmin/product/"+productId, true);
+						}
 						request.setRequestHeader("content-type", "application/json");
 						request.send(JSON.stringify(product));
 					}

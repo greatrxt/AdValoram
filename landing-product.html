@@ -499,7 +499,7 @@ tr.shown details-control {
 				
 				//create sku rows
 				var skuArray = productJson.stockKeepingUnits;
-				var skuTableId = "table_sku_"+i;
+				var skuTableId = "table_sku";
 				var skuData = '<table cellpadding="5" id = "' + skuTableId + '" cellspacing="0" border="0" style="padding-left:50px;">'+
 							'<thead>'+
 							'<tr>'+
@@ -543,7 +543,7 @@ tr.shown details-control {
 							skuTables[dataTable.row(this).index()]
 						);
 				});
-			$('#'+skuTableId).DataTable();
+			$('#table_sku').DataTable();
 			
 			}
 		);
@@ -558,6 +558,7 @@ tr.shown details-control {
 				document.getElementById('expand-row-' + dataTable.row(this).index()).src = "resources/details_open.png";
 			} else {
 				child.show();
+				$('#table_sku').DataTable();
 				document.getElementById('expand-row-' + dataTable.row(this).index()).src = "resources/details_close.png";
 			}
 		});
