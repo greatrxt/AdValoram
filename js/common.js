@@ -34,8 +34,28 @@
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
 	 //alert("window is loaded");
-	 
-	 if(document.getElementById('availableSizes')!=null){
+	var currentTabIndex = 0;
+	$("#btnBack").click(function(){
+		var currentTab = $("#homeTabs li a.nav-link.active");
+		currentTabIndex = parseInt(currentTab[0].id);
+		$('.nav-tabs-horizontal li:eq('+(currentTabIndex - 1)+') a').tab('show'); 				//http://getbootstrap.com/javascript/#tabs
+		if(currentTabIndex > 0){
+			currentTabIndex = currentTabIndex - 1;
+		}
+    });
+	
+	
+	$("#btnNext").click(function(){
+		var currentTab = $("#homeTabs li a.nav-link.active");
+		currentTabIndex = parseInt(currentTab[0].id);
+        $('.nav-tabs-horizontal li:eq('+(currentTabIndex + 1)+') a').tab('show'); 				//http://getbootstrap.com/javascript/#tabs
+		if(currentTabIndex < ($('.nav-tabs-horizontal >ul >li').length - 1)){
+			currentTabIndex = currentTabIndex + 1;
+		}
+    });
+	
+
+	if(document.getElementById('availableSizes')!=null){
 		 $.getJSON("http://localhost:8080/AdValoramAdmin/size", function(data){
 			 if(data.result=='error'){
 				return;

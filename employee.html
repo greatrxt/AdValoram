@@ -567,29 +567,29 @@
     <section class="panel panel-with-borders" style="overflow:auto">
         <div class="panel-heading">
             <h2>
-                Create New Employee
+                <div id = "employeeTitle">Create New Employee</div>
             </h2>
         </div>
         <div class="panel-body">
-			<div class="nav-tabs-horizontal">
+			<div class="nav-tabs-horizontal" id = "homeTabs">
 				<ul class="nav nav-tabs" role="tablist">
 					<li class="nav-item">
-						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Person Details</a>
+						<a id = "0" class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Person Details</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Employee Details</a>
+						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Employee Details</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Banking & Related</a>
+						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Banking & Related</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Education & Experience</a>
+						<a id = "3" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Education & Experience</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Document Uploads</a>
+						<a id = "4" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Document Uploads</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">System Rights</a>
+						<a id = "5" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">System Rights</a>
 					</li>
 				</ul>
 				<div class="tab-content padding-vertical-20">
@@ -810,8 +810,8 @@
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick = "createOrUpdateEmployee();">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>
@@ -829,7 +829,7 @@
 		fetchLocations();
 		if(getParameterByName('id')!=null){
 			employeeId = getParameterByName('id');
-			document.getElementById('employeeTitle').innerHTML  = "Edit Bank";
+			document.getElementById('employeeTitle').innerHTML  = "Edit Employee";
 			$.getJSON("http://localhost:8080/AdValoramAdmin/common/employee/"+employeeId, function(data){
 				var result = data.result;
 				if(result!='error'){
@@ -862,20 +862,20 @@
 					} else if (document.getElementById("employmentTypeTemporary").checked) {
 						employee.employeeType = document.getElementById("employmentTypeTemporary").value;
 					}
-					employee.bankName = document.getElementById("bankName").value;
-					employee.bankAccountNumber = document.getElementById("bankAccountNumber").value;
-					employee.ifscCode = document.getElementById("ifscCode").value;
-					employee.permanentAccountNumber = document.getElementById("permanentAccountNumber").value;
-					employee.employeeProvidentFundNumber = document.getElementById("employeeProvidentFundNumber").value;
-					employee.universalAccountNumber = document.getElementById("universalAccountNumber").value;
-					employee.filesMetadata = '';// document.getElementById("filesMetadata").value;
-					employee.notes = document.getElementById("notes").value;
+					document.getElementById("bankName").value = employee.bankName;
+					document.getElementById("bankAccountNumber").value = employee.bankAccountNumber;
+					document.getElementById("ifscCode").value = employee.ifscCode;
+					document.getElementById("permanentAccountNumber").value = employee.permanentAccountNumber;
+					document.getElementById("employeeProvidentFundNumber").value = employee.employeeProvidentFundNumber;
+					document.getElementById("universalAccountNumber").value = employee.universalAccountNumber;
+					//employee.filesMetadata = '';// document.getElementById("filesMetadata").value;
+					document.getElementById("notes").value = employee.notes;
 		
 					var waitToSelectLocation = setInterval(function(){
 						if(locationsArray!=null){
 							var city = document.getElementById("city");
 							for(var i = 0; i < city.length; i++){
-								if(city.options[i].text.localeCompare(bank.city.cityName) == 0){
+								if(city.options[i].text.localeCompare(employee.city.cityName) == 0){
 									city.selectedIndex = i;
 									refreshLocationDistrictAndState();
 									clearInterval(waitToSelectLocation);
@@ -914,12 +914,12 @@
 		employee.reportingTo = document.getElementById("reportingTo").value;
 		employee.jobRolesAndResponsibilities = document.getElementById("jobRolesAndResponsibilities").value;
 		
-		if (document.getElementById("employmentTypePermanent").checked) {
-			employee.employeeType = document.getElementById("employmentTypePermanent").value;
-		} else if (document.getElementById("employmentTypeProbation").checked) {
-			employee.employeeType = document.getElementById("employmentTypeProbation").value;
-		} else if (document.getElementById("employmentTypeTemporary").checked) {
-			employee.employeeType = document.getElementById("employmentTypeTemporary").value;
+		if (employee.employeeType == document.getElementById("employmentTypePermanent").value) {
+			document.getElementById("employmentTypePermanent").checked = true;
+		} else if (employee.employeeType == document.getElementById("employmentTypeProbation").value) {
+			document.getElementById("employmentTypeProbation").checked = true;
+		} else if (employee.employeeType = document.getElementById("employmentTypeTemporary").value) {
+			document.getElementById("employmentTypeTemporary").checked = true;
 		}
 		employee.bankName = document.getElementById("bankName").value;
 		employee.bankAccountNumber = document.getElementById("bankAccountNumber").value;
@@ -938,7 +938,11 @@
 			}
 		};
 		
-		request.open ("POST", "http://localhost:8080/AdValoramAdmin/employee", true);
+		if(employeeId < 0){
+			request.open ("POST", "http://localhost:8080/AdValoramAdmin/employee", true);
+		} else {
+			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/employee/" + employeeId, true);
+		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(employee));
 	}

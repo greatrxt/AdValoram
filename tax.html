@@ -567,93 +567,47 @@
     <section class="panel panel-with-borders" style="overflow:auto">
         <div class="panel-heading">
             <h2>
-                <div id = "bankTitle">Create New Bank</div>
+                <div id = "taxTitle">Create New Tax</div>
             </h2>
         </div>
         <div class="panel-body">
-			<div class="nav-tabs-horizontal" id = "homeTabs">
+			<div class="nav-tabs-horizontal">
 				<ul class="nav nav-tabs" role="tablist">
 					<li class="nav-item">
-						<a id = "0" class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Bank Details</a>
-					</li>
-					<li class="nav-item">
-						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Account Details</a>
+						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Tax Details</a>
 					</li>
 				</ul>
 				<div class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
-						<div class = "col-lg-5">
-							<div class="form-group">
-                                <label for="bankName">Bank Name*</label>
-                                <input class="form-control" id="bankName" type="text">
-                            </div>
-						
-							<div class="form-group">
-                                <label for="city">City</label>
-								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()">
-									<option value="Option 1">Unable to retrieve data</option>
-								</select>
-                            </div>
-							
-							
-							<div class="form-group">
-								<label class="form-control-label" for="branchAddress">Branch Address</label>
-								<textarea class="form-control" rows="3" id="branchAddress" style = "margin-top: 0px; margin-bottom: 0px; height: 125px;"></textarea>
-							</div>
-							
-							<div class="form-group">
-                                <label for="relationshipManagerName">Relationship Manager Name*</label>
-                                <input class="form-control" id="relationshipManagerName" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="alternateContact">Alternate Contact</label>
-                                <input class="form-control" id="alternateContact" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="ifscCode">IFSC Code</label>
-                                <input class="form-control" id="ifscCode" type="text">
-                            </div>
-						</div>
-						
-						
-						<div class = "col-lg-5" style="padding-left:100px;">
-							<div class="form-group">
-								<label class="form-control-label" for="branchName">Branch Name</label>
-								<input class="form-control" id="branchName" type="text">
-							</div>
-						
-							<div class="form-group">
-                                <label for="district">District</label>
-                                <input class="form-control" id="district" type="text" readonly>
-                            </div>
-							
-							<div class="form-group">
-                                <label for="state">State</label>
-                                <input class="form-control" id="state" type="text" readonly>
-                            </div>
-							
-							<div class="form-group">
-								<label class="form-control-label" for="emailAddress">Email Address</label>
-								<input class="form-control" id="emailAddress" type="text">
-							</div>
-							
-							<div class="form-group">
-								<label class="form-control-label" for="contactNumber">Contact Number</label>
-								<input class="form-control" id="contactNumber" type="text">
-							</div>
-							
-							<div class="form-group">
-								<label class="form-control-label" for="alternateContactNumber">Alternate Contact Number</label>
-								<input class="form-control" id="alternateContactNumber" type="text">
+						<div class = "col-lg-9">
+							<div class = "row">	
+								<div class = "col-lg-5">	
+									<div class="form-group">
+										<label for="taxName">Tax Name</label>
+										<input class="form-control" id="taxName" type="text">
+									</div>
+								</div>
+								<div class = "col-lg-3">	
+									<div class="form-group">
+										<label for="shortName">Short Name</label>
+										<input class="form-control" id="shortName" type="text">
+									</div>
+								</div>
+								<div class = "col-lg-3">	
+									<div class="form-group">
+										<label for="taxRate">Tax Rate</label>
+										<input class="form-control" id="taxRate" type="number" step = 0.01>
+									</div>
+								</div>
 							</div>
 						</div>
+						
+		
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateBank();">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateTax();">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>
@@ -665,39 +619,19 @@
 </div>	
 </section>
 <script>
-var bankId = -1;
+var taxId = -1;
 $(window).load(function() {
 	fetchLocations();
 	if(getParameterByName('id')!=null){
-		bankId = getParameterByName('id');
-		document.getElementById('bankTitle').innerHTML  = "Edit Bank";
-		$.getJSON("http://localhost:8080/AdValoramAdmin/common/bank/"+bankId, function(data){
+		taxId = getParameterByName('id');
+		document.getElementById('taxTitle').innerHTML  = "Edit Tax";
+		$.getJSON("http://localhost:8080/AdValoramAdmin/common/tax/"+taxId, function(data){
 			var result = data.result;
 			if(result!='error'){
-				var bank = result[0];
-				document.getElementById("bankName").value = bank.bankName;
-				document.getElementById("branchName").value = bank.branchName;
-				document.getElementById("branchAddress").value = bank.branchAddress;
-				document.getElementById("emailAddress").value = bank.emailAddress;
-				document.getElementById("relationshipManagerName").value = bank.relationshipManagerName;
-				document.getElementById("contactNumber").value = bank.contactNumber;
-				document.getElementById("alternateContact").value = bank.alternateContact;
-				document.getElementById("alternateContactNumber").value = bank.alternateContactNumber; 
-				document.getElementById("ifscCode").value = bank.ifscCode;
-				var waitToSelectLocation = setInterval(function(){
-					if(locationsArray!=null){
-						var city = document.getElementById("city");
-						for(var i = 0; i < city.length; i++){
-							if(city.options[i].text.localeCompare(bank.city.cityName) == 0){
-								city.selectedIndex = i;
-								refreshLocationDistrictAndState();
-								clearInterval(waitToSelectLocation);
-								break;
-							}
-						}
-					}
-				}, 100);
-				
+				var tax = result[0];
+				document.getElementById("taxName").value = tax.taxName;
+				document.getElementById("shortName").value = tax.shortName;
+				document.getElementById("taxRate").value = tax.taxRate;	
 			}
 		});
 	}
@@ -707,20 +641,13 @@ $(window).load(function() {
 
 <script>
 	
-	function createOrUpdateBank(){
+	function createOrUpdateTax(){
 
-		var bank = new Object();
+		var tax = new Object();
 		
-		bank.bankName  = document.getElementById("bankName").value;
-		bank.branchName = document.getElementById("branchName").value;
-		bank.branchAddress = document.getElementById("branchAddress").value;
-		bank.city = document.getElementById("city").value;
-		bank.emailAddress = document.getElementById("emailAddress").value;
-		bank.relationshipManagerName = document.getElementById("relationshipManagerName").value;
-		bank.contactNumber = document.getElementById("contactNumber").value;
-		bank.alternateContact = document.getElementById("alternateContact").value;
-		bank.alternateContactNumber = document.getElementById("alternateContactNumber").value;
-		bank.ifscCode = document.getElementById("ifscCode").value;
+		tax.taxName = document.getElementById("taxName").value;
+		tax.shortName = document.getElementById("shortName").value;
+		tax.taxRate = document.getElementById("taxRate").value; 	
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
@@ -729,13 +656,13 @@ $(window).load(function() {
 				console.log("Success");
 			}
 		};
-		if(bankId > 0){
-			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/bank/" + bankId, true);
+		if(taxId > 0){
+			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/tax/" + taxId, true);
 		} else {
-			request.open ("POST", "http://localhost:8080/AdValoramAdmin/bank", true);
+			request.open ("POST", "http://localhost:8080/AdValoramAdmin/tax", true);
 		}
 		request.setRequestHeader("content-type", "application/json");
-		request.send(JSON.stringify(bank));
+		request.send(JSON.stringify(tax));
 	}
 </script>
 </body>

@@ -708,22 +708,22 @@
         </div>
 
         <div class="panel-body">
-			<div class="nav-tabs-horizontal">
+			<div class="nav-tabs-horizontal" id = "homeTabs">
 				<ul class="nav nav-tabs" role="tablist">
 					<li class="nav-item" id="tab-product-description">
-						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Product Description</a>
+						<a id = "0" class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Product Description</a>
 					</li>
 					<li class="nav-item" id="tab-pricing">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Pricing</a>
+						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Pricing</a>
 					</li>
 					<li class="nav-item" id="tab-product-colors">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Colors</a>
+						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Colors</a>
 					</li>
 					<!--<li class="nav-item" id="tab-product-financial-details">
 						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Financial Details</a>
 					</li>-->
 					<li class="nav-item" id="tab-product-images">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Images</a>
+						<a id = "3" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Images</a>
 					</li>
 					<!--<li class="nav-item" id="tab-product-notes">
 						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab6" role="tab" aria-expanded="true">Notes</a>
@@ -895,72 +895,30 @@
 						});
 					</script>
 					<div class="tab-pane" id="tab4" role="tabpanel" aria-expanded="true">
-						<div class = "col-lg-5">
-							<div class="form-group">
-                                <label for="linkedTransport">Linked Transport</label>
-								<select class="form-control" id="linkedTransport">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
-                            </div>
-							<div class="form-group">
-                                <label for="contactNumber">Contact Number</label>
-                                <input class="form-control" id="contactNumber" type="text">
-                            </div>
-							<div class="form-group">
-								<label class="form-control-label" for="contractTerms">Contract Terms</label>
-								<textarea class="form-control" rows="7" id="contractTerms"></textarea>
-							</div>
-						</div>
-						<div class = "col-lg-5" style="padding-left:100px;">
-							<div class="form-group">
-                                <label for="contactPerson">Contact Person</label>
-                                <input class="form-control" id="contactPerson" type="text">
-                            </div>
-							<div class="form-group">
-                                <label for="emailAddress">Email Address</label>
-                                <input class="form-control" id="emailAddress" type="text">
-                            </div>
-							
-							<div class="form-group">
-                                <label for="paymentTerms">Payment Terms</label>
-								<select class="form-control" id="paymentTerms">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
-								</select>
-                            </div>
-							
-						</div>
-					</div>
-					<div class="tab-pane" id="tab5" role="tabpanel" aria-expanded="true">
 							<div class="form-group">
 								<label class="form-control-label" for="uploadDocuments">Upload Images</label>
+								<!--<input id="uploadDocuments" type="file" accept="image/*">-->
 								<input id="uploadDocuments" type="file" multiple accept="image/*">
-								<br>
-								<small>Press and Hold CTRL button to attach multiple images</small>
+								<br/>
+								<br/>
+								<!--<small>Press and Hold CTRL button to attach multiple images</small>-->
 								<div class="preview-area"></div>
 							</div>
 					</div>
 					<script>
-						var inputLocalFont = document.getElementById("uploadDocuments");
-						inputLocalFont.addEventListener("change",previewImages,false);
+						var inputLocalFile = document.getElementById("uploadDocuments");
+						inputLocalFile.addEventListener("change", previewImages, false);
 
 						function previewImages(){
 							var fileList = this.files;
 							
 							var anyWindow = window.URL || window.webkitURL;
 							$('.preview-area').html("");
-								for(var i = 0; i < fileList.length; i++){
-								  var objectUrl = anyWindow.createObjectURL(fileList[i]);
-								  $('.preview-area').append('<img style="width:80%" src="' + objectUrl + '" /><br/><br/><br/>');
-								  window.URL.revokeObjectURL(fileList[i]);
-								}
+							for(var i = 0; i < fileList.length; i++){
+							  var objectUrl = anyWindow.createObjectURL(fileList[i]);
+							  $('.preview-area').append('<img style="width:50%" src="' + objectUrl + '" /><br/><br/><br/>');
+							  window.URL.revokeObjectURL(fileList[i]);
+							}
 							
 							
 						}
@@ -989,8 +947,8 @@
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createProduct();">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>
@@ -1169,11 +1127,23 @@
 									}
 									
 									document.getElementById('costPrice').value = product.costPrice;
-									//									
+									//	
+									$.getJSON("http://localhost:8080/AdValoramAdmin/upload/product/" + product.styleCode, function(data){
+										if(data.result=='error'){
+											return;
+										}
+										var fileDetailsArray = data.result;
+										$('.preview-area').html("");
+										for(var f = 0; f < fileDetailsArray.length; f++){
+											$('.preview-area').append('<img style="width:50%" src="' + fileDetailsArray[f].uri + '" /><br/><br/><br/>');
+										}
+									});
+									
 								}
 							});
 						}
 					});
+					
 					function createProduct(){
 
 						var product = new Object();
@@ -1248,10 +1218,28 @@
 								console.log("Success");
 							}
 						};
+
+						var uploadDocuments = document.getElementById("uploadDocuments");
+						for(var f = 0; f < uploadDocuments.files.length; f++){
+						
+							var formData = new FormData();
+							formData.append('file', uploadDocuments.files[f]);
+
+								$.ajax({
+								  url: 'http://localhost:8080/AdValoramAdmin/upload/product/' + product.styleCode,
+								  type: 'POST',
+								  processData: false, // important
+								  contentType: false, // important
+								  dataType : '*',
+								  data: formData
+							});
+						
+						}
+						
 						if(productId < 0){
 							request.open ("POST", "http://localhost:8080/AdValoramAdmin/product", true);
 						} else {
-							request.open ("PUT", "http://localhost:8080/AdValoramAdmin/product/"+productId, true);
+							request.open ("PUT", "http://localhost:8080/AdValoramAdmin/product/" + productId, true);
 						}
 						request.setRequestHeader("content-type", "application/json");
 						request.send(JSON.stringify(product));

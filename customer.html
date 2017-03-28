@@ -575,22 +575,22 @@
             </h2>
         </div>
         <div class="panel-body">
-			<div class="nav-tabs-horizontal">
+			<div class="nav-tabs-horizontal" id = "homeTabs">
 				<ul class="nav nav-tabs" role="tablist">
 					<li class="nav-item">
-						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Company Details</a>
+						<a id = "0" class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Company Details</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Trade Terms</a>
+						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Trade Terms</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Taxation & Related</a>
+						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Taxation & Related</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Transport</a>
+						<a id = "3" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Transport</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Alerts & Uploads</a>
+						<a id = "4" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Alerts & Uploads</a>
 					</li>
 				</ul>
 				<div class="tab-content padding-vertical-20">
@@ -902,8 +902,8 @@
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateCustomer()">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
 						</div>
                     </div>

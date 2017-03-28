@@ -391,38 +391,36 @@
         <div class="panel-heading">
             <h2>
                 <div class="dropdown pull-right">
-					<button type="button" class="btn btn-primary"  onclick = "addEmployee();">
-                        Add Employee
+					<button type="button" class="btn btn-primary"  onclick = "addProduct();">
+                        Add Tax
                     </button>
                 </div>
-                Employee Master
+                Tax Master
             </h2>
         </div>
         <div class="panel-body">
-            <table class="table table-hover nowrap" id="displayEmployeesTable" width="100%">
+            <table class="table table-hover nowrap" id="displayTaxsTable" width="100%">
                 <thead class="thead-default">
                 <tr>
-                    <th>Employee ID</th>
-                    <th>Employee Name</th>
-                    <th>Department</th>
-					<th>Designation</th>					
-                    <th>City</th>
-					<th>Date Modified</th>
+                    <th>Tax ID</th>
+                    <th>Tax Name</th>
+                    <th>Branch Name</th>
+					<th>City</th>					
+                    <th>Created By</th>
 					<th>Action</th>
                 </tr>
                 </thead>
                 <tfoot>
                 <tr>
-                    <th>Employee ID</th>
-                    <th>Employee Name</th>
-                    <th>Department</th>
-					<th>Designation</th>					
-                    <th>City</th>
-					<th>Date Modified</th>
+                    <th>Tax ID</th>
+                    <th>Tax Name</th>
+                    <th>Branch Name</th>
+					<th>City</th>					
+                    <th>Created By</th>
 					<th>Action</th>
                 </tr>
                 </tfoot>
-                <tbody id = 'displayEmployeesTableBody'>
+                <tbody id = 'displayTaxsTableBody'>
                 </tbody>
             </table>
         </div>
@@ -433,7 +431,7 @@
 <div id = "printModal" class = "modal printbox">
     <div class="modal-content">
 		<div class="modal-header">
-			<h3 style="padding:5px;font-size:15px;">Delete Employee ?</h3>
+			<h3 style="padding:5px;font-size:15px;">Delete Tax ?</h3>
 		</div>
 		<div class="modal-body">
 		<span id = "printMessage"></span></br>
@@ -449,34 +447,35 @@
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
 	 //alert("window is loaded");
-	 	 
+	 
+	 	 	 
 	 $.fn.dataTable.ext.errMode = 'none';
 
-	$('#displayEmployeesTable').on( 'error.dt', function ( e, settings, techNote, message ) {
+	$('#displayTaxsTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
-	}).DataTable();
+	}) .DataTable();
 	
-	$.getJSON("http://localhost:8080/AdValoramAdmin/common/employee", function(data){
-		 	var dataTable = $('#displayEmployeesTable').DataTable();			
+	 $.getJSON("http://localhost:8080/AdValoramAdmin/common/tax", function(data){
+		 	var dataTable = $('#displayTaxsTable').DataTable();			
 			if(data.result == 'error'){
 				return;
 			}
 			
-			var employeeArray = data.result;
-			for(var i = 0; i < employeeArray.length; i++){
-				var employeeJson = employeeArray[i];
+			var taxArray = data.result;
+			var dataTable = $('#displayTaxsTable').DataTable();
+			for(var i = 0; i < taxArray.length; i++){
+				var taxJson = taxArray[i];
 				
 					
 				dataTable.row.add([
-					""+employeeJson.id,
+					""+taxJson.id,
 					//"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
-					employeeJson.firstName,
-					employeeJson.department,
-					employeeJson.designation,
-					employeeJson.city.cityName,
-					employeeJson.lastUpdate,
-					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editEmployee("+employeeJson.id+");'><i class='icmn-pencil5'></i> View</a>"
-												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteEmployeeDialog("+employeeJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
+					taxJson.taxName,
+					taxJson.shortName,
+					taxJson.taxRate + " %",
+					taxJson.lastUpdate,
+					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editTax("+taxJson.id+");'><i class='icmn-pencil5'></i> View</a>"
+												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteTaxDialog("+taxJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
 		});
@@ -484,11 +483,11 @@
 
 </script>
 <script>
-function editEmployee(id){
-	window.location = "employee.html?id="+id;
+function editTax(id){
+	window.location = "tax.html?id="+id;
 }
 function signOut(){
-	window.load = "index.html";
+	window.location = "index.html";
 }
 function closeBarCodeModal(){
 	modal.style.display = "none";
@@ -520,7 +519,7 @@ span.onclick = function() {
 <script>
     $(function () {
 
-		$('#displayEmployeesTable').DataTable();
+		$('#displayTaxsTable').DataTable();
     });
 </script>
 <!-- End Page Scripts -->
