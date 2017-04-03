@@ -656,16 +656,19 @@
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateLocation();">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 					<script>
+					function goBackToLandingPage(){
+						window.location = "landing-location.html";
+					}
 					var locationId = -1;
 					$(window).load(function() {
 						if(getParameterByName('id')!=null){
 							locationId = getParameterByName('id');
 							document.getElementById('locationTitle').innerHTML  = "Edit Location";
-							$.getJSON("http://localhost:8080/AdValoramAdmin/common/location/"+locationId, function(data){
+							$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/location/"+locationId, function(data){
 								var result = data.result;
 								if(result!='error'){
 									var location = result[0];
@@ -712,7 +715,7 @@
 						request.onreadystatechange = function(){
 							console.log(request.readyState+" " + request.status)
 							if(request.readyState == 4 && request.status == 200){
-								
+								window.location = "landing-location.html";
 							}
 						};
 
@@ -723,9 +726,9 @@
 						location.country = selectCountry;
 						
 						if(locationId < 0){
-							request.open ("POST", "http://localhost:8080/AdValoramAdmin/location", true);
+							request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/location", true);
 						} else {
-							request.open ("PUT", "http://localhost:8080/AdValoramAdmin/location/"+locationId, true);
+							request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/location/"+locationId, true);
 						}
 						
 						request.setRequestHeader("content-type", "application/json");

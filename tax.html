@@ -608,7 +608,7 @@
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateTax();">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 				</div>
@@ -619,13 +619,16 @@
 </div>	
 </section>
 <script>
+function goBackToLandingPage(){
+	window.location = "landing-tax.html";
+}
 var taxId = -1;
 $(window).load(function() {
 	fetchLocations();
 	if(getParameterByName('id')!=null){
 		taxId = getParameterByName('id');
 		document.getElementById('taxTitle').innerHTML  = "Edit Tax";
-		$.getJSON("http://localhost:8080/AdValoramAdmin/common/tax/"+taxId, function(data){
+		$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/tax/"+taxId, function(data){
 			var result = data.result;
 			if(result!='error'){
 				var tax = result[0];
@@ -654,12 +657,13 @@ $(window).load(function() {
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
 				console.log("Success");
+				window.location = "landing-tax.html";
 			}
 		};
 		if(taxId > 0){
-			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/tax/" + taxId, true);
+			request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/tax/" + taxId, true);
 		} else {
-			request.open ("POST", "http://localhost:8080/AdValoramAdmin/tax", true);
+			request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/tax", true);
 		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(tax));

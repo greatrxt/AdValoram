@@ -24,6 +24,6 @@
 			}
 		};
 		
-		request.open ("GET", "http://localhost:8080/AdValoramAdmin/transporter", true);
+		request.open ("GET", "http://173.212.200.188:8080/AdValoramAdmin/transporter", true);
 		request.send();
 	}

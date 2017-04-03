@@ -606,7 +606,7 @@
 								}
 							};
 							
-							request.open ("GET", "http://localhost:8080/AdValoramAdmin/common/color", true);
+							request.open ("GET", base_url + "/AdValoramAdmin/common/color", true);
 							request.send();
 						}
 						
@@ -949,17 +949,20 @@
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createProduct();">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 					<script>
+					function goBackToLandingPage(){
+						window.location = "landing-product.html";
+					}
 					var productId = -1;
 					var loadedProductData = null;
 					$(window).load(function() {
 						if(getParameterByName('id')!=null){
 							productId = getParameterByName('id');
 							document.getElementById('productTitle').innerHTML  = "Edit Product";
-							$.getJSON("http://localhost:8080/AdValoramAdmin/common/product/" + productId, function(data){
+							$.getJSON(base_url + "/AdValoramAdmin/common/product/" + productId, function(data){
 								var result = data.result;
 								if(result!='error'){
 									var product = result[0];
@@ -1127,8 +1130,8 @@
 									}
 									
 									document.getElementById('costPrice').value = product.costPrice;
-									//	
-									$.getJSON("http://localhost:8080/AdValoramAdmin/upload/product/" + product.styleCode, function(data){
+									/*	
+									$.getJSON(base_url + "/AdValoramAdmin/upload/product/" + product.styleCode, function(data){
 										if(data.result=='error'){
 											return;
 										}
@@ -1137,8 +1140,13 @@
 										for(var f = 0; f < fileDetailsArray.length; f++){
 											$('.preview-area').append('<img style="width:50%" src="' + fileDetailsArray[f].uri + '" /><br/><br/><br/>');
 										}
-									});
+									});*/
 									
+									var fileDetailsArray = product.associatedFiles;
+									$('.preview-area').html("");
+									for(var f = 0; f < fileDetailsArray.length; f++){
+										$('.preview-area').append('<img style="width:50%" src="' + fileDetailsArray[f].fileLocation + '" /><br/><br/><br/>');
+									}
 								}
 							});
 						}
@@ -1215,31 +1223,34 @@
 						request.onreadystatechange = function(){
 							console.log(request.readyState+" " + request.status)
 							if(request.readyState == 4 && request.status == 200){
-								console.log("Success");
+								var response = JSON.parse(request.response);
+								if(response.result == "success"){
+									console.log("Success");
+									var uploadDocuments = document.getElementById("uploadDocuments");
+									for(var f = 0; f < uploadDocuments.files.length; f++){
+									
+										var formData = new FormData();
+										formData.append('file', uploadDocuments.files[f]);
+
+											$.ajax({
+											  url: base_url + '/AdValoramAdmin/upload/product/' + response.objectId,
+											  type: 'POST',
+											  processData: false, // important
+											  contentType: false, // important
+											  dataType : '*',
+											  data: formData
+										});
+									
+									}
+									window.location = "landing-product.html";
+								}
 							}
 						};
-
-						var uploadDocuments = document.getElementById("uploadDocuments");
-						for(var f = 0; f < uploadDocuments.files.length; f++){
-						
-							var formData = new FormData();
-							formData.append('file', uploadDocuments.files[f]);
-
-								$.ajax({
-								  url: 'http://localhost:8080/AdValoramAdmin/upload/product/' + product.styleCode,
-								  type: 'POST',
-								  processData: false, // important
-								  contentType: false, // important
-								  dataType : '*',
-								  data: formData
-							});
-						
-						}
 						
 						if(productId < 0){
-							request.open ("POST", "http://localhost:8080/AdValoramAdmin/product", true);
+							request.open ("POST", base_url + "/AdValoramAdmin/product", true);
 						} else {
-							request.open ("PUT", "http://localhost:8080/AdValoramAdmin/product/" + productId, true);
+							request.open ("PUT", base_url + "/AdValoramAdmin/product/" + productId, true);
 						}
 						request.setRequestHeader("content-type", "application/json");
 						request.send(JSON.stringify(product));

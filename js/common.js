@@ -6,6 +6,8 @@
 		}
 	}
 	
+	//var base_url = http://173.212.200.188:8080;
+	var base_url = "http://localhost:8080";
 	
 	function getParameterByName(name, url) {
 		if (!url) {
@@ -56,7 +58,7 @@
 	
 
 	if(document.getElementById('availableSizes')!=null){
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/size", function(data){
+		 $.getJSON(base_url + "/AdValoramAdmin/size", function(data){
 			 if(data.result=='error'){
 				return;
 			 }
@@ -83,7 +85,7 @@
 	
 	if(document.getElementById('availableGender')!=null){
 		 //load genderCodes
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/gender", function(data){
+		 $.getJSON(base_url + "/AdValoramAdmin/gender", function(data){
 			 if(data.result=='error'){
 				return;
 			 }
@@ -109,7 +111,7 @@
 
 	if(document.getElementById('season')!=null){
 		 //load seasons
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/common/season", function(data){
+		 $.getJSON(base_url + "/AdValoramAdmin/common/season", function(data){
 			 
 			 if(data.result=='error'){
 				return;
@@ -129,7 +131,7 @@
 	
 	if(document.getElementById('brand')!=null){
 		//load Brand
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/common/brand", function(data){
+		 $.getJSON(base_url + "/AdValoramAdmin/common/brand", function(data){
 			 if(data.result=='error'){
 				return;
 			 }
@@ -148,7 +150,7 @@
 	
 	if(document.getElementById('unitOfMeasurement')!=null){
 	//load uom
-	 $.getJSON("http://localhost:8080/AdValoramAdmin/common/unitOfMeasurement", function(data){
+	 $.getJSON(base_url + "/AdValoramAdmin/common/unitOfMeasurement", function(data){
 			 if(data.result=='error'){
 				return;
 			 }
@@ -167,7 +169,7 @@
 	
 	if(document.getElementById('unitOfMeasurement')!=null){
 			//load productCategory
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/common/product_category", function(data){
+		 $.getJSON(base_url + "/AdValoramAdmin/common/product_category", function(data){
 				if(data.result=='error'){
 					return;
 				 }
@@ -187,7 +189,7 @@
 	if(document.getElementById('reportingTo')!=null 
 			|| document.getElementById('linkedEmployee')!=null){
 			//load employee
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/common/employee", function(data){
+		 $.getJSON(base_url + "/AdValoramAdmin/common/employee", function(data){
 			 if(data.result=='error'){
 				return;
 			 }
@@ -204,47 +206,58 @@
 			});
 	}
 	
+	var distributorArray = null;
 	if(document.getElementById('linkedDistributor')!=null){
 			//load distributor
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/customer/distributor", function(data){
-			 if(data.result=='error'){
+		 $.getJSON(base_url + "/AdValoramAdmin/customer/distributor", function(data){
+			var distributorSelect = document.getElementById('linkedDistributor');
+			removeOptions(distributorSelect);
+			if(distributorSelect!=null) distributorSelect.disabled = true;
+			if(data.result=='error'){
 				return;
-			 }
-				var distributorArray = data.result;
-				var distributorSelect = document.getElementById('linkedDistributor');
-				removeOptions(distributorSelect);
-				for(var i = 0; i < distributorArray.length; i++){
-					var distributor = distributorArray[i];
-						var opt = document.createElement('option');
-						opt.value = distributor.id;
-						opt.innerHTML = distributor.companyName;
-						distributorSelect.appendChild(opt);
-				}
+			}
+			
+			distributorArray = data.result;
+						
+			for(var i = 0; i < distributorArray.length; i++){
+				var distributor = distributorArray[i];
+					var opt = document.createElement('option');
+					opt.value = distributor.id;
+					opt.innerHTML = distributor.companyName;
+					distributorSelect.appendChild(opt);
+			}
 			});
 	}
 	
+	var brokerArray = null;
 	if(document.getElementById('linkedBroker')!=null){
 			//load broker
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/customer/broker", function(data){
-			 if(data.result=='error'){
+		 $.getJSON(base_url + "/AdValoramAdmin/customer/broker", function(data){
+			var brokerSelect = document.getElementById('linkedBroker');			
+			removeOptions(brokerSelect);
+			if(brokerSelect!=null) brokerSelect.disabled = true;
+			if(data.result=='error'){
 				return;
-			 }
-				var brokerArray = data.result;
-				var brokerSelect = document.getElementById('linkedBroker');
-				removeOptions(brokerSelect);
-				for(var i = 0; i < brokerArray.length; i++){
-					var broker = brokerArray[i];
-						var opt = document.createElement('option');
-						opt.value = broker.id;
-						opt.innerHTML = broker.companyName;
-						brokerSelect.appendChild(opt);
-				}
-			});
+			}
+			
+			brokerArray = data.result;
+			if(brokerArray.length > 0){
+				brokerSelect.disabled = false;
+			}			
+
+			for(var i = 0; i < brokerArray.length; i++){
+				var broker = brokerArray[i];
+				var opt = document.createElement('option');
+				opt.value = broker.id;
+				opt.innerHTML = broker.companyName;
+				brokerSelect.appendChild(opt);
+			}
+		});
 	}
 	
 	if(document.getElementById('linkedTransporter')!=null){
 			//load transporter
-		 $.getJSON("http://localhost:8080/AdValoramAdmin/common/transporter", function(data){
+		 $.getJSON(base_url + "/AdValoramAdmin/common/transporter", function(data){
 			 if(data.result=='error'){
 				return;
 			 }

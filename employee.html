@@ -812,7 +812,7 @@
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick = "createOrUpdateEmployee();">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 				</div>
@@ -824,13 +824,16 @@
 	
 	
 <script>
+	function goBackToLandingPage(){
+		window.location = "landing-employee.html";
+	}
 	var employeeId = -1;
 	$(window).load(function() {
 		fetchLocations();
 		if(getParameterByName('id')!=null){
 			employeeId = getParameterByName('id');
 			document.getElementById('employeeTitle').innerHTML  = "Edit Employee";
-			$.getJSON("http://localhost:8080/AdValoramAdmin/common/employee/"+employeeId, function(data){
+			$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/employee/"+employeeId, function(data){
 				var result = data.result;
 				if(result!='error'){
 					var employee = result[0];
@@ -934,14 +937,14 @@
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
-				
+				window.location = "landing-employee.html";
 			}
 		};
 		
 		if(employeeId < 0){
-			request.open ("POST", "http://localhost:8080/AdValoramAdmin/employee", true);
+			request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/employee", true);
 		} else {
-			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/employee/" + employeeId, true);
+			request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/employee/" + employeeId, true);
 		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(employee));

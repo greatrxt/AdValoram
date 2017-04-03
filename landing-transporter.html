@@ -444,7 +444,9 @@
 </div>
 
 <script>
-
+	function addTransporter(){
+		window.location = "transporter.html";
+	}
 
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
@@ -457,7 +459,7 @@
 	} ) .DataTable();
 	//$('#displayTransportersTable').DataTable();
 
-	 $.getJSON("http://localhost:8080/AdValoramAdmin/common/transporter", function(data){
+	 $.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/transporter", function(data){
 		 	var dataTable = $('#displayTransportersTable').DataTable();			
 			if(data.result == 'error'){
 				return;

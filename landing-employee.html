@@ -444,6 +444,9 @@
 </div>
 
 <script>
+	function addEmployee(){
+		window.location = "employee.html";
+	}
 
 
 	$(window).load(function() {
@@ -456,7 +459,7 @@
 		console.log( 'An error has been reported by DataTables: ', message );
 	}).DataTable();
 	
-	$.getJSON("http://localhost:8080/AdValoramAdmin/common/employee", function(data){
+	$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/employee", function(data){
 		 	var dataTable = $('#displayEmployeesTable').DataTable();			
 			if(data.result == 'error'){
 				return;

@@ -895,6 +895,7 @@
 								<input id="uploadDocuments" type="file">
 								<br>
 								<small>Add Files</small>
+								<div id = "uploadedFiles"></div>
 							</div>
 							
 						</div>
@@ -904,7 +905,7 @@
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateCustomer()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 				</div>
@@ -916,10 +917,22 @@
 </section>
 
 <script>
+function goBackToLandingPage(){
+	window.location = "landing-customer.html";
+}
+
 function displayHideDistBrokerRow(){
 	if (document.getElementById("radioRetailer").checked) {
-		document.getElementById("linkedDistributor").disabled = false;
-		document.getElementById("linkedBroker").disabled = false;
+		if(distributorArray != null) {
+			document.getElementById("linkedDistributor").disabled = false;
+		} else {
+			document.getElementById("linkedDistributor").disabled = true;
+		}
+		if(brokerArray!=null){
+			document.getElementById("linkedBroker").disabled = false;
+		} else {
+			document.getElementById("linkedBroker").disabled = true;
+		}
 	} else if (document.getElementById("radioDistributor").checked) {
 		document.getElementById("linkedDistributor").disabled = true;
 		document.getElementById("linkedBroker").disabled = true;
@@ -935,7 +948,7 @@ $(window).load(function() {
 	if(getParameterByName('id')!=null){
 		customerId = getParameterByName('id');
 		document.getElementById('customerTitle').innerHTML  = "Edit Customer";
-		$.getJSON("http://localhost:8080/AdValoramAdmin/common/customer/"+customerId, function(data){
+		$.getJSON(base_url + "/AdValoramAdmin/common/customer/"+customerId, function(data){
 			var result = data.result;
 			if(result!='error'){
 				var customer = result[0];
@@ -1012,6 +1025,13 @@ $(window).load(function() {
 						}
 					}
 				}, 100);
+				
+				var fileDetailsArray = customer.associatedFiles;
+				$('#uploadedFiles').html("");
+				for(var f = 0; f < fileDetailsArray.length; f++){
+					$('#uploadedFiles').append('<a href="' + fileDetailsArray[f].fileLocation + '" /><br/>');
+				}
+				
 				}
 		});
 	}
@@ -1091,12 +1111,29 @@ $(window).load(function() {
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
 				console.log("Success");
+				var uploadDocuments = document.getElementById("uploadDocuments");
+				for(var f = 0; f < uploadDocuments.files.length; f++){
+				
+					var formData = new FormData();
+					formData.append('file', uploadDocuments.files[f]);
+
+						$.ajax({
+						  url: base_url + '/AdValoramAdmin/upload/customer/' + response.objectId,
+						  type: 'POST',
+						  processData: false, // important
+						  contentType: false, // important
+						  dataType : '*',
+						  data: formData
+					});
+				
+				}
+				window.location = "landing-customer.html";
 			}
 		};
 		if(customerId < 0){
-			request.open ("POST", "http://localhost:8080/AdValoramAdmin/customer", true);
+			request.open ("POST", base_url + "/AdValoramAdmin/customer", true);
 		} else {
-			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/customer/" + customerId, true);
+			request.open ("PUT", base_url + "/AdValoramAdmin/customer/" + customerId, true);
 		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(customer));

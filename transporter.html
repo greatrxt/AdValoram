@@ -747,7 +747,7 @@
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick = "createOrUpdateTransporter()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 				</div>
@@ -759,6 +759,10 @@
 </section>
 
 <script>
+	function goBackToLandingPage(){
+		window.location = "landing-transporter.html";
+	}
+	
 	var locationsArray = null;
 	function refreshLocationDistrictAndState(){
 		var district = document.getElementById('district');
@@ -801,7 +805,7 @@
 			}
 		};
 		
-		request.open ("GET", "http://localhost:8080/AdValoramAdmin/location", true);
+		request.open ("GET", "http://173.212.200.188:8080/AdValoramAdmin/location", true);
 		request.send();
 	}
 	
@@ -844,14 +848,14 @@
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
-				
+				window.location = "landing-transporter.html";
 			}
 		};
 		
 		if(transporterId < 0){
-			request.open ("POST", "http://localhost:8080/AdValoramAdmin/transporter", true);
+			request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/transporter", true);
 		} else {
-			request.open ("PUT", "http://localhost:8080/AdValoramAdmin/transporter/" + transporterId, true);
+			request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/transporter/" + transporterId, true);
 		}
 		
 		request.setRequestHeader("content-type", "application/json");
@@ -864,7 +868,7 @@
 		if(getParameterByName('id')!=null){
 			transporterId = getParameterByName('id');
 			document.getElementById('transporterTitle').innerHTML  = "Edit Transporter";
-			$.getJSON("http://localhost:8080/AdValoramAdmin/common/transporter/"+transporterId, function(data){
+			$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/transporter/"+transporterId, function(data){
 				var result = data.result;
 				if(result!='error'){
 					var transporter = result[0];

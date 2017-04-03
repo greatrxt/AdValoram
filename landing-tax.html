@@ -391,7 +391,7 @@
         <div class="panel-heading">
             <h2>
                 <div class="dropdown pull-right">
-					<button type="button" class="btn btn-primary"  onclick = "addProduct();">
+					<button type="button" class="btn btn-primary"  onclick = "addTax();">
                         Add Tax
                     </button>
                 </div>
@@ -455,7 +455,7 @@
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
 	
-	 $.getJSON("http://localhost:8080/AdValoramAdmin/common/tax", function(data){
+	 $.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/tax", function(data){
 		 	var dataTable = $('#displayTaxsTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -483,6 +483,9 @@
 
 </script>
 <script>
+function addTax(){
+	window.location = "tax.html";
+}
 function editTax(id){
 	window.location = "tax.html?id="+id;
 }

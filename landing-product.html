@@ -115,6 +115,7 @@
     <script src="assets/common/js/demo.temp.js"></script>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 	<script src="js/JsBarcode.all.min.js"></script>
+	<script src="js/common.js"></script>
 	<!--For Electron--><script>if (window.module) module = window.module;</script>
 	<script>
 		try {
@@ -458,7 +459,9 @@ tr.shown details-control {
 }
 </style>
 <script>
-
+	function addProduct(){
+		window.location = "product.html";
+	}
 
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
@@ -473,7 +476,7 @@ tr.shown details-control {
 	var dataTable = $('#displayProductTable').DataTable();		
 	
 	var productArray = null;
-	$.getJSON("http://localhost:8080/AdValoramAdmin/common/product", function(data){
+	$.getJSON(base_url + "/AdValoramAdmin/common/product", function(data){
 		
 			if(data.result == 'error'){
 				return;
@@ -493,7 +496,7 @@ tr.shown details-control {
 					productJson.stockKeepingUnits.length,
 					productJson.createdByUser.username,
 					productJson.lastUpdate,
-					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProduct("+productJson.id+");'><i class='icmn-pencil5'></i> View</a>"
+					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProduct("+productJson.id+"); event.stopPropagation();'><i class='icmn-pencil5'></i> View</a>"
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteLocationDialog("+productJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 				
@@ -552,7 +555,7 @@ tr.shown details-control {
 
 	 // Add event listener for opening and closing details
     $('#displayProductsTableBody').on( 'click', 'tr', function () {
-		var child = dataTable.row(this).child;	 
+			var child = dataTable.row(this).child;	 
 			if (child.isShown()) {
 				child.hide();
 				document.getElementById('expand-row-' + dataTable.row(this).index()).src = "resources/details_open.png";

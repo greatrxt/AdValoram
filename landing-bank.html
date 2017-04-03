@@ -391,7 +391,7 @@
         <div class="panel-heading">
             <h2>
                 <div class="dropdown pull-right">
-					<button type="button" class="btn btn-primary"  onclick = "addProduct();">
+					<button type="button" class="btn btn-primary"  onclick = "addBank();">
                         Add Bank
                     </button>
                 </div>
@@ -442,6 +442,9 @@
 </div>
 
 <script>
+	function addBank(){
+		window.location = "bank.html";
+	}
 
 
 	$(window).load(function() {
@@ -455,7 +458,7 @@
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
 	
-	 $.getJSON("http://localhost:8080/AdValoramAdmin/common/bank", function(data){
+	 $.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/bank", function(data){
 		 	var dataTable = $('#displayBanksTable').DataTable();			
 			if(data.result == 'error'){
 				return;
