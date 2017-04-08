@@ -112,8 +112,7 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
-	<script src="js/load-locations.js"></script>
-	<script src="js/fetch-transporters.js"></script>
+	<script src="js/common.js"></script>
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations();fetchTransporters();">
@@ -571,25 +570,20 @@
     <section class="panel panel-with-borders" style="overflow:auto">
         <div class="panel-heading">
             <h2>
-				<div class="dropdown pull-right">
-					<button id = "buttonAddColor" type="button" class="btn btn-primary"  onclick = "addColorToTable();" >
-                        Add Product
-                    </button>
-					</div>
                 Create New Invoice
             </h2>
         </div>
         <div class="panel-body">
-			<div class="nav-tabs-horizontal">
+			<div class="nav-tabs-horizontal" id = "homeTabs">
 				<ul class="nav nav-tabs" role="tablist">
 					<li class="nav-item">
-						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Billing Details</a>
+						<a id = "0" class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Billing Details</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Discounts</a>
+						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Discounts</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Others</a>
+						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Others</a>
 					</li>
 				</ul>
 				<div class="tab-content padding-vertical-20">
@@ -751,9 +745,9 @@
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createNewInvoice()">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 				</div>
@@ -765,6 +759,9 @@
 </section>
 
 <script>
+	function goBackToLandingPage(){
+		window.location = "landing-invoice.html";
+	}
 	
 	function createCustomer(){
 

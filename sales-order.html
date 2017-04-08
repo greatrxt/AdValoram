@@ -112,8 +112,8 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
-	<script src="js/load-locations.js"></script>
-	<script src="js/fetch-transporters.js"></script>
+	<script src="js/common.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations();fetchTransporters();">
@@ -564,6 +564,97 @@
         </div>
     </div>
 </nav>
+
+
+<div id="addProductModal" class="modal-outer-body">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+		<h3 style="padding:5px;font-size:15px;">Add Product</h3>
+    </div>
+    <div class="modal-body">
+		<div class="modal-left-body">
+			<table class="tg" id = "barCodeEntriesTable">
+			  <tr>
+				<th class="tg-yw4l"><span>Style Code</span></th>
+				<th class="tg-yw4l"><span>Color Code</span></th>
+				<th class="tg-yw4l"><span>Gender</span></th>
+				<th class="tg-yw4l"><span>MRP</span></th>
+			  </tr>
+			  <tr>
+				<td class="tg-yw42">
+					<div class="form-group">
+						<input class="form-control" id = "productStyleCodes" type="search" list="styleCodes" placeholder="Select Style Code">
+					</div>
+
+					<datalist id="styleCodes">
+					  <option value="1" />
+					  <option value="2" />
+					  <option value="3" />
+					</datalist>
+				</td>
+				<td class="tg-yw42">
+					<div class="form-group">
+						<select class="form-control" id = "dropDownColorCode">
+						</select>
+					</div>
+				</td>
+				<td class="tg-yw42">
+					<div class="form-group">
+						<select class="form-control" id = "dropDownGender">
+						</select>
+					</div>
+				</td>
+				<td class="tg-yw42">
+					<div class="form-group">
+						<input class="form-control" type = "text" id = "textMrp" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength = "4" readonly>
+					</div>
+				</td>
+			  </tr>
+			
+			<tr>
+				<th class="tg-yw4l"><span>Size </span></th>
+				<th class="tg-yw4l"><span>EAN Code</span></th>
+				<th class="tg-yw4l"><span>Order Quantity</span></th>
+			</tr>
+			  
+			<!--	<tr>
+					<th class="tg-yw4l"><span>28</span></th>
+					<th class="tg-yw42"><span id = "ean28">1</span></td>
+					<th class="tg-yw4l"><input type = "number" id = "printCopiesFor28" min="0" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = "0"></th>
+				</tr>
+				
+				<tr>
+					<th class="tg-yw4l"><span>30</span></th>
+					<th class="tg-yw42"><span id = "ean30">1</span></td>
+					<th class="tg-yw4l"><input type = "number" id = "printCopiesFor30" min="0" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = "0"></th>
+				</tr>-->
+			<tbody id = "sizeTable">
+			
+			</tbody>
+			  
+			</table>
+		</div>
+		
+		<div class="modal-right-body">
+			<div class = "modal-right-body-bottom">
+				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndClose()">Save & Close</button></br>
+				<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndGoToNext()">Save & Add New</button>
+			</div>
+		</div>
+    </div>
+    <div class="modal-footer">
+		<span id="numberOfPrintCopies" style="float:left;color:#000000;padding:7px 40px 0px 35px;font-size:13px;"></span>
+      <!--<button id="closeBarCodeModal" onclick="closeBarCodeModal()">Close</button>-->
+    </div>
+  </div>
+
+</div>
+
+
+
 <section class = "page-content">
 <div class="page-content-inner">
 
@@ -572,40 +663,62 @@
         <div class="panel-heading">
             <h2>
 				<div class="dropdown pull-right">
-					<button id = "buttonAddColor" type="button" class="btn btn-primary"  onclick = "addColorToTable();" >
+					<button id = "buttonAddProduct" type="button" class="btn btn-primary"  onclick = "addProduct();"  style = "display:none">
                         Add Product
                     </button>
 					</div>
                 Create New Sales Order
             </h2>
-        </div>
+        </div>				
+		<script>
+		$(document).ready(function(){
+				
+				$('#tab-billing-details').click(function(){
+					$('#buttonAddProduct').hide();
+				});
+
+				$('#tab-add-product').click(function(){
+					$('#buttonAddProduct').show();
+				});
+
+				$('#tab-taxation-discounts').click(function(){
+					$('#buttonAddProduct').hide();
+				});
+				
+				$('#tab-uploads').click(function(){
+					$('#buttonAddProduct').hide();
+				});
+
+		});
+		</script>
         <div class="panel-body">
-			<div class="nav-tabs-horizontal">
+			<div class="nav-tabs-horizontal" id = "homeTabs">
 				<ul class="nav nav-tabs" role="tablist">
-					<li class="nav-item">
-						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Billing Details</a>
+					<li class="nav-item" id = "tab-billing-details">
+						<a id = "0" class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Billing Details</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Add Product</a>
+					<li class="nav-item" id = "tab-add-product">
+						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Add Product</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Taxation & Discounts</a>
+					<li class="nav-item" id = "tab-taxation-discounts">
+						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Taxation & Discounts</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Uploads</a>
+					<li class="nav-item" id = "tab-uploads">
+						<a id = "3" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Uploads</a>
 					</li>
 				</ul>
 				<div class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
+
 							<div class="form-group">
                                 <label for="salesOrderId">Sales Order ID</label>
                                 <input class="form-control" id="salesOrderId" type="text" readonly>
                             </div>
 							<div class="form-group">
                                 <label for="purchaseOrderReference">Purchase Order Reference</label>
-                                <input class="form-control" id="purchaseOrderReference" type="text" readonly>
+                                <input class="form-control" id="purchaseOrderReference" type="text">
                             </div>
 
 							<div class="form-group">
@@ -815,9 +928,9 @@
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createCustomer()">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 				</div>
@@ -829,6 +942,14 @@
 </section>
 
 <script>
+	var modal = document.getElementById('addProductModal');
+	function addProduct(){
+		modal.style.display = "block";
+	}
+
+	function goBackToLandingPage(){
+		window.location = "landing-sales-order.html";
+	}
 	
 	function createCustomer(){
 

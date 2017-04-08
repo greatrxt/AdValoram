@@ -112,8 +112,7 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
-	<script src="js/load-locations.js"></script>
-	<script src="js/fetch-transporters.js"></script>
+	<script src="js/common.js"></script>
 </head>
 <style>
 #packing-list-main-div{
@@ -588,7 +587,7 @@
 					</h2>
 				</div>
 				<div class="panel-body">
-			<div class="nav-tabs-horizontal">
+			<div class="nav-tabs-horizontal" id = "homeTabs">
 				<script>
 				$(document).ready(function(){
 
@@ -620,13 +619,13 @@
 				</script>
 				<ul class="nav nav-tabs" role="tablist">
 					<li class="nav-item" id = "tab-billing-details">
-						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Billing Details</a>
+						<a id = "0" class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Billing Details</a>
 					</li>
 					<li class="nav-item" id = "tab-add-product">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Add Product</a>
+						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Add Product</a>
 					</li>
 					<li class="nav-item" id = "tab-uploads">
-						<a class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Uploads</a>
+						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Uploads</a>
 					</li>
 				</ul>
 				<div class="tab-content padding-vertical-20">
@@ -675,6 +674,47 @@
 					</div>
 					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-12">
+							<div class="form-group" >
+								<label class="form-control-label" for="productSize">Sizes</label>
+                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked>28
+								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px" checked>30
+								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px" checked>32
+								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px" checked>34
+								<input id="productSize36" name = "productSize" type="checkbox" value="36" style="margin:10px" checked>36
+								<input id="productSize38" name = "productSize" type="checkbox" value="38" style="margin:10px" checked>38
+								<input id="productSize40" name = "productSize" type="checkbox" value="40" style="margin:10px" checked>40
+								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px" checked>42
+								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px" checked>44
+								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px" checked>46
+								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px" checked>48
+                            </div>
+							<script>
+							$(document).ready(function () {
+								var f = function () {
+										var index = $(":checkbox").index(this) + 5;
+										//$(".table table-hover nowrap > * > * > :nth-child(" + index + ")").toggleClass('hidden');
+										//$('td:nth-child('+ index +'),th:nth-child(' + index + ')').toggleClass('hidden');
+									};
+
+								$(":checkbox").click(f);
+							});
+
+							/*function hideColumn(){
+								$('td:nth-child(5),th:nth-child(2)').hide();
+							}*/
+							</script>
+							<style>
+							.hidden {
+							    width: 0;
+								opacity: 0;
+								font-size: 0;
+								padding: 0;
+								margin: 0;
+								border: 0;						
+							}
+							</style>
+						</div>
+						<div class = "col-lg-12">
 							<table class="table table-hover nowrap" id="productsTable" width="100%">
 								<thead class="thead-default">
 									<tr>
@@ -683,10 +723,6 @@
 										<th rowspan = "2">Color Code</th>					
 										<th rowspan = "2">Gender</th>
 										<th colspan = "11">
-											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -714,10 +750,6 @@
 										<th rowspan = "2">Color Code</th>					
 										<th rowspan = "2">Gender</th>
 										<th colspan = "11">
-											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -793,9 +825,9 @@
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createCustomer()">Save</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Back</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Next</button>
-							<button type="button" class="btn width-150 btn-default" style="margin:10px">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
+							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
 				</div>
@@ -856,7 +888,9 @@
 </script>
 
 <script>
-	
+	function goBackToLandingPage(){
+		window.location = "landing-packing-list.html";
+	}
 	function createCustomer(){
 
 		var customer = new Object();	

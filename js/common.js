@@ -56,7 +56,139 @@
 		}
     });
 	
+	/*
+	Adds Product in Sales order
+	*/
+	if(document.getElementById('productStyleCodes')!=null){
+		//populate style code
+		 $.getJSON(base_url + "/AdValoramAdmin/product/style", function(data){
+			if(data.result=='error'){
+				return;
+			}
+			var styleCodes = data.result;
+			var searchStyleCodeBox = document.getElementById('productStyleCodes');
+			var options = '';
+			for(var i = 0; i < styleCodes.length; i++){
+				var styleJson = styleCodes[i];
+				 options += '<option value="' + styleJson.styleCode + '" id = "' + styleJson.id + '"/>';
+			}
+			
+			document.getElementById('styleCodes').innerHTML = options;
+			
+			//What happens after user selects a style code -
+			//http://stackoverflow.com/questions/30151633/jquery-event-for-html5-datalist-when-item-is-selected-or-typed-input-match-with
+			$("#productStyleCodes").on('input', function () {
+				var val = this.value;
+				if($('#styleCodes option').filter(function(){
+					return this.value === val;        
+				}).length) {
+					//send ajax request
+					//alert(this.value);
+					for(var i = 0; i < styleCodes.length; i++){
+						var styleJson = styleCodes[i];
+						if(styleJson.styleCode == this.value){
+																
+							$.getJSON(base_url + "/AdValoramAdmin/common/product/"+styleJson.id, function(data){
+								if(data.result=='error'){
+									return;
+								}
+								//populate colors
+								var colorsJsonArray = data.result[0].colors;
+				 				var dropDownColorCode = document.getElementById('dropDownColorCode');
+								removeOptions(dropDownColorCode);
+								for(var i = 0; i < colorsJsonArray.length; i++){
+									var colorJson = colorsJsonArray[i];
+									for(var color in colorJson){
+										var opt = document.createElement('option');
+										opt.value = color;
+										opt.innerHTML = color;
+										dropDownColorCode.appendChild(opt);
+									}
+								}
+								
+								//populate gender
+								var genderJsonArray = data.result[0].genderCodes;
+				 				var dropDownGender = document.getElementById('dropDownGender');
+								removeOptions(dropDownGender);
+								for(var i = 0; i < genderJsonArray.length; i++){
+									var genderJson = genderJsonArray[i];
+									var opt = document.createElement('option');
+									opt.value = genderJson.id;
+									opt.setAttribute('genderCode', genderJson.genderCode);
+									opt.innerHTML = genderJson.gender;
+									dropDownGender.appendChild(opt);								
+								}
+								
+								document.getElementById('textMrp').value = data.result[0].mrp;
+								
+								function populateSizeTable(){
+									var tbody = '';
+									var sizeCodesArray = JSON.parse(JSON.stringify(data.result[0].sizeCodes));
+									var prefix = document.getElementById('dropDownColorCode').value + styleJson.styleCode;
+									var postfix = dropDownGender.options[dropDownGender.selectedIndex].getAttribute('genderCode');
+									/*for (var i = 0; i < sizeCodesArray.length; i++) {
+										tbody +=  "<tr>" +
+												"<th class='tg-yw4l'><span>"+sizeCodesArray[i].sizeCode+"</span></th>"+
+												"<th class='tg-yw42'><span>" + prefix + sizeCodesArray[i].sizeCode + postfix + "</span></td>"+
+												"<th class='tg-yw4l'><input type = 'number' min='0' onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = '0'></th>" + 
+											"</tr>";
+									}*/
+									var n = 0;
+									var indexOfItemsAddedToTable = [];
+									while(n < sizeCodesArray.length){
 
+										var lowestSizeIndex = 0;
+										var lowestSize = sizeCodesArray[0].sizeCode;
+										
+										//ensure indexOfItemsAddedToTable does not contain 0. If yes, move to next index. If that index is also already present in indexOfItemsAddedToTable then move to next
+										while(indexOfItemsAddedToTable.indexOf(lowestSizeIndex) > -1){
+											lowestSizeIndex++;
+											lowestSize = sizeCodesArray[lowestSizeIndex].sizeCode;
+										}
+
+										for (var i = 0; i < sizeCodesArray.length; i++) {
+											if(!(indexOfItemsAddedToTable.indexOf(i) > -1)){
+												if(sizeCodesArray[i].sizeCode < lowestSize){
+													lowestSize = sizeCodesArray[i].sizeCode;
+													lowestSizeIndex = i;
+												}
+											}
+										}
+										tbody +=  "<tr>" +
+												"<th class='tg-yw4l'><span>"+sizeCodesArray[lowestSizeIndex].sizeCode+"</span></th>"+
+												"<th class='tg-yw42'><span>" + prefix + sizeCodesArray[lowestSizeIndex].sizeCode + postfix + "</span></td>"+
+												"<th class='tg-yw4l'><input type = 'number' min='0' onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = '0'></th>" + 
+											"</tr>";
+										
+										indexOfItemsAddedToTable.push(lowestSizeIndex);
+										n++;
+									}
+									
+									$('#sizeTable').html(tbody);
+								}
+								
+								populateSizeTable();
+								
+								dropDownColorCode.addEventListener(
+									 'change',
+									 function() { populateSizeTable(); },
+									 false
+								);
+								
+								dropDownGender.addEventListener(
+									 'change',
+									 function() { populateSizeTable(); },
+									 false
+								);
+							});
+						
+						}
+					}
+				}
+			});
+		 });
+	}
+	
 	if(document.getElementById('availableSizes')!=null){
 		 $.getJSON(base_url + "/AdValoramAdmin/size", function(data){
 			 if(data.result=='error'){
