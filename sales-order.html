@@ -564,7 +564,14 @@
         </div>
     </div>
 </nav>
-
+<style>
+#sizeTableDiv{
+    -webkit-transition: all 1.0s ease;
+    -moz-transition: all 1.0s ease;
+    -o-transition: all 1.0s ease;
+    transition: all 1.0s ease;
+}
+</style>
 
 <div id="addProductModal" class="modal-outer-body">
 
@@ -576,72 +583,60 @@
     </div>
     <div class="modal-body">
 		<div class="modal-left-body">
-			<table class="tg" id = "barCodeEntriesTable">
+			<table class="tg">
 			  <tr>
+				<th class="tg-yw4l"><span>ID</span></th>
 				<th class="tg-yw4l"><span>Style Code</span></th>
-				<th class="tg-yw4l"><span>Color Code</span></th>
-				<th class="tg-yw4l"><span>Gender</span></th>
-				<th class="tg-yw4l"><span>MRP</span></th>
+				<th class="tg-yw4l postServerRequest"><span>Color Code</span></th>
+				<th class="tg-yw4l postServerRequest"><span>Gender</span></th>
+				<th class="tg-yw4l postServerRequest"><span>MRP</span></th>
 			  </tr>
 			  <tr>
+				<td class="tg-yw42"><div class="form-group"><span id = "productId">1</span></div></td>
 				<td class="tg-yw42">
 					<div class="form-group">
 						<input class="form-control" id = "productStyleCodes" type="search" list="styleCodes" placeholder="Select Style Code">
 					</div>
 
 					<datalist id="styleCodes">
-					  <option value="1" />
-					  <option value="2" />
-					  <option value="3" />
 					</datalist>
 				</td>
-				<td class="tg-yw42">
+				<td class="tg-yw42 postServerRequest">
 					<div class="form-group">
 						<select class="form-control" id = "dropDownColorCode">
 						</select>
 					</div>
 				</td>
-				<td class="tg-yw42">
+				<td class="tg-yw42 postServerRequest">
 					<div class="form-group">
 						<select class="form-control" id = "dropDownGender">
 						</select>
 					</div>
 				</td>
-				<td class="tg-yw42">
+				<td class="tg-yw42 postServerRequest">
 					<div class="form-group">
 						<input class="form-control" type = "text" id = "textMrp" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength = "4" readonly>
 					</div>
 				</td>
 			  </tr>
 			
-			<tr>
+			<tr class = "postServerRequest">
 				<th class="tg-yw4l"><span>Size </span></th>
 				<th class="tg-yw4l"><span>EAN Code</span></th>
 				<th class="tg-yw4l"><span>Order Quantity</span></th>
 			</tr>
-			  
-			<!--	<tr>
-					<th class="tg-yw4l"><span>28</span></th>
-					<th class="tg-yw42"><span id = "ean28">1</span></td>
-					<th class="tg-yw4l"><input type = "number" id = "printCopiesFor28" min="0" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = "0"></th>
-				</tr>
+
+			<tbody id = "sizeTable" class = "postServerRequest">
 				
-				<tr>
-					<th class="tg-yw4l"><span>30</span></th>
-					<th class="tg-yw42"><span id = "ean30">1</span></td>
-					<th class="tg-yw4l"><input type = "number" id = "printCopiesFor30" min="0" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = "0"></th>
-				</tr>-->
-			<tbody id = "sizeTable">
-			
 			</tbody>
-			  
+
 			</table>
 		</div>
 		
-		<div class="modal-right-body">
+		<div class="modal-right-body postServerRequest">
 			<div class = "modal-right-body-bottom">
-				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndClose()">Save & Close</button></br>
-				<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveBarCodeentryAndGoToNext()">Save & Add New</button>
+				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveProductAndClose()">Save & Close</button></br>
+				<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveProductAndGoToNext()">Save & Add New</button>
 			</div>
 		</div>
     </div>
@@ -810,6 +805,35 @@
 					</div>
 					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-12">
+							<div class="form-group" >
+								<label class="form-control-label" for="productSize">Sizes</label>
+                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked onclick = "toggleColumnVisibility(4)">28
+								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px" checked onclick = "toggleColumnVisibility(5)">30
+								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px" checked onclick = "toggleColumnVisibility(6)">32
+								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px" checked onclick = "toggleColumnVisibility(7)">34
+								<input id="productSize36" name = "productSize" type="checkbox" value="36" style="margin:10px" checked onclick = "toggleColumnVisibility(8)">36
+								<input id="productSize38" name = "productSize" type="checkbox" value="38" style="margin:10px" checked onclick = "toggleColumnVisibility(9)">38
+								<input id="productSize40" name = "productSize" type="checkbox" value="40" style="margin:10px" checked onclick = "toggleColumnVisibility(10)">40
+								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px" checked onclick = "toggleColumnVisibility(11)">42
+								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px" checked onclick = "toggleColumnVisibility(12)">44
+								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px" checked onclick = "toggleColumnVisibility(13)">46
+								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px" checked onclick = "toggleColumnVisibility(14)">48
+                            </div>
+							<script>
+							$(document).ready(function () {
+								dataTable = $('#productsTable').DataTable();
+							});
+							function toggleColumnVisibility(index){								
+								 // Get the column API object
+								var column = dataTable.column(index);		 
+								// Toggle the visibility
+								column.visible(!column.visible());
+							}
+							
+							</script>
+
+						</div>
+						<div class = "col-lg-12">
 							<table class="table table-hover nowrap" id="productsTable" width="100%">
 								<thead class="thead-default">
 									<tr>
@@ -827,6 +851,7 @@
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										Size
 										</th>
+										<th rowspan = "2">Action</th>
 									</tr>
 									<tr>
 										<th>28</th>
@@ -858,6 +883,7 @@
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										Size
 										</th>
+										<th rowspan = "2">Action</th>
 									</tr>
 									<tr>
 										<th>28</th>
@@ -873,16 +899,11 @@
 										<th>48</th>
 									</tr>
 								</tfoot>
-									<tbody id = 'colorCodesTableBody'>
+								<tbody id = 'productsTableBody'>								
 								</tbody>
 							</table>
 						</div>
 					</div>
-					<script>
-						$(function () {
-							dataTable = $('#productsTable').DataTable();
-						});
-					</script>
 					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-5">
 							<div class="form-group">
@@ -931,6 +952,7 @@
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnPreview" style="margin:10px; background-color:#5dc698; border-color:#5dc698; display:none" onclick = "showPreview();">Preview</button>
 						</div>
                     </div>
 				</div>
@@ -942,84 +964,113 @@
 </section>
 
 <script>
+	var productList = [];
+	function saveProductAndClose(){
+		var product = new Object();
+		product.id = document.getElementById("productId").innerHTML;
+		product.styleCode = selectedStyleCode;
+		product.colorCode = document.getElementById("dropDownColorCode").value;
+		
+		var dropDownGender = document.getElementById("dropDownGender");
+		product.gender = dropDownGender.options[dropDownGender.selectedIndex].text;	//to display 
+		product.genderCode = document.getElementById("dropDownGender").value;	//to send to server
+		product.mrp = document.getElementById("textMrp").value;
+		product.quantityForSize28 = (document.getElementById("quantityForSize28") == null 
+									|| document.getElementById("quantityForSize28").value == 0) ? "" : document.getElementById("quantityForSize28").value;
+		product.quantityForSize30 = (document.getElementById("quantityForSize30") == null
+									|| document.getElementById("quantityForSize30").value == 0)? "" :  document.getElementById("quantityForSize30").value;
+		product.quantityForSize32 = (document.getElementById("quantityForSize32") == null 
+									|| document.getElementById("quantityForSize32").value == 0) ? "" : document.getElementById("quantityForSize32").value;
+		product.quantityForSize34 = (document.getElementById("quantityForSize34") == null 
+									|| document.getElementById("quantityForSize34").value == 0) ? "" : document.getElementById("quantityForSize34").value;
+		product.quantityForSize36 = (document.getElementById("quantityForSize36") == null 
+									|| document.getElementById("quantityForSize36").value == 0) ? "" : document.getElementById("quantityForSize36").value;
+		product.quantityForSize38 = (document.getElementById("quantityForSize38") == null 
+									|| document.getElementById("quantityForSize38").value == 0) ? "" : document.getElementById("quantityForSize38").value;
+		product.quantityForSize40 = (document.getElementById("quantityForSize40") == null 
+									|| document.getElementById("quantityForSize40").value == 0) ? "" : document.getElementById("quantityForSize40").value;
+		product.quantityForSize42 = (document.getElementById("quantityForSize42") == null 
+									|| document.getElementById("quantityForSize42").value == 0) ? "" : document.getElementById("quantityForSize42").value;
+		product.quantityForSize44 = (document.getElementById("quantityForSize44") == null 
+									|| document.getElementById("quantityForSize44").value == 0) ? "" : document.getElementById("quantityForSize44").value;
+		product.quantityForSize46 = (document.getElementById("quantityForSize46") == null 
+									|| document.getElementById("quantityForSize46").value == 0) ? "" : document.getElementById("quantityForSize46").value;
+		product.quantityForSize48 = (document.getElementById("quantityForSize48") == null 
+									|| document.getElementById("quantityForSize48").value == 0) ? "" : document.getElementById("quantityForSize48").value;
+		productList.push(product);
+		refreshProductsTable();
+		closeAddProductModal();
+	}
+	
+	function refreshProductsTable(){
+		$('#productsTable').dataTable().fnDestroy()
+		var tbody = '';
+		for(var p = 0; p < productList.length; p++){
+			var product = productList[p];
+				tbody +=  "<tr>" +
+				"<td>" + product.id + "</td>"+
+				"<td>" + product.styleCode + "</td>"+
+				"<td>" + product.colorCode + "</td>"+
+				"<td>" + product.gender + "</td>"+
+				"<td>" + product.quantityForSize28 + "</td>" +
+				"<td>" + product.quantityForSize30 + "</td>" +
+				"<td>" + product.quantityForSize32 + "</td>" +
+				"<td>" + product.quantityForSize34 + "</td>" +
+				"<td>" + product.quantityForSize36 + "</td>" +
+				"<td>" + product.quantityForSize38 + "</td>" +
+				"<td>" + product.quantityForSize40 + "</td>" +
+				"<td>" + product.quantityForSize42 + "</td>" +
+				"<td>" + product.quantityForSize44 + "</td>" +
+				"<td>" + product.quantityForSize46 + "</td>" +
+				"<td>" + product.quantityForSize48 + "</td>" +
+				"<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
+				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
+		}
+		$('#productsTableBody').html(tbody);	
+		dataTable = $('#productsTable').DataTable();	
+		if(productList.length > 0){
+			$('#btnPreview').show();
+		} else {
+			$('#btnPreview').hide();
+		}
+	}
+	
+	function deleteProductEntryAndUpdateView(id){
+		deleteProductEntry(id);
+		refreshProductsTable();
+	}
+	
+	function deleteProductEntry(id){
+		for(var r = 0; r < productList.length; r++){
+			if(productList[r].id == id){
+				productList.splice(r, 1);
+			}
+		}
+		//re-assign IDs
+		for(var r = 0; r < productList.length; r++){
+			productList[r].id = r+1;
+		}
+	}
+
 	var modal = document.getElementById('addProductModal');
 	function addProduct(){
 		modal.style.display = "block";
+		document.getElementById("productId").innerHTML = productList.length + 1;
 	}
 
 	function goBackToLandingPage(){
 		window.location = "landing-sales-order.html";
 	}
 	
-	function createCustomer(){
+	function closeAddProductModal(){
+		document.getElementById("addProductModal").style.display = "none";
+	}
+	
+	var span = document.getElementsByClassName("close")[0];
 
-		var customer = new Object();	
-		customer.companyName = document.getElementById("companyName").value;
-		
-		if (document.getElementById("radioRetailer").checked) {
-			customer.customerType = document.getElementById("radioRetailer").value;
-		} else if (document.getElementById("radioDistributor").checked) {
-			customer.customerType = document.getElementById("radioDistributor").value;
-		} else if (document.getElementById("radioBroker").checked) {
-			customer.customerType = document.getElementById("radioBroker").value;
-		}
-		customer.linkedDistributor = document.getElementById("linkedDistributor").value;
-		customer.linkedBroker = document.getElementById("linkedBroker").value;
-		customer.billingAddress = document.getElementById("billingAddress").value;
-		customer.deliveryAddress = document.getElementById("deliveryAddress").value;
-		customer.city = document.getElementById("city").value;
-		customer.pinCode = document.getElementById("pinCode").value;
-		customer.contactPerson = document.getElementById("contactPerson").value;
-		customer.contactNumber	 = document.getElementById("contactNumber").value;
-		customer.emailAddress = document.getElementById("emailAddress").value;
-		customer.markDown = document.getElementById("markDown").value;
-		customer.cashDiscount = document.getElementById("cashDiscount").value;
-		customer.promptPaymentDiscount = document.getElementById("promptPaymentDiscount").value;
-		customer.specialDiscount = document.getElementById("specialDiscount").value;
-		customer.distributorCommission = document.getElementById("distributorCommission").value;
-		customer.brokerCommission = document.getElementById("brokerCommission").value;
-		customer.creditPeriod = document.getElementById("creditPeriod").value;
-		customer.creditLimit = document.getElementById("creditLimit").value;
-		customer.paymentTerms = document.getElementById("paymentTerms").value;
-		customer.financialGrouping = document.getElementById("financialGrouping").value;
-		customer.vatTinNumber = document.getElementById("vatTinNumber").value;
-		customer.cstTinNumber = document.getElementById("cstTinNumber").value;
-		customer.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
-		customer.panNumber = document.getElementById("panNumber").value;
-		
-		vatIsApplicable = document.getElementById("vatIsApplicable").checked;
-		cstIsApplicable = document.getElementById("cstIsApplicable").checked;
-		gstIsApplicable = document.getElementById("gstIsApplicable").checked;
-		octroiLbtEntryTaxIsApplicable = document.getElementById("octroiLbtEntryTaxIsApplicable").checked;
-		
-		if(cstIsApplicable) customer.cstRateApplicable = document.getElementById("cstRateApplicable").value;
-		if(vatIsApplicable) customer.vatRateApplicable = document.getElementById("vatRateApplicable").value;
-		if(cstIsApplicable) customer.cstRateAgainstFormC = document.getElementById("cstRateAgainstFormC").value;
-		if(gstIsApplicable) customer.gstRateApplicable = document.getElementById("gstRateApplicable").value;
-		if(octroiLbtEntryTaxIsApplicable) customer.octroiLbtEntryTaxApplicable = document.getElementById("octroiLbtEntryTaxApplicable").value;
-		
-		customer.linkedTransporter = document.getElementById("linkedTransporter").value;
-		
-		customer.transportContactPerson = document.getElementById("transportContactPerson").value;
-		customer.transportContactNumber = document.getElementById("transportContactNumber").value;
-		customer.transportEmailAddress = document.getElementById("transportEmailAddress").value;
-		customer.transportContractTerms = document.getElementById("transportContractTerms").value;
-		customer.transportPaymentTerms = document.getElementById("transportPaymentTerms").value;
-		
-		customer.specialInstructions = document.getElementById("specialInstructions").value;
-		customer.notes = document.getElementById("notes").value;
-		
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
-			if(request.readyState == 4 && request.status == 200){
-				console.log("Success");
-			}
-		};
-		
-		request.open ("POST", "http://localhost:8080/AdValoramAdmin/customer", true);
-		request.setRequestHeader("content-type", "application/json");
-		request.send(JSON.stringify(customer));
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
 	}
 </script>
 </body>

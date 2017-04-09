@@ -1,13 +1,23 @@
+
+	
+	//var base_url = http://173.212.200.188:8080;
+	// DEFINE ALL GLOBAL VARIABLES HERE	
+	var gendersArray = null;
+	var seasonsArray = null;
+	var colorsArray = null;
+	var sizesArray = null;
+	var productCategoryArray = null;
+	var brandsArray = null;
+	var selectedStyleCode = null;
+	var base_url = "http://localhost:8080";
+	
 	function removeOptions(selectbox){
-    var i;
-    for(i = selectbox.options.length - 1 ; i >= 0 ; i--)
-		{
+		var i;
+		for(i = selectbox.options.length - 1 ; i >= 0 ; i--)
+			{
 			selectbox.remove(i);
 		}
 	}
-	
-	//var base_url = http://173.212.200.188:8080;
-	var base_url = "http://localhost:8080";
 	
 	function getParameterByName(name, url) {
 		if (!url) {
@@ -25,13 +35,7 @@
 	 // executes when HTML-Document is loaded and DOM is ready
 	 //alert("document is ready");
 	});
-	
-	var gendersArray = null;
-	var seasonsArray = null;
-	var colorsArray = null;
-	var sizesArray = null;
-	var productCategoryArray = null;
-	var brandsArray = null;
+
 	
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
@@ -59,7 +63,11 @@
 	/*
 	Adds Product in Sales order
 	*/
+	
 	if(document.getElementById('productStyleCodes')!=null){
+		if(document.getElementsByClassName('postServerRequest')!=null){
+			$(".postServerRequest").hide(0);
+		}
 		//populate style code
 		 $.getJSON(base_url + "/AdValoramAdmin/product/style", function(data){
 			if(data.result=='error'){
@@ -84,6 +92,7 @@
 				}).length) {
 					//send ajax request
 					//alert(this.value);
+					selectedStyleCode = this.value;
 					for(var i = 0; i < styleCodes.length; i++){
 						var styleJson = styleCodes[i];
 						if(styleJson.styleCode == this.value){
@@ -122,19 +131,15 @@
 								document.getElementById('textMrp').value = data.result[0].mrp;
 								
 								function populateSizeTable(){
+									$(".postServerRequest").show(100);
 									var tbody = '';
 									var sizeCodesArray = JSON.parse(JSON.stringify(data.result[0].sizeCodes));
 									var prefix = document.getElementById('dropDownColorCode').value + styleJson.styleCode;
 									var postfix = dropDownGender.options[dropDownGender.selectedIndex].getAttribute('genderCode');
-									/*for (var i = 0; i < sizeCodesArray.length; i++) {
-										tbody +=  "<tr>" +
-												"<th class='tg-yw4l'><span>"+sizeCodesArray[i].sizeCode+"</span></th>"+
-												"<th class='tg-yw42'><span>" + prefix + sizeCodesArray[i].sizeCode + postfix + "</span></td>"+
-												"<th class='tg-yw4l'><input type = 'number' min='0' onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = '0'></th>" + 
-											"</tr>";
-									}*/
+
 									var n = 0;
 									var indexOfItemsAddedToTable = [];
+									//sort available sizes
 									while(n < sizeCodesArray.length){
 
 										var lowestSizeIndex = 0;
@@ -154,11 +159,12 @@
 												}
 											}
 										}
+										
 										tbody +=  "<tr>" +
-												"<th class='tg-yw4l'><span>"+sizeCodesArray[lowestSizeIndex].sizeCode+"</span></th>"+
-												"<th class='tg-yw42'><span>" + prefix + sizeCodesArray[lowestSizeIndex].sizeCode + postfix + "</span></td>"+
-												"<th class='tg-yw4l'><input type = 'number' min='0' onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = '0'></th>" + 
-											"</tr>";
+													"<td class='tg-yw4l'><span>"+sizeCodesArray[lowestSizeIndex].sizeCode+"</span></td>"+
+													"<td class='tg-yw42'><span>" + prefix + sizeCodesArray[lowestSizeIndex].sizeCode + postfix + "</span></td>"+
+													"<td class='tg-yw4l'><input id = 'quantityForSize" + sizeCodesArray[lowestSizeIndex].sizeCode + "' type = 'number' min='0' onkeypress='return event.charCode >= 48 && event.charCode <= 57' value = '0'></td>" + 
+												"</tr>";
 										
 										indexOfItemsAddedToTable.push(lowestSizeIndex);
 										n++;

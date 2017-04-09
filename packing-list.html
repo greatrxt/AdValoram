@@ -676,20 +676,20 @@
 						<div class = "col-lg-12">
 							<div class="form-group" >
 								<label class="form-control-label" for="productSize">Sizes</label>
-                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked>28
-								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px" checked>30
-								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px" checked>32
-								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px" checked>34
-								<input id="productSize36" name = "productSize" type="checkbox" value="36" style="margin:10px" checked>36
-								<input id="productSize38" name = "productSize" type="checkbox" value="38" style="margin:10px" checked>38
-								<input id="productSize40" name = "productSize" type="checkbox" value="40" style="margin:10px" checked>40
-								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px" checked>42
-								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px" checked>44
-								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px" checked>46
-								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px" checked>48
+                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked onclick = "toggleColumnVisibility(4)">28
+								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px" checked onclick = "toggleColumnVisibility(5)">30
+								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px" checked onclick = "toggleColumnVisibility(6)">32
+								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px" checked onclick = "toggleColumnVisibility(7)">34
+								<input id="productSize36" name = "productSize" type="checkbox" value="36" style="margin:10px" checked onclick = "toggleColumnVisibility(8)">36
+								<input id="productSize38" name = "productSize" type="checkbox" value="38" style="margin:10px" checked onclick = "toggleColumnVisibility(9)">38
+								<input id="productSize40" name = "productSize" type="checkbox" value="40" style="margin:10px" checked onclick = "toggleColumnVisibility(10)">40
+								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px" checked onclick = "toggleColumnVisibility(11)">42
+								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px" checked onclick = "toggleColumnVisibility(12)">44
+								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px" checked onclick = "toggleColumnVisibility(13)">46
+								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px" checked onclick = "toggleColumnVisibility(14)">48
                             </div>
 							<script>
-							$(document).ready(function () {
+							/*$(document).ready(function () {
 								var f = function () {
 										var index = $(":checkbox").index(this) + 5;
 										//$(".table table-hover nowrap > * > * > :nth-child(" + index + ")").toggleClass('hidden');
@@ -702,17 +702,18 @@
 							/*function hideColumn(){
 								$('td:nth-child(5),th:nth-child(2)').hide();
 							}*/
-							</script>
-							<style>
-							.hidden {
-							    width: 0;
-								opacity: 0;
-								font-size: 0;
-								padding: 0;
-								margin: 0;
-								border: 0;						
+							$(document).ready(function () {
+								dataTable = $('#productsTable').DataTable();
+							});
+							function toggleColumnVisibility(index){								
+								 // Get the column API object
+								var column = dataTable.column(index);		 
+								// Toggle the visibility
+								column.visible(!column.visible());
 							}
-							</style>
+							
+							</script>
+
 						</div>
 						<div class = "col-lg-12">
 							<table class="table table-hover nowrap" id="productsTable" width="100%">
@@ -776,9 +777,9 @@
 						</div>
 					</div>
 					<script>
-						$(function () {
+						/*$(function () {
 							dataTable = $('#productsTable').DataTable();
-						});
+						});*/
 					</script>
 					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-5">
