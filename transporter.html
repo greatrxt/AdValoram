@@ -805,7 +805,7 @@
 			}
 		};
 		
-		request.open ("GET", "http://173.212.200.188:8080/AdValoramAdmin/location", true);
+		request.open ("GET", base_url + "/AdValoramAdmin/location", true);
 		request.send();
 	}
 	
@@ -853,9 +853,9 @@
 		};
 		
 		if(transporterId < 0){
-			request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/transporter", true);
+			request.open ("POST", base_url + "/AdValoramAdmin/transporter", true);
 		} else {
-			request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/transporter/" + transporterId, true);
+			request.open ("PUT", base_url + "/AdValoramAdmin/transporter/" + transporterId, true);
 		}
 		
 		request.setRequestHeader("content-type", "application/json");
@@ -868,7 +868,7 @@
 		if(getParameterByName('id')!=null){
 			transporterId = getParameterByName('id');
 			document.getElementById('transporterTitle').innerHTML  = "Edit Transporter";
-			$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/transporter/"+transporterId, function(data){
+			$.getJSON(base_url + "/AdValoramAdmin/common/transporter/"+transporterId, function(data){
 				var result = data.result;
 				if(result!='error'){
 					var transporter = result[0];

@@ -833,7 +833,7 @@
 		if(getParameterByName('id')!=null){
 			employeeId = getParameterByName('id');
 			document.getElementById('employeeTitle').innerHTML  = "Edit Employee";
-			$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/employee/"+employeeId, function(data){
+			$.getJSON(base_url + "/AdValoramAdmin/common/employee/"+employeeId, function(data){
 				var result = data.result;
 				if(result!='error'){
 					var employee = result[0];
@@ -942,9 +942,9 @@
 		};
 		
 		if(employeeId < 0){
-			request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/employee", true);
+			request.open ("POST", base_url + "/AdValoramAdmin/employee", true);
 		} else {
-			request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/employee/" + employeeId, true);
+			request.open ("PUT", base_url + "/AdValoramAdmin/employee/" + employeeId, true);
 		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(employee));

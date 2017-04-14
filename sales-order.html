@@ -111,6 +111,7 @@
 
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
+	<script src="js/common-sales.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
@@ -748,7 +749,7 @@
 								<div class = "col-lg-6">	
 									<div class="form-group">
 										<label for="salesOrderRevisionNumber">Sales Order Revision Number</label>
-										<input class="form-control" id="salesOrderRevisionNumber" type="text" readonly>
+										<input class="form-control" id="salesOrderRevisionNumber" type="text" readonly value = "0">
 									</div>
 								</div>
 								<div class = "col-lg-6">	
@@ -756,17 +757,13 @@
 										<label for="salesOrderDate">Sales Order Date</label>
 										<input class="form-control" id="salesOrderDate" type="text" readonly>
 									</div>
+
 								</div>
 							</div>
 							
 							<div class="form-group">
                                 <label for="clientName">Client Name</label>
 								<select class="form-control" id="clientName">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
 								</select>
                             </div>
 							
@@ -791,13 +788,8 @@
                             </div>
 							
 							<div class="form-group">
-                                <label for="referredBy">Referred By</label>
-								<select class="form-control" id="referredBy">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+                                <label for="referredByEmployee">Referred By</label>
+								<select class="form-control" id="referredByEmployee">
 								</select>
                             </div>
 							
@@ -807,27 +799,28 @@
 						<div class = "col-lg-12">
 							<div class="form-group" >
 								<label class="form-control-label" for="productSize">Sizes</label>
-                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked onclick = "toggleColumnVisibility(4)">28
-								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px" checked onclick = "toggleColumnVisibility(5)">30
-								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px" checked onclick = "toggleColumnVisibility(6)">32
-								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px" checked onclick = "toggleColumnVisibility(7)">34
-								<input id="productSize36" name = "productSize" type="checkbox" value="36" style="margin:10px" checked onclick = "toggleColumnVisibility(8)">36
-								<input id="productSize38" name = "productSize" type="checkbox" value="38" style="margin:10px" checked onclick = "toggleColumnVisibility(9)">38
-								<input id="productSize40" name = "productSize" type="checkbox" value="40" style="margin:10px" checked onclick = "toggleColumnVisibility(10)">40
-								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px" checked onclick = "toggleColumnVisibility(11)">42
-								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px" checked onclick = "toggleColumnVisibility(12)">44
-								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px" checked onclick = "toggleColumnVisibility(13)">46
-								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px" checked onclick = "toggleColumnVisibility(14)">48
+                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked onclick = "toggleColumnVisibility(4, this)">28
+								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px" checked onclick = "toggleColumnVisibility(5, this)">30
+								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px" checked onclick = "toggleColumnVisibility(6, this)">32
+								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px" checked onclick = "toggleColumnVisibility(7, this)">34
+								<input id="productSize36" name = "productSize" type="checkbox" value="36" style="margin:10px" checked onclick = "toggleColumnVisibility(8, this)">36
+								<input id="productSize38" name = "productSize" type="checkbox" value="38" style="margin:10px" checked onclick = "toggleColumnVisibility(9, this)">38
+								<input id="productSize40" name = "productSize" type="checkbox" value="40" style="margin:10px" checked onclick = "toggleColumnVisibility(10, this)">40
+								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px" checked onclick = "toggleColumnVisibility(11, this)">42
+								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px" checked onclick = "toggleColumnVisibility(12, this)">44
+								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px" checked onclick = "toggleColumnVisibility(13, this)">46
+								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px" checked onclick = "toggleColumnVisibility(14, this)">48
                             </div>
 							<script>
 							$(document).ready(function () {
 								dataTable = $('#productsTable').DataTable();
 							});
-							function toggleColumnVisibility(index){								
+							function toggleColumnVisibility(index, element){								
 								 // Get the column API object
 								var column = dataTable.column(index);		 
 								// Toggle the visibility
-								column.visible(!column.visible());
+								//column.visible(!column.visible());
+								column.visible(element.checked);
 							}
 							
 							</script>
@@ -948,7 +941,7 @@
 
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createCustomer()">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createSalesOrder()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
@@ -964,6 +957,81 @@
 </section>
 
 <script>
+	$(window).load(function() {
+		document.getElementById('salesOrderDate').value = print_today();
+	});
+	var salesOrderId = -1;
+	function createSalesOrder(){
+		var salesOrder = new Object();
+		
+		//salesOrder.salesOrderId = document.getElementById('salesOrderId').value;
+		//salesOrder.salesOrderRevisionNumber = document.getElementById('salesOrderRevisionNumber').value;
+		
+		salesOrder.purchaseOrderReference = document.getElementById('purchaseOrderReference').value;
+		
+		var clientName = document.getElementById('clientName');
+		salesOrder.linkedCustomer = clientName.value;
+		
+		var employeeName = document.getElementById('referredByEmployee');
+		salesOrder.referredByEmployee = employeeName.value;
+		
+		salesOrder.clientNameOnSalesOrderDate = clientName.options[clientName.selectedIndex].text
+		salesOrder.clientBillingAddressOnSalesOrderDate = document.getElementById('billingAddress').value;
+		salesOrder.clientDeliveryAddressOnSalesOrderDate = document.getElementById('deliveryAddress').value;
+		salesOrder.clientCityOnSalesOrderDate = document.getElementById('city').value;
+		salesOrder.clientDistrictOnSalesOrderDate = document.getElementById('district').value;
+		salesOrder.clientStateOnSalesOrderDate = document.getElementById('state').value;
+		salesOrder.clientPinCodeOnSalesOrderDate = document.getElementById('pinCode').value;
+		salesOrder.clientContactPersonOnSalesOrderDate = document.getElementById('contactPerson').value;
+		salesOrder.clientContactNumberOnSalesOrderDate = document.getElementById('contactNumber').value;
+		salesOrder.clientEmailAddressOnSalesOrderDate = document.getElementById('emailAddress').value;
+		
+		salesOrder.markDownOnSalesOrderDate = document.getElementById('markDown').value;
+		salesOrder.cashDiscountOnSalesOrderDate = document.getElementById('cashDiscount').value;
+		salesOrder.promptPaymentDiscountOnSalesOrderDate = document.getElementById('promptPaymentDiscount').value;
+		salesOrder.specialDiscountOnSalesOrderDate = document.getElementById('specialDiscount').value;
+		
+		salesOrder.notes = document.getElementById('notes').value;
+		
+		salesOrder.productList = productList;
+		console.log(JSON.stringify(salesOrder));
+		
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			console.log(request.readyState+" " + request.status)
+			if(request.readyState == 4 && request.status == 200){
+				var response = JSON.parse(request.response);
+				if(response.result == "success"){
+					var uploadDocuments = document.getElementById("uploadDocuments");
+					for(var f = 0; f < uploadDocuments.files.length; f++){
+					
+						var formData = new FormData();
+						formData.append('file', uploadDocuments.files[f]);
+
+							$.ajax({
+							  url: base_url + '/AdValoramAdmin/upload/salesOrder/' + response.objectId,
+							  type: 'POST',
+							  processData: false, // important
+							  contentType: false, // important
+							  dataType : '*',
+							  data: formData
+						});
+					
+					}
+					//window.location = "landing-product.html";
+				}
+			}
+		};
+		
+		if(salesOrderId < 0){
+			request.open ("POST", base_url + "/AdValoramAdmin/salesOrder", true);
+		} else {
+			request.open ("PUT", base_url + "/AdValoramAdmin/salesOrder/" + salesOrderId, true);
+		}
+		request.setRequestHeader("content-type", "application/json");
+		request.send(JSON.stringify(salesOrder));
+	}
+	
 	var productList = [];
 	function saveProductAndClose(){
 		var product = new Object();
@@ -1003,7 +1071,7 @@
 	}
 	
 	function refreshProductsTable(){
-		$('#productsTable').dataTable().fnDestroy()
+		$('#productsTable').dataTable().fnDestroy();
 		var tbody = '';
 		for(var p = 0; p < productList.length; p++){
 			var product = productList[p];
@@ -1011,23 +1079,48 @@
 				"<td>" + product.id + "</td>"+
 				"<td>" + product.styleCode + "</td>"+
 				"<td>" + product.colorCode + "</td>"+
-				"<td>" + product.gender + "</td>"+
-				"<td>" + product.quantityForSize28 + "</td>" +
-				"<td>" + product.quantityForSize30 + "</td>" +
-				"<td>" + product.quantityForSize32 + "</td>" +
-				"<td>" + product.quantityForSize34 + "</td>" +
-				"<td>" + product.quantityForSize36 + "</td>" +
-				"<td>" + product.quantityForSize38 + "</td>" +
-				"<td>" + product.quantityForSize40 + "</td>" +
-				"<td>" + product.quantityForSize42 + "</td>" +
-				"<td>" + product.quantityForSize44 + "</td>" +
-				"<td>" + product.quantityForSize46 + "</td>" +
-				"<td>" + product.quantityForSize48 + "</td>" +
-				"<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
+				"<td>" + product.gender + "</td>";
+				
+				tbody+="<td>" + product.quantityForSize28 + "</td>"+
+				"<td>" + product.quantityForSize30 + "</td>"+
+				"<td>" + product.quantityForSize32 + "</td>"+
+				"<td>" + product.quantityForSize34 + "</td>"+
+				"<td>" + product.quantityForSize36 + "</td>"+
+				"<td>" + product.quantityForSize38 + "</td>"+
+				"<td>" + product.quantityForSize40 + "</td>"+
+				"<td>" + product.quantityForSize42 + "</td>"+
+				"<td>" + product.quantityForSize44 + "</td>"+
+				"<td>" + product.quantityForSize46 + "</td>"+
+				"<td>" + product.quantityForSize48 + "</td>";
+				
+				/*if(document.getElementById('productSize28').checked) tbody+="<td>" + product.quantityForSize28 + "</td>";
+				if(document.getElementById('productSize30').checked) tbody+="<td>" + product.quantityForSize30 + "</td>";
+				if(document.getElementById('productSize32').checked) tbody+="<td>" + product.quantityForSize32 + "</td>";
+				if(document.getElementById('productSize34').checked) tbody+="<td>" + product.quantityForSize34 + "</td>";
+				if(document.getElementById('productSize36').checked) tbody+="<td>" + product.quantityForSize36 + "</td>";
+				if(document.getElementById('productSize38').checked) tbody+="<td>" + product.quantityForSize38 + "</td>";
+				if(document.getElementById('productSize40').checked) tbody+="<td>" + product.quantityForSize40 + "</td>";
+				if(document.getElementById('productSize42').checked) tbody+="<td>" + product.quantityForSize42 + "</td>";
+				if(document.getElementById('productSize44').checked) tbody+="<td>" + product.quantityForSize44 + "</td>";
+				if(document.getElementById('productSize46').checked) tbody+="<td>" + product.quantityForSize46 + "</td>";
+				if(document.getElementById('productSize48').checked) tbody+="<td>" + product.quantityForSize48 + "</td>";*/
+				
+				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
 				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
 		}
 		$('#productsTableBody').html(tbody);	
 		dataTable = $('#productsTable').DataTable();	
+			dataTable.column(4).visible(document.getElementById('productSize28').checked);
+			dataTable.column(5).visible(document.getElementById('productSize30').checked);
+			dataTable.column(6).visible(document.getElementById('productSize32').checked);
+			dataTable.column(7).visible(document.getElementById('productSize34').checked);
+			dataTable.column(8).visible(document.getElementById('productSize36').checked);
+			dataTable.column(9).visible(document.getElementById('productSize38').checked);
+			dataTable.column(10).visible(document.getElementById('productSize40').checked);
+			dataTable.column(11).visible(document.getElementById('productSize42').checked);
+			dataTable.column(12).visible(document.getElementById('productSize44').checked);
+			dataTable.column(13).visible(document.getElementById('productSize46').checked);
+			dataTable.column(14).visible(document.getElementById('productSize48').checked);
 		if(productList.length > 0){
 			$('#btnPreview').show();
 		} else {

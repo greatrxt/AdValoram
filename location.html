@@ -668,7 +668,7 @@
 						if(getParameterByName('id')!=null){
 							locationId = getParameterByName('id');
 							document.getElementById('locationTitle').innerHTML  = "Edit Location";
-							$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/location/"+locationId, function(data){
+							$.getJSON(base_url + "/AdValoramAdmin/common/location/"+locationId, function(data){
 								var result = data.result;
 								if(result!='error'){
 									var location = result[0];
@@ -726,9 +726,9 @@
 						location.country = selectCountry;
 						
 						if(locationId < 0){
-							request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/location", true);
+							request.open ("POST", base_url + "/AdValoramAdmin/location", true);
 						} else {
-							request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/location/"+locationId, true);
+							request.open ("PUT", base_url + "/AdValoramAdmin/location/"+locationId, true);
 						}
 						
 						request.setRequestHeader("content-type", "application/json");

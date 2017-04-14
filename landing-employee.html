@@ -113,6 +113,7 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
+	<script src="js/common.js"></script>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 	<script src="js/JsBarcode.all.min.js"></script>
 	<!--For Electron--><script>if (window.module) module = window.module;</script>
@@ -459,7 +460,7 @@
 		console.log( 'An error has been reported by DataTables: ', message );
 	}).DataTable();
 	
-	$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/employee", function(data){
+	$.getJSON(base_url + "/AdValoramAdmin/common/employee", function(data){
 		 	var dataTable = $('#displayEmployeesTable').DataTable();			
 			if(data.result == 'error'){
 				return;

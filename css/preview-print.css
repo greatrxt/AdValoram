@@ -1,0 +1,9 @@
+#hiderow,
+.delete {
+  display: none;
+}
+@media print {
+  .no-print {
+    display: none;
+  }
+}
