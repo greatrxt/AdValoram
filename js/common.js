@@ -1,6 +1,6 @@
 
 	
-	//var base_url = http://173.212.200.188:8080;
+	//var base_url = "http://173.212.200.188:8080";
 	// DEFINE ALL GLOBAL VARIABLES HERE	
 	var gendersArray = null;
 	var seasonsArray = null;
@@ -18,7 +18,9 @@
 			selectbox.remove(i);
 		}
 	}
-	
+	function numberWithCommas(x) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
 	function getParameterByName(name, url) {
 		if (!url) {
 		  url = window.location.href;
@@ -48,6 +50,7 @@
 		if(currentTabIndex > 0){
 			currentTabIndex = currentTabIndex - 1;
 		}
+		tabFunction(currentTabIndex);
     });
 	
 	
@@ -58,6 +61,7 @@
 		if(currentTabIndex < ($('.nav-tabs-horizontal >ul >li').length - 1)){
 			currentTabIndex = currentTabIndex + 1;
 		}
+		tabFunction(currentTabIndex);
     });
 	
 	if(document.getElementById('availableSizes')!=null){
@@ -172,7 +176,7 @@
 	
 	if(document.getElementById('unitOfMeasurement')!=null){
 			//load productCategory
-		 $.getJSON(base_url + "/AdValoramAdmin/common/product_category", function(data){
+		 $.getJSON(base_url + "/AdValoramAdmin/common/productCategory", function(data){
 				if(data.result=='error'){
 					return;
 				 }
@@ -229,7 +233,10 @@
 					opt.innerHTML = distributor.companyName;
 					distributorSelect.appendChild(opt);
 			}
+			distributorSelect.selectedIndex = -1;
 			});
+			
+			
 	}
 	
 	var brokerArray = null;
@@ -255,6 +262,7 @@
 				opt.innerHTML = broker.companyName;
 				brokerSelect.appendChild(opt);
 			}
+			brokerSelect.selectedIndex = -1;
 		});
 	}
 	
@@ -274,6 +282,7 @@
 						opt.innerHTML = transporter.companyName;
 						transporterSelect.appendChild(opt);
 				}
+				transporterSelect.selectedIndex = -1;
 			});
 	}
 	});

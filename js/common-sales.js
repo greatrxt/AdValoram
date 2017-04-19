@@ -1,29 +1,34 @@
 $(window).load(function() {
 	getClients();
 	getNextSalesOrderId();
+	getNextPackingListId();
 	getProductData();
 	getEmployees();
 });
+
+var employeeArray;
+var customerArray;
 
 function getEmployees(){
 		if(document.getElementById('referredByEmployee')!=null){
 			//load employee
 		 $.getJSON(base_url + "/AdValoramAdmin/common/employee", function(data){
-			 if(data.result=='error'){
+			if(data.result=='error'){
 				return;
-			 }
-				var employeeArray = data.result;
-				var employeeSelect = document.getElementById('referredByEmployee');
-				removeOptions(employeeSelect);
-				for(var i = 0; i < employeeArray.length; i++){
-					var employee = employeeArray[i];
-						var opt = document.createElement('option');
-						opt.value = employee.id;
-						opt.innerHTML = employee.firstName + " " + employee.lastName;
-						employeeSelect.appendChild(opt);
-				}
-				employeeSelect.selectedIndex = -1
-			});
+			}
+			
+			employeeArray = data.result;
+			var employeeSelect = document.getElementById('referredByEmployee');
+			removeOptions(employeeSelect);
+			for(var i = 0; i < employeeArray.length; i++){
+				var employee = employeeArray[i];
+					var opt = document.createElement('option');
+					opt.value = employee.id;
+					opt.innerHTML = employee.firstName + " " + employee.lastName;
+					employeeSelect.appendChild(opt);
+			}
+			employeeSelect.selectedIndex = -1;
+		});
 	}
 }
 function print_today() {
@@ -56,13 +61,24 @@ function getNextSalesOrderId(){
 	}	
 }
 
+function getNextPackingListId(){
+	if(document.getElementById('packingListId')!=null){
+	 $.getJSON(base_url + "/AdValoramAdmin/packingList/nextid", function(data){
+			 if(data.result=='error'){
+				return;
+			 }
+		document.getElementById('packingListId').value = data.result;
+		});
+	}	
+}
+
 function getClients(){
 	if(document.getElementById('clientName')!=null){
 	 $.getJSON(base_url + "/AdValoramAdmin/customer/idNameList", function(data){
 			 if(data.result=='error'){
 				return;
 			 }
-			var customerArray = data.result;
+			customerArray = data.result;
 			var customerSelect = document.getElementById('clientName');
 			removeOptions(customerSelect);
 			for(var i = 0; i < customerArray.length; i++){

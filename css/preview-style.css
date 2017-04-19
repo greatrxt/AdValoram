@@ -11,7 +11,7 @@ body { font: 14px/1.4 Georgia, serif; }
 textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none;}
 textarea:focus {outline: none !important;border:0px solid red;box-shadow: 0 0 0px #719ECE;}
 table { border-collapse: collapse; }
-table td, table th { border: 1px solid black; padding: 5px; }
+table td, table th { border: 1px solid black; padding: 4px; }
 
 #header { height: 15px; width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px; }
 
@@ -77,3 +77,9 @@ button{background-color: #01a8fe;border-color: #01a8fe;outline: none !important;
     user-select: none;
     border: 1px solid transparent;
     border-radius: .25rem;width:150px;margin:20px 10px 0 0;color: #ffffff !important;}
+
+.green {
+	background-color:#5dc698; 
+	border-color:#5dc698;
+	width:auto;
+}

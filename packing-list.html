@@ -113,6 +113,8 @@
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
+	<script src="js/common-sales.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
 </head>
 <style>
 #packing-list-main-div{
@@ -570,6 +572,82 @@
         </div>
     </div>
 </nav>
+
+<div id="addProductModal" class="modal-outer-body">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+		<h3 style="padding:5px;font-size:15px;">Add Product</h3>
+    </div>
+    <div class="modal-body">
+		<div class="modal-left-body">
+			<table class="tg">
+			  <tr>
+				<th class="tg-yw4l"><span>ID</span></th>
+				<th class="tg-yw4l"><span>Style Code</span></th>
+				<th class="tg-yw4l postServerRequest"><span>Color Code</span></th>
+				<th class="tg-yw4l postServerRequest"><span>Gender</span></th>
+				<th class="tg-yw4l postServerRequest"><span>MRP</span></th>
+			  </tr>
+			  <tr>
+				<td class="tg-yw42"><div class="form-group"><span id = "productId">1</span></div></td>
+				<td class="tg-yw42">
+					<div class="form-group">
+						<input class="form-control" id = "productStyleCodes" type="search" list="styleCodes" placeholder="Select Style Code">
+					</div>
+
+					<datalist id="styleCodes">
+					</datalist>
+				</td>
+				<td class="tg-yw42 postServerRequest">
+					<div class="form-group">
+						<select class="form-control" id = "dropDownColorCode">
+						</select>
+					</div>
+				</td>
+				<td class="tg-yw42 postServerRequest">
+					<div class="form-group">
+						<select class="form-control" id = "dropDownGender">
+						</select>
+					</div>
+				</td>
+				<td class="tg-yw42 postServerRequest">
+					<div class="form-group">
+						<input class="form-control" type = "text" id = "textMrp" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength = "4" readonly>
+					</div>
+				</td>
+			  </tr>
+			
+			<tr class = "postServerRequest">
+				<th class="tg-yw4l"><span>Size </span></th>
+				<th class="tg-yw4l"><span>EAN Code</span></th>
+				<th class="tg-yw4l"><span>Order Quantity</span></th>
+			</tr>
+
+			<tbody id = "sizeTable" class = "postServerRequest">
+				
+			</tbody>
+
+			</table>
+		</div>
+		
+		<div class="modal-right-body postServerRequest">
+			<div class = "modal-right-body-bottom">
+				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveProductAndClose()">Save & Close</button></br>
+				<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveProductAndGoToNext()">Save & Add New</button>
+			</div>
+		</div>
+    </div>
+    <div class="modal-footer">
+		<span id="numberOfPrintCopies" style="float:left;color:#000000;padding:7px 40px 0px 35px;font-size:13px;"></span>
+      <!--<button id="closeBarCodeModal" onclick="closeBarCodeModal()">Close</button>-->
+    </div>
+  </div>
+
+</div>
+
 <section class = "page-content">
 <div class="page-content-inner">
 
@@ -579,11 +657,11 @@
                 <div class="panel-heading">
 					<h2>
 						<div class="dropdown pull-right">
-							<button id = "buttonAddProduct" type="button" class="btn btn-primary"  onclick = "changeClass();"  style = "display:none">
+							<button id = "buttonAddProduct" type="button" class="btn btn-primary"  onclick = "addProduct();"  style = "display:none">
 								Add Product
 							</button>
 							</div>
-						Create New Packing List
+						<span id = "pageTitle">Create New Packing List</span>
 					</h2>
 				</div>
 				<div class="panel-body">
@@ -597,22 +675,25 @@
 						//});
 						
 						$('#tab-billing-details').click(function(){
-							$('#buttonAddProduct').hide();
+							/*$('#buttonAddProduct').hide();
 							$("#packing-list-main-div").attr("class", "col-lg-12");
-							$("#packing-list-inv-disp").hide();
+							$("#packing-list-inv-disp").hide();*/
+							tabFunction(0);
 						});
 
 						$('#tab-add-product').click(function(){
-							$('#buttonAddProduct').show();
+							/*$('#buttonAddProduct').show();
 							$("#packing-list-main-div").attr("class", "col-lg-8");
 							$("#packing-list-inv-disp").attr("class", "col-lg-4");
-							$("#packing-list-inv-disp").show(1200);
+							$("#packing-list-inv-disp").show(1200);*/
+							tabFunction(1);
 						});
 
 						$('#tab-uploads').click(function(){
-							$('#buttonAddProduct').hide();
+							/*$('#buttonAddProduct').hide();
 							$("#packing-list-main-div").attr("class", "col-lg-12");
-							$("#packing-list-inv-disp").hide(500);
+							$("#packing-list-inv-disp").hide(500);*/
+							tabFunction(2);
 						});
 
 				});
@@ -632,13 +713,17 @@
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
-							<div class="form-group">
+						<div class="form-group">
+                                <label for="linkedSalesOrderId">Sales Order ID</label>
+                                <input class="form-control" id="linkedSalesOrderId" type="text" readonly>
+                        </div>
+						<div class="form-group">
                                 <label for="packingListId">Packing List ID</label>
                                 <input class="form-control" id="packingListId" type="text" readonly>
                             </div>
 							<div class="form-group">
                                 <label for="purchaseOrderReference">Purchase Order Reference</label>
-                                <input class="form-control" id="purchaseOrderReference" type="text" readonly>
+                                <input class="form-control" id="purchaseOrderReference" type="text">
                             </div>
 						</div>
 						
@@ -648,7 +733,7 @@
 								<div class = "col-lg-6">	
 									<div class="form-group">
 										<label for="packingListRevisionNumber">Packing List Revision Number</label>
-										<input class="form-control" id="packingListRevisionNumber" type="text" readonly>
+										<input class="form-control" id="packingListRevisionNumber" type="text" value="0" readonly>
 									</div>
 								</div>
 								<div class = "col-lg-6">	
@@ -662,11 +747,6 @@
 							<div class="form-group">
                                 <label for="clientName">Client Name</label>
 								<select class="form-control" id="clientName">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
 								</select>
                             </div>
 							
@@ -676,40 +756,28 @@
 						<div class = "col-lg-12">
 							<div class="form-group" >
 								<label class="form-control-label" for="productSize">Sizes</label>
-                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked onclick = "toggleColumnVisibility(4)">28
-								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px" checked onclick = "toggleColumnVisibility(5)">30
-								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px" checked onclick = "toggleColumnVisibility(6)">32
-								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px" checked onclick = "toggleColumnVisibility(7)">34
-								<input id="productSize36" name = "productSize" type="checkbox" value="36" style="margin:10px" checked onclick = "toggleColumnVisibility(8)">36
-								<input id="productSize38" name = "productSize" type="checkbox" value="38" style="margin:10px" checked onclick = "toggleColumnVisibility(9)">38
-								<input id="productSize40" name = "productSize" type="checkbox" value="40" style="margin:10px" checked onclick = "toggleColumnVisibility(10)">40
-								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px" checked onclick = "toggleColumnVisibility(11)">42
-								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px" checked onclick = "toggleColumnVisibility(12)">44
-								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px" checked onclick = "toggleColumnVisibility(13)">46
-								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px" checked onclick = "toggleColumnVisibility(14)">48
+                                <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked onclick = "toggleColumnVisibility(4, this)">28
+								<input id="productSize30" name = "productSize" type="checkbox" value="30" style="margin:10px" checked onclick = "toggleColumnVisibility(5, this)">30
+								<input id="productSize32" name = "productSize" type="checkbox" value="32" style="margin:10px" checked onclick = "toggleColumnVisibility(6, this)">32
+								<input id="productSize34" name = "productSize" type="checkbox" value="34" style="margin:10px" checked onclick = "toggleColumnVisibility(7, this)">34
+								<input id="productSize36" name = "productSize" type="checkbox" value="36" style="margin:10px" checked onclick = "toggleColumnVisibility(8, this)">36
+								<input id="productSize38" name = "productSize" type="checkbox" value="38" style="margin:10px" checked onclick = "toggleColumnVisibility(9, this)">38
+								<input id="productSize40" name = "productSize" type="checkbox" value="40" style="margin:10px" checked onclick = "toggleColumnVisibility(10, this)">40
+								<input id="productSize42" name = "productSize" type="checkbox" value="42" style="margin:10px" checked onclick = "toggleColumnVisibility(11, this)">42
+								<input id="productSize44" name = "productSize" type="checkbox" value="44" style="margin:10px" checked onclick = "toggleColumnVisibility(12, this)">44
+								<input id="productSize46" name = "productSize" type="checkbox" value="46" style="margin:10px" checked onclick = "toggleColumnVisibility(13, this)">46
+								<input id="productSize48" name = "productSize" type="checkbox" value="48" style="margin:10px" checked onclick = "toggleColumnVisibility(14, this)">48
                             </div>
 							<script>
-							/*$(document).ready(function () {
-								var f = function () {
-										var index = $(":checkbox").index(this) + 5;
-										//$(".table table-hover nowrap > * > * > :nth-child(" + index + ")").toggleClass('hidden');
-										//$('td:nth-child('+ index +'),th:nth-child(' + index + ')').toggleClass('hidden');
-									};
-
-								$(":checkbox").click(f);
-							});
-
-							/*function hideColumn(){
-								$('td:nth-child(5),th:nth-child(2)').hide();
-							}*/
 							$(document).ready(function () {
 								dataTable = $('#productsTable').DataTable();
 							});
-							function toggleColumnVisibility(index){								
+							function toggleColumnVisibility(index, element){								
 								 // Get the column API object
 								var column = dataTable.column(index);		 
 								// Toggle the visibility
-								column.visible(!column.visible());
+								//column.visible(!column.visible());
+								column.visible(element.checked);
 							}
 							
 							</script>
@@ -729,6 +797,7 @@
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										Size
 										</th>
+										<th rowspan = "2">Action</th>
 									</tr>
 									<tr>
 										<th>28</th>
@@ -756,6 +825,7 @@
 											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										Size
 										</th>
+										<th rowspan = "2">Action</th>
 									</tr>
 									<tr>
 										<th>28</th>
@@ -771,42 +841,12 @@
 										<th>48</th>
 									</tr>
 								</tfoot>
-									<tbody id = 'colorCodesTableBody'>
+									<tbody id = 'productsTableBody'>
 								</tbody>
 							</table>
 						</div>
 					</div>
-					<script>
-						/*$(function () {
-							dataTable = $('#productsTable').DataTable();
-						});*/
-					</script>
 					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
-						<div class = "col-lg-5">
-							<div class="form-group">
-                                <label for="markDown">Mark Down (%)</label>
-                                <input class="form-control" id="markDown" type="number" step="0.01" readonly>
-                            </div>
-							<div class="form-group">
-                                <label for="promptPaymentDiscount">Upfront/Prompt Payment Discount</label>
-                                <input class="form-control" id="promptPaymentDiscount" type="number"readonly>
-                            </div>
-						
-						</div>
-						<div class = "col-lg-5" style="padding-left:100px;">
-							
-							<div class="form-group">
-                                <label for="cashDiscount">Cash Discount (%)</label>
-                                <input class="form-control" id="cashDiscount"  type="number" readonly>
-                            </div>
-							
-							<div class="form-group">
-                                <label for="specialDiscount">Special Discount (%)</label>
-                                <input class="form-control" id="specialDiscount" type="text" readonly>
-                            </div>
-						</div>
-					</div>
-					<div class="tab-pane" id="tab4" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-10">
 							<div class="form-group">
 								<label class="form-control-label" for="notes">Notes</label>
@@ -825,10 +865,11 @@
 
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createCustomer()">Save</button>
+							<button type="button" class="btn width-150 btn-primary" style="margin:10px" id = "btnSave" onclick="createPackingList()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnPreview" style="margin:10px; background-color:#5dc698; border-color:#5dc698; display:none" onclick = "showPreview();">Preview</button>
 						</div>
                     </div>
 				</div>
@@ -889,78 +930,636 @@
 </script>
 
 <script>
+
+	function tabFunction(tabId){
+		if(tabId == 0){
+			$("#packing-list-main-div").attr("class", "col-lg-12");
+			$("#packing-list-inv-disp").hide();
+		} else if(tabId == 1){
+			$('#buttonAddProduct').show();
+			$("#packing-list-main-div").attr("class", "col-lg-8");
+			$("#packing-list-inv-disp").attr("class", "col-lg-4");
+			$("#packing-list-inv-disp").show(1200);
+		} else if(tabId == 2){
+			$('#buttonAddProduct').hide();
+			$("#packing-list-main-div").attr("class", "col-lg-12");
+			$("#packing-list-inv-disp").hide(500);
+		}
+	}
+	
 	function goBackToLandingPage(){
 		window.location = "landing-packing-list.html";
 	}
-	function createCustomer(){
+	
+	var balanceQuantityForCurrentPackingList = {};
+	var salesOrderId = -1;
+	//packing list ID = sales order ID
+	$(window).load(function() {
+		document.getElementById('packingListDate').value = print_today();		
+		//retrieve corresponding sales order
+		if(getParameterByName('salesOrderId')!=null 
+			|| getParameterByName('packingListId')!=null){
+			
+			document.getElementById('buttonAddProduct').style.display = "none" ;
+			
+			salesOrderId = getParameterByName('salesOrderId');			
+			packingListId = getParameterByName('packingListId');
+			
+			var url;
+			if(salesOrderId!=null){
+				url = base_url + "/AdValoramAdmin/salesOrder/"+salesOrderId + "/linkedPackingLists";
+			} else if(packingListId!=null){
+				url = base_url + "/AdValoramAdmin/packingList/"+packingListId + "/linkedSalesOrder";
+				document.getElementById("pageTitle").innerHTML = "Edit Packing List"
+			}
+			$.getJSON(url, function(data){
+			var result = data.result;
+			if(result!='error'){
+				var salesOrder = result;
+				salesOrderId = salesOrder.salesOrderId;
+				if(salesOrder.salesOrderId < 0){
+					processUnlinkedPackingList(salesOrder.packingList);
+					return;
+				}
+				if(salesOrder.status == "OPEN"){
+					window.location = "sales-order.html?id=" + salesOrderId;
+				} 
+				document.getElementById('linkedSalesOrderId').value = salesOrder.salesOrderId;
+				document.getElementById('purchaseOrderReference').value = salesOrder.purchaseOrderReference;				
+				document.getElementById("purchaseOrderReference").readOnly = true;
 
-		var customer = new Object();	
-		customer.companyName = document.getElementById("companyName").value;
-		
-		if (document.getElementById("radioRetailer").checked) {
-			customer.customerType = document.getElementById("radioRetailer").value;
-		} else if (document.getElementById("radioDistributor").checked) {
-			customer.customerType = document.getElementById("radioDistributor").value;
-		} else if (document.getElementById("radioBroker").checked) {
-			customer.customerType = document.getElementById("radioBroker").value;
+				var waitToSelectClient = setInterval(function(){
+					if(customerArray!=null){
+						var clientName = document.getElementById("clientName");
+						for(var i = 0; i < clientName.length; i++){
+							if(clientName.options[i].value == salesOrder.linkedCustomer.id){
+								clientName.selectedIndex = i;
+								clientName.disabled = true;
+								clearInterval(waitToSelectClient);
+								break;
+							}
+						}
+					}
+				}, 100);
+				
+				
+				//entry
+				var entries = salesOrder.entry;
+				var minSize = 999;
+				var maxSize = -1;
+				//var salesOrderEntries = [];
+				var salesOrderEntries = {};
+				
+				var sizeArray = [];
+				for(var s = 0; s < entries.length; s++){
+					var entryJson = entries[s];
+					var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
+					if(size < minSize){
+						minSize = size;
+					}
+					if(size > maxSize){
+						maxSize = size;
+					}
+					if(sizeArray.indexOf(size) == -1){
+						sizeArray.push(size);
+					}
+
+					var entryId = entryJson.entryId;
+					//var salesOrderEntry = salesOrderEntries[entryId - 1];
+					var salesOrderEntry = salesOrderEntries[entryId];
+					var balanceForCurrentEntry = balanceQuantityForCurrentPackingList[entryId];
+					if(salesOrderEntry == null){
+						salesOrderEntry = new Object();
+						salesOrderEntry.id = entryJson.entryId;
+						salesOrderEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+						salesOrderEntry.mrp = entryJson.stockKeepingUnit.mrp;
+						salesOrderEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
+						salesOrderEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
+						salesOrderEntry.colorCode = entryJson.stockKeepingUnit.colorCode.colorCode;
+						salesOrderEntries[salesOrderEntry.id] = salesOrderEntry;
+						balanceForCurrentEntry = {};
+						balanceQuantityForCurrentPackingList[salesOrderEntry.id] = balanceForCurrentEntry;	//contains sales order entries initially
+					} else {
+						//compare
+						if(salesOrderEntry.styleCode != entryJson.stockKeepingUnit.styleCode){
+							console.log("ERROR. Color code does not match " + entryJson.entryId);
+							return;
+						}
+						if(salesOrderEntry.gender != entryJson.stockKeepingUnit.genderCode.gender){
+							console.log("ERROR. genderCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(salesOrderEntry.colorCode != entryJson.stockKeepingUnit.colorCode.colorCode){
+							console.log("ERROR. colorCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(salesOrderEntry.mrp != entryJson.stockKeepingUnit.mrp){
+							console.log("ERROR. mrp does not match " + entryJson.entryId);
+							return;
+						}
+					}
+					
+					var key = "quantityForSize" + size;
+					salesOrderEntry[key] = entryJson.quantity;
+					balanceForCurrentEntry[key] = entryJson.quantity;
+				}
+				
+				for(var s = 28; s <= 48; s=s+2){
+					document.getElementById('productSize'+s).checked = false;
+					document.getElementById('productSize'+s).disabled = true;
+				}
+				
+				for(var s = 0; s < sizeArray.length; s++){
+					document.getElementById('productSize'+sizeArray[s]).checked = true;
+				}
+				
+				var sorted_keys = Object.keys(salesOrderEntries).sort();
+				for(var p = 0; p < sorted_keys.length; p++){
+					var salesOrderEntry = salesOrderEntries[sorted_keys[p]];
+					productList.push(salesOrderEntry);			//contains sales order entries initially
+				}
+				
+				//check out existing entries in packing list. Substract from corresponding entries in Sales Order to find balance quantity
+				/**
+				Balance Quantity 
+				*/
+				var linkedPackingListsJson = salesOrder.linkedPackingLists;
+				var linkedPackingLists= [];
+				for(var p = 0; p < linkedPackingListsJson.length; p++){
+					var packingListJson = linkedPackingListsJson[p];
+					if(parseInt(packingListId) == packingListJson.packingListId){
+						document.getElementById("packingListRevisionNumber").value = packingListJson.packingListRevisionNumber;
+						document.getElementById("packingListId").value = packingListJson.packingListId;
+						document.getElementById('notes').value = packingListJson.notes;
+						if(packingListJson.status == "OPEN" || packingListJson.status == "CONFIRMED"){
+							$('#btnPreview').show();
+						} else {
+							$('#btnPreview').hide();
+						}
+					}
+					
+					var linkedPackingList = new Object();
+					linkedPackingLists.push(linkedPackingList);
+					
+					linkedPackingList.packingListId = packingListJson.packingListId;
+					linkedPackingList.clientNameOnPackingListDate = packingListJson.clientNameOnPackingListDate;
+					
+					linkedPackingList[packingListJson.packingListId] = linkedPackingList;
+					
+					var packingListEntryJson = packingListJson.entry;
+					var packingListEntries = [];
+					linkedPackingList.packingListEntries = packingListEntries;
+					
+					//packing list entries start
+					for(var s = 0; s < packingListEntryJson.length; s++){
+						var entryJson = packingListEntryJson[s];
+						var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
+
+						var entryId = entryJson.entryId;
+						var packingListEntry = packingListEntries[entryId];
+						if(packingListEntry == null){
+							packingListEntry = new Object();
+							packingListEntry.id = entryJson.entryId;
+							packingListEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+							packingListEntry.mrp = entryJson.stockKeepingUnit.mrp;
+							packingListEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
+							packingListEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
+							packingListEntry.colorCode = entryJson.stockKeepingUnit.colorCode.colorCode;
+							packingListEntries[packingListEntry.id] = packingListEntry;
+						} else {
+							//compare
+							if(packingListEntry.styleCode != entryJson.stockKeepingUnit.styleCode){
+								console.log("ERROR. Color code does not match " + entryJson.entryId);
+								return;
+							}
+							if(packingListEntry.gender != entryJson.stockKeepingUnit.genderCode.gender){
+								console.log("ERROR. genderCode does not match " + entryJson.entryId);
+								return;
+							}
+							if(packingListEntry.colorCode != entryJson.stockKeepingUnit.colorCode.colorCode){
+								console.log("ERROR. colorCode does not match " + entryJson.entryId);
+								return;
+							}
+							if(packingListEntry.mrp != entryJson.stockKeepingUnit.mrp){
+								console.log("ERROR. mrp does not match " + entryJson.entryId);
+								return;
+							}
+						}
+						
+						var key = "quantityForSize" + size;
+						packingListEntry[key] = entryJson.quantity;	
+
+					}
+					
+					//----- end
+				}
+				
+				var salesOrderKeys = Object.keys(salesOrderEntries).sort();
+				//to calculate balance so as to consider entries in other packing lists
+				for(var l = 0; l < linkedPackingLists.length; l++){
+					var pl = linkedPackingLists[l];
+					var ple = pl.packingListEntries;
+					
+					//var packingListEntryKeys = Object.keys(ple).sort();
+					//for(var e = 0; e < packingListEntryKeys.length; e++){
+						//var index = packingListEntryKeys[e];
+					for(var e = 0; e < salesOrderKeys.length; e++){	//always use sales order index. Sometimes packing list entries do not contain an index if all quantity for entry is Zero
+						var index = salesOrderKeys[e];
+						var packingListEntry = ple[index];
+						var balanceForCurrentEntry = balanceQuantityForCurrentPackingList[index];
+						for(var s = 0; s < sizeArray.length; s++){
+							var size = sizeArray[s];
+							var key = "quantityForSize" + size;
+							if(productList[(index - 1)][key]!=null){
+								if(packingListEntry[key]!=null){
+									if(parseInt(packingListId) > 0){	//EDITING AN EXISTING PACKING LIST
+										//packingListId  > 0 while editing existing packing list. Populate table with packing list entries instead of balance 
+										if(parseInt(packingListId) == pl.packingListId){
+											productList[(index - 1)][key] = packingListEntry[key];
+										} else {
+											balanceForCurrentEntry[key] = parseInt(balanceForCurrentEntry[key]) - packingListEntry[key];
+										}
+									} else {	// CREATING NEW PACKING LIST
+										//populate table with balance only while creating
+										productList[(index - 1)][key] = productList[(index - 1)][key] - packingListEntry[key];
+										balanceForCurrentEntry[key] = parseInt(balanceForCurrentEntry[key]) - packingListEntry[key];
+									}
+								}
+							}
+						}
+					}					
+				}
+				refreshProductsTable();
+				dataTable.column(15).nodes().each(function (cell, i) {
+					cell.innerHTML = "";
+				});
+			}
+		});
+			
 		}
-		customer.linkedDistributor = document.getElementById("linkedDistributor").value;
-		customer.linkedBroker = document.getElementById("linkedBroker").value;
-		customer.billingAddress = document.getElementById("billingAddress").value;
-		customer.deliveryAddress = document.getElementById("deliveryAddress").value;
-		customer.city = document.getElementById("city").value;
-		customer.pinCode = document.getElementById("pinCode").value;
-		customer.contactPerson = document.getElementById("contactPerson").value;
-		customer.contactNumber	 = document.getElementById("contactNumber").value;
-		customer.emailAddress = document.getElementById("emailAddress").value;
-		customer.markDown = document.getElementById("markDown").value;
-		customer.cashDiscount = document.getElementById("cashDiscount").value;
-		customer.promptPaymentDiscount = document.getElementById("promptPaymentDiscount").value;
-		customer.specialDiscount = document.getElementById("specialDiscount").value;
-		customer.distributorCommission = document.getElementById("distributorCommission").value;
-		customer.brokerCommission = document.getElementById("brokerCommission").value;
-		customer.creditPeriod = document.getElementById("creditPeriod").value;
-		customer.creditLimit = document.getElementById("creditLimit").value;
-		customer.paymentTerms = document.getElementById("paymentTerms").value;
-		customer.financialGrouping = document.getElementById("financialGrouping").value;
-		customer.vatTinNumber = document.getElementById("vatTinNumber").value;
-		customer.cstTinNumber = document.getElementById("cstTinNumber").value;
-		customer.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
-		customer.panNumber = document.getElementById("panNumber").value;
+	});
+	
+	//special case where user has directly created a Packing list without any sales order
+	function processUnlinkedPackingList(packingList){
+		var packingListJson = packingList[0];
+
+		document.getElementById("linkedSalesOrderId").value = "Not Applicable";
+		document.getElementById("packingListRevisionNumber").value = packingListJson.packingListRevisionNumber;
+		document.getElementById("packingListId").value = packingListJson.packingListId;
+		document.getElementById('notes').value = packingListJson.notes;
 		
-		vatIsApplicable = document.getElementById("vatIsApplicable").checked;
-		cstIsApplicable = document.getElementById("cstIsApplicable").checked;
-		gstIsApplicable = document.getElementById("gstIsApplicable").checked;
-		octroiLbtEntryTaxIsApplicable = document.getElementById("octroiLbtEntryTaxIsApplicable").checked;
 		
-		if(cstIsApplicable) customer.cstRateApplicable = document.getElementById("cstRateApplicable").value;
-		if(vatIsApplicable) customer.vatRateApplicable = document.getElementById("vatRateApplicable").value;
-		if(cstIsApplicable) customer.cstRateAgainstFormC = document.getElementById("cstRateAgainstFormC").value;
-		if(gstIsApplicable) customer.gstRateApplicable = document.getElementById("gstRateApplicable").value;
-		if(octroiLbtEntryTaxIsApplicable) customer.octroiLbtEntryTaxApplicable = document.getElementById("octroiLbtEntryTaxApplicable").value;
+		var linkedPackingList = new Object();					
+		linkedPackingList.packingListId = packingListJson.packingListId;
+		linkedPackingList.clientNameOnPackingListDate = packingListJson.clientNameOnPackingListDate;
+		if(packingListJson.status == "OPEN" || packingListJson.status == "CONFIRMED"){
+			$('#btnPreview').show();
+		} else {
+			$('#btnPreview').hide();
+		}
+		linkedPackingList[packingListJson.packingListId] = linkedPackingList;
 		
-		customer.linkedTransporter = document.getElementById("linkedTransporter").value;
+		var packingListEntryJson = packingListJson.entry;
+		var packingListEntries = [];
+		linkedPackingList.packingListEntries = packingListEntries;
 		
-		customer.transportContactPerson = document.getElementById("transportContactPerson").value;
-		customer.transportContactNumber = document.getElementById("transportContactNumber").value;
-		customer.transportEmailAddress = document.getElementById("transportEmailAddress").value;
-		customer.transportContractTerms = document.getElementById("transportContractTerms").value;
-		customer.transportPaymentTerms = document.getElementById("transportPaymentTerms").value;
+		//packing list entries start
+		for(var s = 0; s < packingListEntryJson.length; s++){
+			var entryJson = packingListEntryJson[s];
+			var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
+
+			var entryId = entryJson.entryId;
+			var packingListEntry = packingListEntries[entryId];
+			if(packingListEntry == null){
+				packingListEntry = new Object();
+				packingListEntry.id = entryJson.entryId;
+				packingListEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+				packingListEntry.mrp = entryJson.stockKeepingUnit.mrp;
+				packingListEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
+				packingListEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
+				packingListEntry.colorCode = entryJson.stockKeepingUnit.colorCode.colorCode;
+				packingListEntries[packingListEntry.id] = packingListEntry;
+			} else {
+				//compare
+				if(packingListEntry.styleCode != entryJson.stockKeepingUnit.styleCode){
+					console.log("ERROR. Color code does not match " + entryJson.entryId);
+					return;
+				}
+				if(packingListEntry.gender != entryJson.stockKeepingUnit.genderCode.gender){
+					console.log("ERROR. genderCode does not match " + entryJson.entryId);
+					return;
+				}
+				if(packingListEntry.colorCode != entryJson.stockKeepingUnit.colorCode.colorCode){
+					console.log("ERROR. colorCode does not match " + entryJson.entryId);
+					return;
+				}
+				if(packingListEntry.mrp != entryJson.stockKeepingUnit.mrp){
+					console.log("ERROR. mrp does not match " + entryJson.entryId);
+					return;
+				}
+			}
+			
+			var key = "quantityForSize" + size;
+			packingListEntry[key] = entryJson.quantity;	
+
+			}
+
+			var pl = linkedPackingList;
+			var ple = pl.packingListEntries;
+			var packingListEntryKeys = Object.keys(ple).sort();
+			for(var e = 0; e < packingListEntryKeys.length; e++){
+				var index = packingListEntryKeys[e];
+
+				var packingListEntry = ple[index];
+				productList.push(packingListEntry);
+			}					
 		
-		customer.specialInstructions = document.getElementById("specialInstructions").value;
-		customer.notes = document.getElementById("notes").value;
+		refreshProductsTable();
+		dataTable.column(15).nodes().each(function (cell, i) {
+			cell.innerHTML = "";
+		});
+		document.getElementById('purchaseOrderReference').value = packingListJson.purchaseOrderReference;
+		document.getElementById("purchaseOrderReference").readOnly = true;
+		var waitToSelectClient = setInterval(function(){
+			if(customerArray!=null){
+				var clientName = document.getElementById("clientName");
+				for(var i = 0; i < clientName.length; i++){
+					if(clientName.options[i].value == packingListJson.linkedCustomer.id){
+						clientName.selectedIndex = i;
+						clientName.disabled = true;
+						clearInterval(waitToSelectClient);
+						break;
+					}
+				}
+			}
+		}, 100);
+	}
+	
+	function  showPreview(){
+		window.location = "preview-packing-list.html?packingListId="+packingListId;
+	}
+	
+	var packingListId = -1;
+	function createPackingList(){
+		var packingList = new Object();
+		
+		//packingList.packingListId = document.getElementById('packingListId').value;
+		//packingList.packingListRevisionNumber = document.getElementById('packingListRevisionNumber').value;
+		
+		packingList.purchaseOrderReference = document.getElementById('purchaseOrderReference').value;
+					
+		var clientName = document.getElementById('clientName');
+		packingList.linkedCustomer = clientName.options[clientName.selectedIndex].value;
+		packingList.clientNameOnPackingListDate = clientName.options[clientName.selectedIndex].text;
+
+		if(getParameterByName('packingListId')!=null){
+			packingListId = getParameterByName('packingListId');
+		} else {
+			packingListId = -1;
+		}
+		
+		packingList.linkedSalesOrderId = salesOrderId;
+		
+		packingList.notes = document.getElementById('notes').value;
+		
+		packingList.productList = productList;
+		console.log(JSON.stringify(packingList));
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
-				console.log("Success");
+				var response = JSON.parse(request.response);
+				if(response.result == "success"){
+					var uploadDocuments = document.getElementById("uploadDocuments");
+					for(var f = 0; f < uploadDocuments.files.length; f++){
+					
+						var formData = new FormData();
+						formData.append('file', uploadDocuments.files[f]);
+
+							$.ajax({
+							  url: base_url + '/AdValoramAdmin/upload/packingList/' + response.objectId,
+							  type: 'POST',
+							  processData: false, // important
+							  contentType: false, // important
+							  dataType : '*',
+							  data: formData
+						});
+					
+					}
+					
+					packingListId = response.packingListId;
+					window.location = "packing-list.html?packingListId="+response.packingListId;
+					
+				}
 			}
 		};
 		
-		request.open ("POST", "http://localhost:8080/AdValoramAdmin/customer", true);
+		if(packingListId < 0){
+			request.open ("POST", base_url + "/AdValoramAdmin/packingList", true);
+		} else {
+			request.open ("PUT", base_url + "/AdValoramAdmin/packingList/" + packingListId, true);
+		}
 		request.setRequestHeader("content-type", "application/json");
-		request.send(JSON.stringify(customer));
+		request.send(JSON.stringify(packingList));
+	}
+	
+	var productList = [];
+	function saveProductAndClose(){
+		var product = new Object();
+		product.id = document.getElementById("productId").innerHTML;
+		product.styleCode = selectedStyleCode;
+		product.colorCode = document.getElementById("dropDownColorCode").value;
+		
+		var dropDownGender = document.getElementById("dropDownGender");
+		product.gender = dropDownGender.options[dropDownGender.selectedIndex].text;	//to display 
+		product.genderCode = document.getElementById("dropDownGender").value;	//to send to server
+		product.mrp = document.getElementById("textMrp").value;
+		product.quantityForSize28 = (document.getElementById("quantityForSize28") == null 
+									|| document.getElementById("quantityForSize28").value == 0
+									|| !document.getElementById('productSize28').checked) ? "" : document.getElementById("quantityForSize28").value;
+		product.quantityForSize30 = (document.getElementById("quantityForSize30") == null
+									|| document.getElementById("quantityForSize30").value == 0
+									|| !document.getElementById('productSize30').checked)? "" :  document.getElementById("quantityForSize30").value;
+		product.quantityForSize32 = (document.getElementById("quantityForSize32") == null 
+									|| document.getElementById("quantityForSize32").value == 0
+									||!document.getElementById('productSize32').checked) ? "" : document.getElementById("quantityForSize32").value;
+		product.quantityForSize34 = (document.getElementById("quantityForSize34") == null 
+									|| document.getElementById("quantityForSize34").value == 0
+									|| !document.getElementById('productSize34').checked) ? "" : document.getElementById("quantityForSize34").value;
+		product.quantityForSize36 = (document.getElementById("quantityForSize36") == null 
+									|| document.getElementById("quantityForSize36").value == 0
+									|| !document.getElementById('productSize36').checked) ? "" : document.getElementById("quantityForSize36").value;
+		product.quantityForSize38 = (document.getElementById("quantityForSize38") == null 
+									|| document.getElementById("quantityForSize38").value == 0
+									|| !document.getElementById('productSize38').checked) ? "" : document.getElementById("quantityForSize38").value;
+		product.quantityForSize40 = (document.getElementById("quantityForSize40") == null 
+									|| document.getElementById("quantityForSize40").value == 0
+									|| !document.getElementById('productSize40').checked) ? "" : document.getElementById("quantityForSize40").value;
+		product.quantityForSize42 = (document.getElementById("quantityForSize42") == null 
+									|| document.getElementById("quantityForSize42").value == 0
+									|| !document.getElementById('productSize42').checked) ? "" : document.getElementById("quantityForSize42").value;
+		product.quantityForSize44 = (document.getElementById("quantityForSize44") == null 
+									|| document.getElementById("quantityForSize44").value == 0
+									|| !document.getElementById('productSize44').checked) ? "" : document.getElementById("quantityForSize44").value;
+		product.quantityForSize46 = (document.getElementById("quantityForSize46") == null 
+									|| document.getElementById("quantityForSize46").value == 0
+									|| !document.getElementById('productSize46').checked) ? "" : document.getElementById("quantityForSize46").value;
+		product.quantityForSize48 = (document.getElementById("quantityForSize48") == null 
+									|| document.getElementById("quantityForSize48").value == 0
+									|| !document.getElementById('productSize48').checked) ? "" : document.getElementById("quantityForSize48").value;
+		productList.push(product);
+		refreshProductsTable();
+		closeAddProductModal();
+	}
+	
+	/*function limitQuantityTo(element, maxQuantity){
+		if(element.value > maxQuantity){
+			element.value = maxQuantity;
+		}
+	}*/
+	
+	function limitQuantityTo(element, productListIndex, key, maxQuantity){
+		if(element.value > maxQuantity){
+			element.value = maxQuantity;
+		}
+		var key = "quantityForSize"+key;
+		productList[productListIndex][key] = parseInt(element.value);
+	}
+	
+	function refreshProductsTable(){
+		$('#productsTable').dataTable().fnDestroy();
+		var tbody = '';
+		for(var p = 0; p < productList.length; p++){
+			var product = productList[p];
+				tbody +=  "<tr>" +
+				"<td>" + product.id + "</td>"+
+				"<td>" + product.styleCode + "</td>"+
+				"<td>" + product.colorCode + "</td>"+
+				"<td>" + product.gender + "</td>";
+				<!--<input type="number" name="quantity" min="1" max="5">-->
+				/*
+				if(product.quantityForSize28!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",28," + product.quantityForSize28+"); value='" + product.quantityForSize28 + "' max='" + product.quantityForSize28 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize30!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",30," + product.quantityForSize30+"); value='" + product.quantityForSize30 + "' max='" + product.quantityForSize30 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize32!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",32," + product.quantityForSize32+"); value='" + product.quantityForSize32 + "' max='" + product.quantityForSize32 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize34!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",34,"+product.quantityForSize34+"); value='" + product.quantityForSize34 + "' max='" + product.quantityForSize34 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize36!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",36,"+product.quantityForSize36+"); value='" + product.quantityForSize36 + "' max='" + product.quantityForSize36 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize38!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",38,"+product.quantityForSize38+"); value='" + product.quantityForSize38 + "' max='" + product.quantityForSize38 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize40!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",40,"+product.quantityForSize40+"); value='" + product.quantityForSize40 + "' max='" + product.quantityForSize40 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize42!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",42,"+product.quantityForSize42+"); value='" + product.quantityForSize42 + "' max='" + product.quantityForSize42 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize44!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",44,"+product.quantityForSize44+"); value='" + product.quantityForSize44 + "' max='" + product.quantityForSize44 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize46!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",46,"+product.quantityForSize46+"); value='" + product.quantityForSize46 + "' max='" + product.quantityForSize46 + "'></td>"; else tbody+="<td>0</td>";
+				
+				if(product.quantityForSize48!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",48,"+product.quantityForSize48+"); value='" + product.quantityForSize48 + "' max='" + product.quantityForSize48 + "'></td>"; else tbody+="<td>0</td>";
+				
+				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
+				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
+				
+				*/
+				/*
+				for(var s = 28; s <= 48; s=s+2){
+					var key = "quantityForSize" + s;	
+					if(balanceQuantityForCurrentPackingList[(p+1)]!=null){
+						var balanceForCurrentEntry = balanceQuantityForCurrentPackingList[(p+1)];
+						if(balanceForCurrentEntry[key]!=null){
+							tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ","+s+","+balanceForCurrentEntry[key]+"); value='" + balanceForCurrentEntry[key] + "' max='" + balanceForCurrentEntry[key] + "'></td>"; 
+							continue;
+						} 
+					} 
+					
+					tbody+="<td>0</td>";					
+				}
+				
+				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
+				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
+				*/
+				
+				for(var s = 28; s <=48; s = s+2){
+					var prefix = "quantityForSize";
+					var key = prefix + s;
+			
+					var balanceForCurrentEntry = balanceQuantityForCurrentPackingList[(p+1)];
+					if(product[key]!=null)	{
+						if(packingListId < 0 && salesOrderId < 0){
+							tbody+="<td>" + product[key]+"</td>";
+						} else {
+							if(salesOrderId < 0){
+								tbody+="<td>" + product[key]+"</td>";
+							} else {
+								tbody+="<td><input class = 'form-control' type='number' min='0' value='" + product[key] + "' onchange = limitQuantityTo(this," + p + ",28," + balanceForCurrentEntry[key]+"); max='" + balanceForCurrentEntry[key] + "'></td>"
+							}
+						}
+					} else {
+						tbody+="<td>0</td>";
+					}
+				
+				}			
+			
+				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
+				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
+		}
+		$('#productsTableBody').html(tbody);	
+		dataTable = $('#productsTable').DataTable();	
+			dataTable.column(4).visible(document.getElementById('productSize28').checked);
+			dataTable.column(5).visible(document.getElementById('productSize30').checked);
+			dataTable.column(6).visible(document.getElementById('productSize32').checked);
+			dataTable.column(7).visible(document.getElementById('productSize34').checked);
+			dataTable.column(8).visible(document.getElementById('productSize36').checked);
+			dataTable.column(9).visible(document.getElementById('productSize38').checked);
+			dataTable.column(10).visible(document.getElementById('productSize40').checked);
+			dataTable.column(11).visible(document.getElementById('productSize42').checked);
+			dataTable.column(12).visible(document.getElementById('productSize44').checked);
+			dataTable.column(13).visible(document.getElementById('productSize46').checked);
+			dataTable.column(14).visible(document.getElementById('productSize48').checked);
+		/*if(productList.length > 0){
+			$('#btnPreview').show();
+		} else {
+			$('#btnPreview').hide();
+		}*/
+	}
+	
+	function deleteProductEntryAndUpdateView(id){
+		deleteProductEntry(id);
+		refreshProductsTable();
+	}
+	
+	function deleteProductEntry(id){
+		for(var r = 0; r < productList.length; r++){
+			if(productList[r].id == id){
+				productList.splice(r, 1);
+			}
+		}
+		//re-assign IDs
+		for(var r = 0; r < productList.length; r++){
+			productList[r].id = r+1;
+		}
+	}
+	
+	
+	var modal = document.getElementById('addProductModal');
+	function addProduct(){
+		modal.style.display = "block";
+		document.getElementById("productId").innerHTML = productList.length + 1;
+	}
+	
+	function closeAddProductModal(){
+		document.getElementById("addProductModal").style.display = "none";
+	}
+	
+	var span = document.getElementsByClassName("close")[0];
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
 	}
 </script>
 </body>

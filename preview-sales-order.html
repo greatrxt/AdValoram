@@ -16,10 +16,11 @@
 
 </head>
 <script>
+
 $(window).load(function() {
 	if(getParameterByName('id')!=null){
 		var salesOrderId = getParameterByName('id');
-		$.getJSON(base_url + "/AdValoramAdmin/common/salesOrder/"+salesOrderId, function(data){
+		$.getJSON(base_url + "/AdValoramAdmin/salesOrder/"+salesOrderId, function(data){
 			var result = data.result;
 			if(result!='error'){
 				var salesOrder = result[0];
@@ -103,6 +104,7 @@ $(window).load(function() {
 				tbody+='</tr><tbody>';
 				var sorted_keys = Object.keys(salesOrderEntries).sort()
 				//for(var p = 0; p < salesOrderEntries.length; p++){
+				var grandTotal = 0;
 				for(var p = 0; p < sorted_keys.length; p++){
 					var quantity = 0;
 					//var salesOrderEntry = salesOrderEntries[p];
@@ -123,27 +125,106 @@ $(window).load(function() {
 							}
 							
 						}
+					var total = quantity*salesOrderEntry.mrp;
 					tbody+='<td>'+quantity+'</td>' +
 							'<td>'+salesOrderEntry.mrp+'</td>' +
-							'<td>'+(quantity*salesOrderEntry.mrp)+'</td>'+
+							'<td>'+numberWithCommas(total)+'</td>'+
 							'</tr>';
-
+					grandTotal+=total;
 				}
 				tbody+='</tbody>'+
 					'<tr>' +
-					'<td colspan="19"></td>'+
+					'<td colspan="'+(sizeArray.length+7)+'"></td>'+
 					'</tr>';
+					
+				tbody+='<tr>'+
+					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate' +
+					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ 'the sale of the goods ' +
+					  'specified in this tax invoice is made by me/us and that the transaction of sale covered by this tax invoice ' +
+					  'has been effected by me/us and it shall be accounted for'+ 
+					  'in the turnover of sales while filing of return  and the due tax, if any, payable on the sale has been paid or shall be paid<br><br></td>' +
+					  '<td colspan="2" class="total-line">Total</td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(grandTotal)+'</div></td>'+
+				  '</tr>'+
+				  '<tr>'+
+					  '<td colspan="2" class="total-line">VAT@10%</td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(grandTotal)+'</div></td>'+
+				  '</tr>'+
+				  '<tr>'+
+					  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
+					  'SUBJECT TO MUMBAI JURISDICTION<br>'+
+					  '1. Our responsibility ceases after delivery of goods, from our premises<br>'+
+					  '2. Goods once sold will not be taken back, or exchanged, under any circumstances<br>'+
+					  '3. If payment is not received within 30 days, interest @ 18% p.a. will be charged on Invoice amount.</td>'+
+					  '<td colspan="2" class="total-line">Round Off</td>'+
+					  '<td class="total-value"><textarea id="paid">Rs 0.00</textarea></td>'+
+				  '</tr>'+
+				  '<tr>'+
+					  '<td colspan="'+(sizeArray.length+4)+'"> </td>'+
+					  '<td colspan="2" class="total-line balance">Grand Total</td>'+
+					  '<td class="total-value balance"><div class="due">Rs '+numberWithCommas((1.1*grandTotal).toFixed(2));+'</div></td>'+
+				  '</tr>';
+		  
 				document.getElementById('items').innerHTML = tbody;
+				
+				document.getElementById('customer-name').innerHTML = salesOrder.clientNameOnSalesOrderDate;
+				document.getElementById('billing-address').innerHTML = salesOrder.clientBillingAddressOnSalesOrderDate;
+				document.getElementById('delivery-address').innerHTML = salesOrder.clientDeliveryAddressOnSalesOrderDate;
+				document.getElementById('vat-no').innerHTML = salesOrder.linkedCustomer.vatTinNumber
+				document.getElementById('cst-no').innerHTML = salesOrder.linkedCustomer.cstTinNumber;
+				document.getElementById('pan-no').innerHTML = salesOrder.linkedCustomer.panNumber;
+				
+				document.getElementById('salesOrderNo').innerHTML = salesOrder.salesOrderId;
+				document.getElementById('salesOrderDate').innerHTML = salesOrder.salesOrderDate;
+				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
+				
+				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas((1.1*grandTotal).toFixed(2));
+				if(salesOrder.status == "OPEN"){
+					document.getElementById("buttonConfirmSalesOrder").style.visibility = "visible";
+				} else {
+					document.getElementById("buttonConfirmSalesOrder").style.visibility = "hidden";
+				}
+				
+				if(salesOrder.status == "CONFIRMED"){
+					document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
+					document.getElementById("buttonConfirmSalesOrder").style.display = "none";
+				} else {
+					document.getElementById("buttonGeneratePackingList").style.visibility = "hidden";
+				}
+
 			}
 		});
 	}
 });
+
+function generatePackingList(){
+	window.location="packing-list.html?salesOrderId="+getParameterByName("id");
+}
+function confirmSalesOrder(){
+	$.ajax({
+		url: base_url + '/AdValoramAdmin/salesOrder/'+getParameterByName("id")+'/confirm',
+		type: 'PUT',
+		success: function(result) {
+			window.location = "preview-sales-order.html?id="+getParameterByName("id");
+		}
+	});
+}
+
+function editSalesOrder(){
+	window.location = "sales-order.html?id="+getParameterByName("id");
+}
+function backToLandingPage(){
+	window.location = "landing-sales-order.html";
+}
 </script>
 <body>
 
 	<div id="page-wrap">
-	<button id="printPageButton" class = "no-print" onClick="">Back</button>
-	<button id="printPageButton" class = "no-print" onClick="window.print();">Print</button>
+	<button id="buttonBack" class = "no-print" onClick="backToLandingPage();">Back</button>
+	<button class = "no-print" onClick="editSalesOrder();">Edit</button>
+	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
+	<button id = "buttonConfirmSalesOrder" onclick = "confirmSalesOrder();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
+	<button id = "buttonGeneratePackingList" onclick = "generatePackingList();" class = "no-print green" style = "float:right; visibility:hidden">Generate Packing List</button>
 		<textarea id="header">SALES ORDER</textarea>
 		
 		<div id="identity">
@@ -178,17 +259,10 @@ Thane - 421 302
 	</tr>
 	<tr>
 		<td>
-			<!--<textarea id="contactInfo">
-Phone no : 
-Email Address : 
-
-VAT TIN no :
-CST TIN no :
-			</textarea>-->
-<span>Phone no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span><span id = "contactNumber"></span></br>
-<span>Email Address : </span><span id = "emailAddress"></span></br>
-<span>VAT TIN no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "vatTinNumber"></span></br>
-<span>CST TIN no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "cstTinNumber"></span></br></br>
+<span>Phone no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span><span id = "contactNumber"></span></br>
+<span>Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: advaloramclothing@gmail.com</span></br>
+<span>VAT TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "vatTinNumber"></span></br>
+<span>CST TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "cstTinNumber"></span></br></br>
 		</td>
 	</tr>
 </table>
@@ -206,23 +280,11 @@ CST TIN no :
 				</tr>
 				<tr>
                     <td>
-					<!--<textarea id = "taxInfo">
-					
-Billing Address :
-
-Delivery Address:
-
-VAT No:
-
-CST No:
-
-PAN No:
-					</textarea>-->
-					<span>Billing Address :</span></br><span id="billing-address"></span></br>
-					<span>Delivery Address:</span></br><span id="delivery-address"></span></br>
-					<span>VAT No:</span></br><span id="vat-no"></span></br>
-					<span>CST No:</span></br><span id="cst-no"></span></br>
-					<span>PAN No:</span></br><span id="pan-no"></span></br>
+					<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
+					<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
+					<span>VAT No:</span></br><span id="vat-no"></span></br></br>
+					<span>CST No:</span></br><span id="cst-no"></span></br></br>
+					<span>PAN No:</span></br><span id="pan-no"></span></br></br>
 					</td>
 				</tr>
 			</table>
@@ -255,7 +317,7 @@ Referred By:
                 </tr>
                 <tr>
                     <td class="meta-head">Amount Due</td>
-                    <td><div class="due">Rs 875.00</div></td>
+                    <td><div class="due"><span id = "amountDue"></span></div></td>
                 </tr>
 
             </table>
@@ -263,88 +325,7 @@ Referred By:
 		</div>
 		
 		<table id="items">
-		
-		<!--<tr>
-			<th rowspan = "2">Product No.</th>
-			<th rowspan = "2">Style Code</th>
-			<th rowspan = "2">Color Code</th>					
-			<th rowspan = "2">Gender</th>
-			<th colspan = "11">
-			Size
-			</th>
-			<th rowspan = "2">Total Qty</th>
-			<th rowspan = "2">MRP</th>
-			<th rowspan = "2">Special Rate</th>
-			<th rowspan = "2">Total<br>(INR)</th>
-		</tr>
-		<tr>
-			<th>28</th>
-			<th>30</th>
-			<th>32</th>
-			<th>34</th>
-			<th>36</th>
-			<th>38</th>
-			<th>40</th>
-			<th>42</th>
-			<th>44</th>
-			<th>46</th>
-			<th>48</th>
-		</tr>
-		  
 
-		  
-		 <!-- <tr id="hiderow">
-		    <td colspan="19"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
-		  </tr>-->
-		  <!-- <tbody>
-		  <tr>
-			<td>1</td>
-			<td>01001</td>
-			<td>C1</td>
-			<td>Men</td>
-			<td>1</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td>1</td>
-			<td></td>
-			<td></td>
-			<td>2</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td>4</td>
-			<td>499</td>
-			<td>399</td>
-			<td>1600</td>
-		  </tr>
-		  </tbody>
-		  <tr>
-		    <td colspan="19"></td>
-		  </tr>
-		  <tr>
-		      <td colspan="16" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate  under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which the sale of the goods specified in this tax invoice is made by me/us and that the transaction of sale covered by this tax invoice has been effected by me/us and it shall be accounted for in the turnover of sales while filing of return  and the due tax, if any, payable on the sale has been paid or shall be paid<br><br></td>
-		      <td colspan="2" class="total-line">Total</td>
-		      <td class="total-value"><div id="total">Rs 875.00</div></td>
-		  </tr>
-		  <tr>
-		      <td colspan="2" class="total-line">VAT@10%</td>
-		      <td class="total-value"><div id="total">Rs 875.00</div></td>
-		  </tr>
-		  <tr>
-		      <td colspan="16" class="blank"> 
-			  SUBJECT TO MUMBAI JURISDICTION<br>
-			  1. Our responsibility ceases after delivery of goods, from our premises<br>
-			  2. Goods once sold will not be taken back, or exchanged, under any circumstances<br>
-			  3. If payment is not received within 30 days, interest @ 18% p.a. will be charged on Invoice amount.</td>
-		      <td colspan="2" class="total-line">Round Off</td>
-		      <td class="total-value"><textarea id="paid">Rs 0.00</textarea></td>
-		  </tr>
-		  <tr>
-		      <td colspan="16"> </td>
-		      <td colspan="2" class="total-line balance">Grand Total</td>
-		      <td class="total-value balance"><div class="due">Rs 875.00</div></td>
-		  </tr>-->
 		</table>
 		
 		<div id="terms">

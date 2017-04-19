@@ -738,31 +738,45 @@
 						//});
 						
 						$('#tab-product-description').click(function(){
-							$('#buttonAddColor').hide();
+							tabFunction(0);
 						});
 
 						$('#tab-pricing').click(function(){
-							$('#buttonAddColor').hide();
+							tabFunction(1);
 						});
 
 						$('#tab-product-colors').click(function(){
-						  $('#buttonAddColor').show();
+							tabFunction(2);
 						});
 
 						$('#tab-product-financial-details').click(function(){
-						  $('#buttonAddColor').hide();
-
+							tabFunction(3);
 						});
 
 						$('#tab-product-images').click(function(){
-						  $('#buttonAddColor').hide();
-
+							tabFunction(4);
 						});
+						
 						$('#tab-product-notes').click(function(){
-						  $('#buttonAddColor').hide();
-
+							tabFunction(5);
 						});
 				});
+				
+				function tabFunction(tabId){
+					if(tabId == 0){
+						$('#buttonAddColor').hide();
+					} else if(tabId == 1){
+						$('#buttonAddColor').hide();
+					} else if(tabId == 2){
+						$('#buttonAddColor').show();
+					} else if(tabId == 3){
+						$('#buttonAddColor').hide();
+					} else if(tabId == 4){
+						$('#buttonAddColor').hide();
+					} else if(tabId == 5){
+						$('#buttonAddColor').hide();
+					}
+				}
 				</script>
 				<div class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">

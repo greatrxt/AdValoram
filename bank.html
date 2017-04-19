@@ -671,7 +671,7 @@ $(window).load(function() {
 	if(getParameterByName('id')!=null){
 		bankId = getParameterByName('id');
 		document.getElementById('bankTitle').innerHTML  = "Edit Bank";
-		$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/bank/"+bankId, function(data){
+		$.getJSON(base_url + "/AdValoramAdmin/common/bank/"+bankId, function(data){
 			var result = data.result;
 			if(result!='error'){
 				var bank = result[0];
@@ -735,9 +735,9 @@ $(window).load(function() {
 			}
 		};
 		if(bankId > 0){
-			request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/bank/" + bankId, true);
+			request.open ("PUT", base_url + "/AdValoramAdmin/bank/" + bankId, true);
 		} else {
-			request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/bank", true);
+			request.open ("POST", base_url + "/AdValoramAdmin/bank", true);
 		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(bank));

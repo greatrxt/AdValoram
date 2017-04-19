@@ -628,7 +628,7 @@ $(window).load(function() {
 	if(getParameterByName('id')!=null){
 		taxId = getParameterByName('id');
 		document.getElementById('taxTitle').innerHTML  = "Edit Tax";
-		$.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/tax/"+taxId, function(data){
+		$.getJSON(base_url + "/AdValoramAdmin/common/tax/"+taxId, function(data){
 			var result = data.result;
 			if(result!='error'){
 				var tax = result[0];

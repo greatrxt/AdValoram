@@ -670,22 +670,33 @@
 		$(document).ready(function(){
 				
 				$('#tab-billing-details').click(function(){
-					$('#buttonAddProduct').hide();
+					tabFunction(0);
 				});
 
 				$('#tab-add-product').click(function(){
-					$('#buttonAddProduct').show();
+					tabFunction(1);
 				});
 
 				$('#tab-taxation-discounts').click(function(){
-					$('#buttonAddProduct').hide();
+					tabFunction(2);
 				});
 				
 				$('#tab-uploads').click(function(){
-					$('#buttonAddProduct').hide();
+					tabFunction(3);
 				});
 
 		});
+		function tabFunction(tabId){
+			if(tabId == 0){
+				$('#buttonAddProduct').hide();
+			} else if(tabId == 1){
+				$('#buttonAddProduct').show();
+			} else if(tabId == 2){
+				$('#buttonAddProduct').hide();
+			} else if(tabId == 3){
+				$('#buttonAddProduct').hide();
+			}
+		}
 		</script>
         <div class="panel-body">
 			<div class="nav-tabs-horizontal" id = "homeTabs">
@@ -959,7 +970,152 @@
 <script>
 	$(window).load(function() {
 		document.getElementById('salesOrderDate').value = print_today();
+		if(getParameterByName('id')!=null){
+			salesOrderId = getParameterByName('id');
+			
+			$.getJSON(base_url + "/AdValoramAdmin/salesOrder/"+salesOrderId, function(data){
+			var result = data.result;
+			if(result!='error'){
+				var salesOrder = result[0];
+			
+				console.log(salesOrder);
+				
+				document.getElementById('salesOrderId').value = salesOrder.salesOrderId;
+				document.getElementById('salesOrderRevisionNumber').value = salesOrder.salesOrderRevisionNumber;
+				document.getElementById('purchaseOrderReference').value = salesOrder.purchaseOrderReference;				
+				
+				document.getElementById('billingAddress').value = salesOrder.clientBillingAddressOnSalesOrderDate;
+				document.getElementById('deliveryAddress').value = salesOrder.clientDeliveryAddressOnSalesOrderDate;
+				document.getElementById('city').value = salesOrder.clientCityOnSalesOrderDate;
+				document.getElementById('district').value = salesOrder.clientDistrictOnSalesOrderDate;
+				document.getElementById('state').value = salesOrder.clientStateOnSalesOrderDate;
+				document.getElementById('pinCode').value = salesOrder.clientPinCodeOnSalesOrderDate;
+				document.getElementById('contactPerson').value = salesOrder.clientContactPersonOnSalesOrderDate;
+				document.getElementById('contactNumber').value = salesOrder.clientContactNumberOnSalesOrderDate;
+				document.getElementById('emailAddress').value = salesOrder.clientEmailAddressOnSalesOrderDate;
+				
+				document.getElementById('markDown').value = salesOrder.markDownOnSalesOrderDate;
+				document.getElementById('cashDiscount').value = salesOrder.cashDiscountOnSalesOrderDate;
+				document.getElementById('promptPaymentDiscount').value = salesOrder.promptPaymentDiscountOnSalesOrderDate;
+				document.getElementById('specialDiscount').value = salesOrder.specialDiscountOnSalesOrderDate;
+				
+				document.getElementById('notes').value = salesOrder.notes;
+
+				var waitToSelectClient = setInterval(function(){
+					if(customerArray!=null){
+						var clientName = document.getElementById("clientName");
+						for(var i = 0; i < clientName.length; i++){
+							if(clientName.options[i].value == salesOrder.linkedCustomer.id){
+								clientName.selectedIndex = i;
+								clearInterval(waitToSelectClient);
+								break;
+							}
+						}
+					}
+				}, 100);
+				
+				var waitToSelectEmployee = setInterval(function(){
+					if(employeeArray!=null){
+						var referredByEmployee = document.getElementById("referredByEmployee");
+						for(var i = 0; i < referredByEmployee.length; i++){
+							if(referredByEmployee.options[i].value == salesOrder.referredByEmployee.id){
+								referredByEmployee.selectedIndex = i;
+								clearInterval(waitToSelectEmployee);
+								break;
+							}
+						}
+					}
+				}, 100);
+				
+				
+				//entry
+				var entries = salesOrder.entry;
+				var minSize = 999;
+				var maxSize = -1;
+				//var salesOrderEntries = [];
+				var salesOrderEntries = {};
+				var sizeArray = [];
+				for(var s = 0; s < entries.length; s++){
+					var entryJson = entries[s];
+					var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
+					if(size < minSize){
+						minSize = size;
+					}
+					if(size > maxSize){
+						maxSize = size;
+					}
+					if(sizeArray.indexOf(size) == -1){
+						sizeArray.push(size);
+					}
+
+					var entryId = entryJson.entryId;
+					//var salesOrderEntry = salesOrderEntries[entryId - 1];
+					var salesOrderEntry = salesOrderEntries[entryId];
+					if(salesOrderEntry == null){
+						salesOrderEntry = new Object();
+						salesOrderEntry.id = entryJson.entryId;
+						salesOrderEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+						salesOrderEntry.mrp = entryJson.stockKeepingUnit.mrp;
+						salesOrderEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
+						salesOrderEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
+						salesOrderEntry.colorCode = entryJson.stockKeepingUnit.colorCode.colorCode;
+						salesOrderEntries[salesOrderEntry.id] = salesOrderEntry;
+					} else {
+						//compare
+						if(salesOrderEntry.styleCode != entryJson.stockKeepingUnit.styleCode){
+							console.log("ERROR. Color code does not match " + entryJson.entryId);
+							return;
+						}
+						if(salesOrderEntry.gender != entryJson.stockKeepingUnit.genderCode.gender){
+							console.log("ERROR. genderCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(salesOrderEntry.colorCode != entryJson.stockKeepingUnit.colorCode.colorCode){
+							console.log("ERROR. colorCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(salesOrderEntry.mrp != entryJson.stockKeepingUnit.mrp){
+							console.log("ERROR. mrp does not match " + entryJson.entryId);
+							return;
+						}
+					}
+					
+					var key = "quantityForSize" + size;
+					salesOrderEntry[key] = entryJson.quantity;	
+
+				}
+				for(var s = 28; s <= 48; s=s+2){
+					document.getElementById('productSize'+s).checked = false;
+				}
+				for(var s = 0; s < sizeArray.length; s++){
+					document.getElementById('productSize'+sizeArray[s]).checked = true;
+					document.getElementById('productSize'+sizeArray[s]).disabled = true;
+				}
+				var sorted_keys = Object.keys(salesOrderEntries).sort()
+				for(var p = 0; p < sorted_keys.length; p++){
+					var salesOrderEntry = salesOrderEntries[sorted_keys[p]];
+					productList.push(salesOrderEntry);
+				}
+				refreshProductsTable();
+				dataTable.column(15).nodes().each(function (cell, i) {
+					cell.innerHTML = "";
+				});
+				
+				if(salesOrder.status == "OPEN" || salesOrder.status == "CONFIRMED"){
+					$('#btnPreview').show();
+				} else {
+					$('#btnPreview').hide();
+				}
+			}
+		});
+			
+		}
 	});
+	
+	function  showPreview(){
+		window.location = "preview-sales-order.html?id="+salesOrderId;
+	}
+	
 	var salesOrderId = -1;
 	function createSalesOrder(){
 		var salesOrder = new Object();
@@ -970,12 +1126,12 @@
 		salesOrder.purchaseOrderReference = document.getElementById('purchaseOrderReference').value;
 		
 		var clientName = document.getElementById('clientName');
-		salesOrder.linkedCustomer = clientName.value;
+		salesOrder.linkedCustomer = clientName.options[clientName.selectedIndex].value;
 		
 		var employeeName = document.getElementById('referredByEmployee');
 		salesOrder.referredByEmployee = employeeName.value;
 		
-		salesOrder.clientNameOnSalesOrderDate = clientName.options[clientName.selectedIndex].text
+		salesOrder.clientNameOnSalesOrderDate = clientName.options[clientName.selectedIndex].text;
 		salesOrder.clientBillingAddressOnSalesOrderDate = document.getElementById('billingAddress').value;
 		salesOrder.clientDeliveryAddressOnSalesOrderDate = document.getElementById('deliveryAddress').value;
 		salesOrder.clientCityOnSalesOrderDate = document.getElementById('city').value;
@@ -1018,7 +1174,10 @@
 						});
 					
 					}
-					//window.location = "landing-product.html";
+					
+					salesOrderId = response.salesOrderId;
+					window.location = "sales-order.html?id="+response.salesOrderId;
+					
 				}
 			}
 		};
@@ -1044,27 +1203,38 @@
 		product.genderCode = document.getElementById("dropDownGender").value;	//to send to server
 		product.mrp = document.getElementById("textMrp").value;
 		product.quantityForSize28 = (document.getElementById("quantityForSize28") == null 
-									|| document.getElementById("quantityForSize28").value == 0) ? "" : document.getElementById("quantityForSize28").value;
+									|| document.getElementById("quantityForSize28").value == 0
+									|| !document.getElementById('productSize28').checked) ? "" : document.getElementById("quantityForSize28").value;
 		product.quantityForSize30 = (document.getElementById("quantityForSize30") == null
-									|| document.getElementById("quantityForSize30").value == 0)? "" :  document.getElementById("quantityForSize30").value;
+									|| document.getElementById("quantityForSize30").value == 0
+									|| !document.getElementById('productSize30').checked)? "" :  document.getElementById("quantityForSize30").value;
 		product.quantityForSize32 = (document.getElementById("quantityForSize32") == null 
-									|| document.getElementById("quantityForSize32").value == 0) ? "" : document.getElementById("quantityForSize32").value;
+									|| document.getElementById("quantityForSize32").value == 0
+									||!document.getElementById('productSize32').checked) ? "" : document.getElementById("quantityForSize32").value;
 		product.quantityForSize34 = (document.getElementById("quantityForSize34") == null 
-									|| document.getElementById("quantityForSize34").value == 0) ? "" : document.getElementById("quantityForSize34").value;
+									|| document.getElementById("quantityForSize34").value == 0
+									|| !document.getElementById('productSize34').checked) ? "" : document.getElementById("quantityForSize34").value;
 		product.quantityForSize36 = (document.getElementById("quantityForSize36") == null 
-									|| document.getElementById("quantityForSize36").value == 0) ? "" : document.getElementById("quantityForSize36").value;
+									|| document.getElementById("quantityForSize36").value == 0
+									|| !document.getElementById('productSize36').checked) ? "" : document.getElementById("quantityForSize36").value;
 		product.quantityForSize38 = (document.getElementById("quantityForSize38") == null 
-									|| document.getElementById("quantityForSize38").value == 0) ? "" : document.getElementById("quantityForSize38").value;
+									|| document.getElementById("quantityForSize38").value == 0
+									|| !document.getElementById('productSize38').checked) ? "" : document.getElementById("quantityForSize38").value;
 		product.quantityForSize40 = (document.getElementById("quantityForSize40") == null 
-									|| document.getElementById("quantityForSize40").value == 0) ? "" : document.getElementById("quantityForSize40").value;
+									|| document.getElementById("quantityForSize40").value == 0
+									|| !document.getElementById('productSize40').checked) ? "" : document.getElementById("quantityForSize40").value;
 		product.quantityForSize42 = (document.getElementById("quantityForSize42") == null 
-									|| document.getElementById("quantityForSize42").value == 0) ? "" : document.getElementById("quantityForSize42").value;
+									|| document.getElementById("quantityForSize42").value == 0
+									|| !document.getElementById('productSize42').checked) ? "" : document.getElementById("quantityForSize42").value;
 		product.quantityForSize44 = (document.getElementById("quantityForSize44") == null 
-									|| document.getElementById("quantityForSize44").value == 0) ? "" : document.getElementById("quantityForSize44").value;
+									|| document.getElementById("quantityForSize44").value == 0
+									|| !document.getElementById('productSize44').checked) ? "" : document.getElementById("quantityForSize44").value;
 		product.quantityForSize46 = (document.getElementById("quantityForSize46") == null 
-									|| document.getElementById("quantityForSize46").value == 0) ? "" : document.getElementById("quantityForSize46").value;
+									|| document.getElementById("quantityForSize46").value == 0
+									|| !document.getElementById('productSize46').checked) ? "" : document.getElementById("quantityForSize46").value;
 		product.quantityForSize48 = (document.getElementById("quantityForSize48") == null 
-									|| document.getElementById("quantityForSize48").value == 0) ? "" : document.getElementById("quantityForSize48").value;
+									|| document.getElementById("quantityForSize48").value == 0
+									|| !document.getElementById('productSize48').checked) ? "" : document.getElementById("quantityForSize48").value;
 		productList.push(product);
 		refreshProductsTable();
 		closeAddProductModal();
@@ -1081,29 +1251,18 @@
 				"<td>" + product.colorCode + "</td>"+
 				"<td>" + product.gender + "</td>";
 				
-				tbody+="<td>" + product.quantityForSize28 + "</td>"+
-				"<td>" + product.quantityForSize30 + "</td>"+
-				"<td>" + product.quantityForSize32 + "</td>"+
-				"<td>" + product.quantityForSize34 + "</td>"+
-				"<td>" + product.quantityForSize36 + "</td>"+
-				"<td>" + product.quantityForSize38 + "</td>"+
-				"<td>" + product.quantityForSize40 + "</td>"+
-				"<td>" + product.quantityForSize42 + "</td>"+
-				"<td>" + product.quantityForSize44 + "</td>"+
-				"<td>" + product.quantityForSize46 + "</td>"+
-				"<td>" + product.quantityForSize48 + "</td>";
+				if(product.quantityForSize28!=null)	tbody+="<td>" + product.quantityForSize28 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize30!=null)	tbody+="<td>" + product.quantityForSize30 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize32!=null)	tbody+="<td>" + product.quantityForSize32 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize34!=null)	tbody+="<td>" + product.quantityForSize34 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize36!=null)	tbody+="<td>" + product.quantityForSize36 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize38!=null)	tbody+="<td>" + product.quantityForSize38 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize40!=null)	tbody+="<td>" + product.quantityForSize40 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize42!=null)	tbody+="<td>" + product.quantityForSize42 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize44!=null)	tbody+="<td>" + product.quantityForSize44 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize46!=null)	tbody+="<td>" + product.quantityForSize46 + "</td>"; else tbody+="<td>0</td>";
+				if(product.quantityForSize48!=null)	tbody+="<td>" + product.quantityForSize48 + "</td>"; else tbody+="<td>0</td>";
 				
-				/*if(document.getElementById('productSize28').checked) tbody+="<td>" + product.quantityForSize28 + "</td>";
-				if(document.getElementById('productSize30').checked) tbody+="<td>" + product.quantityForSize30 + "</td>";
-				if(document.getElementById('productSize32').checked) tbody+="<td>" + product.quantityForSize32 + "</td>";
-				if(document.getElementById('productSize34').checked) tbody+="<td>" + product.quantityForSize34 + "</td>";
-				if(document.getElementById('productSize36').checked) tbody+="<td>" + product.quantityForSize36 + "</td>";
-				if(document.getElementById('productSize38').checked) tbody+="<td>" + product.quantityForSize38 + "</td>";
-				if(document.getElementById('productSize40').checked) tbody+="<td>" + product.quantityForSize40 + "</td>";
-				if(document.getElementById('productSize42').checked) tbody+="<td>" + product.quantityForSize42 + "</td>";
-				if(document.getElementById('productSize44').checked) tbody+="<td>" + product.quantityForSize44 + "</td>";
-				if(document.getElementById('productSize46').checked) tbody+="<td>" + product.quantityForSize46 + "</td>";
-				if(document.getElementById('productSize48').checked) tbody+="<td>" + product.quantityForSize48 + "</td>";*/
 				
 				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
 				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
@@ -1121,11 +1280,11 @@
 			dataTable.column(12).visible(document.getElementById('productSize44').checked);
 			dataTable.column(13).visible(document.getElementById('productSize46').checked);
 			dataTable.column(14).visible(document.getElementById('productSize48').checked);
-		if(productList.length > 0){
+		/*if(productList.length > 0){
 			$('#btnPreview').show();
 		} else {
 			$('#btnPreview').hide();
-		}
+		}*/
 	}
 	
 	function deleteProductEntryAndUpdateView(id){

@@ -113,6 +113,7 @@
     <!-- Clean UI Scripts -->
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
+	<script src="js/common.js"></script>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 	<script src="js/JsBarcode.all.min.js"></script>
 	<!--For Electron--><script>if (window.module) module = window.module;</script>
@@ -404,12 +405,11 @@
             </h2>
         </div>
         <div class="panel-body">
-            <table class="table table-hover nowrap" id="displayBanksTable" width="100%">
+            <table class="table table-hover nowrap" id="displaySalesOrdersTable" width="100%">
                 <thead class="thead-default">
                 <tr>
                     <th>Sales Order ID</th>
-                    <th>Customer Name</th>
-					<th>City</th>					
+                    <th>Customer Name</th>					
                     <th>Order Quantity(Pcs)</th>
 					<th>Order Amount (INR)</th>
 					<th>Status</th>
@@ -419,15 +419,14 @@
                 <tfoot>
                 <tr>
                     <th>Sales Order ID</th>
-                    <th>Customer Name</th>
-					<th>City</th>					
+                    <th>Customer Name</th>					
                     <th>Order Quantity(Pcs)</th>
 					<th>Order Amount (INR)</th>
 					<th>Status</th>
 					<th>Action</th>
                 </tr>
                 </tfoot>
-                <tbody id = 'displayBanksTableBody'>
+                <tbody id = 'displaySalesOrdersTableBody'>
                 </tbody>
             </table>
         </div>
@@ -439,7 +438,7 @@
 <div id = "printModal" class = "modal printbox">
     <div class="modal-content">
 		<div class="modal-header">
-			<h3 style="padding:5px;font-size:15px;">Delete Bank ?</h3>
+			<h3 style="padding:5px;font-size:15px;">Delete Sales Order ?</h3>
 		</div>
 		<div class="modal-body">
 		<span id = "printMessage"></span></br>
@@ -462,31 +461,37 @@
 	 	 	 
 	 $.fn.dataTable.ext.errMode = 'none';
 
-	$('#displayBanksTable').on( 'error.dt', function ( e, settings, techNote, message ) {
+	$('#displaySalesOrdersTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
-	
-	 $.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/bank", function(data){
-		 	var dataTable = $('#displayBanksTable').DataTable();			
+	http://stackoverflow.com/questions/7745609/sql-select-only-rows-with-max-value-on-a-column
+	 $.getJSON(base_url + "/AdValoramAdmin/salesOrder", function(data){
+		 	var dataTable = $('#displaySalesOrdersTable').DataTable();			
 			if(data.result == 'error'){
 				return;
 			}
 			
-			var bankArray = data.result;
-			var dataTable = $('#displayBanksTable').DataTable();
-			for(var i = 0; i < bankArray.length; i++){
-				var bankJson = bankArray[i];
+			var salesOrderArray = data.result;
+			var dataTable = $('#displaySalesOrdersTable').DataTable();
+			for(var i = 0; i < salesOrderArray.length; i++){
+				var salesOrderJson = salesOrderArray[i];
+				var entries = salesOrderJson.entry;
+				var quantity = 0;
+				var orderAmount = 0;
+				for(var q = 0; q < entries.length; q++){
+					var entryJson = entries[q];
+					quantity+=entryJson.quantity;
+					orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
+				}
 				
-					
 				dataTable.row.add([
-					""+bankJson.id,
-					//"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
-					bankJson.bankName,
-					bankJson.branchName,
-					bankJson.city.cityName,
-					bankJson.createdByUser.username,
-					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editBank("+bankJson.id+");'><i class='icmn-pencil5'></i> View</a>"
-												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteBankDialog("+bankJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
+					salesOrderJson.salesOrderId,
+					salesOrderJson.clientNameOnSalesOrderDate,
+					quantity,
+					"Rs. "+numberWithCommas(orderAmount),
+					salesOrderJson.status,
+					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=editSalesOrder("+salesOrderJson.salesOrderId+",'"+salesOrderJson.status+"');><i class='icmn-pencil5'></i> View</a>"
+					+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+salesOrderJson.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
 		});
@@ -494,32 +499,17 @@
 
 </script>
 <script>
-function editBank(id){
-	window.location = "bank.html?id="+id;
+
+function editSalesOrder(id, status){				
+	if(status == "CONFIRMED"){
+		window.location = "preview-sales-order.html?id="+id;
+		return;
+	}				
+	window.location = "sales-order.html?id=" + id;
 }
+
 function signOut(){
 	window.location = "index.html";
-}
-function closeBarCodeModal(){
-	modal.style.display = "none";
-}
-// Get the modal
-var modal = document.getElementById('barcodeQuantity');
-
-// Get the button that opens the modal
-var btn = document.getElementById("buttonAddProduct");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks the button, open the modal 
-/*btn.onclick = function() {
-    modal.style.display = "block";
-}*/
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-    modal.style.display = "none";
 }
 
 </script>
@@ -530,7 +520,7 @@ span.onclick = function() {
 <script>
     $(function () {
 
-		$('#displayBanksTable').DataTable();
+		$('#displaySalesOrdersTable').DataTable();
     });
 </script>
 <!-- End Page Scripts -->
