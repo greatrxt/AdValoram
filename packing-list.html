@@ -960,7 +960,8 @@
 		if(getParameterByName('salesOrderId')!=null 
 			|| getParameterByName('packingListId')!=null){
 			
-			document.getElementById('buttonAddProduct').style.display = "none" ;
+			document.getElementById('buttonAddProduct').style.display = "none";
+			document.getElementById('buttonAddProduct').disabled = true;
 			
 			salesOrderId = getParameterByName('salesOrderId');			
 			packingListId = getParameterByName('packingListId');
@@ -1495,7 +1496,7 @@
 							if(salesOrderId < 0){
 								tbody+="<td>" + product[key]+"</td>";
 							} else {
-								tbody+="<td><input class = 'form-control' type='number' min='0' value='" + product[key] + "' onchange = limitQuantityTo(this," + p + ",28," + balanceForCurrentEntry[key]+"); max='" + balanceForCurrentEntry[key] + "'></td>"
+								tbody+="<td><input class = 'form-control' type='number' min='0' value='" + product[key] + "' onchange = limitQuantityTo(this," + p + ","+s+"," + balanceForCurrentEntry[key]+"); max='" + balanceForCurrentEntry[key] + "'></td>"
 							}
 						}
 					} else {
