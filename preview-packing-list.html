@@ -176,6 +176,10 @@ function editPackingList(){
 function backToLandingPage(){
 	window.location = "landing-packing-list.html";
 }
+
+function generateInvoice(){
+	window.location = "invoice.html?packingListId="+getParameterByName("packingListId");
+}
 </script>
 <body>
 
@@ -184,7 +188,7 @@ function backToLandingPage(){
 	<button class = "no-print" onClick="editPackingList();">Edit</button>
 	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
 	<button id = "buttonConfirmPackingList" onclick = "confirmPackingList();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
-	<button id = "buttonGeneratePackingList" onclick = "generatePackingList();" class = "no-print green" style = "float:right; visibility:hidden">Generate Invoice</button>
+	<button id = "buttonGeneratePackingList" onclick = "generateInvoice();" class = "no-print green" style = "float:right; visibility:hidden">Generate Invoice</button>
 		<textarea id="header">PACKING LIST</textarea>
 		
 		<div id="identity">

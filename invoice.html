@@ -113,6 +113,7 @@
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
+
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations();fetchTransporters();">
@@ -631,7 +632,7 @@
 								<div class = "col-lg-6">	
 									<div class="form-group">
 										<label for="invoiceRevisionNumber">Invoice Revision Number</label>
-										<input class="form-control" id="invoiceRevisionNumber" type="text" readonly>
+										<input class="form-control" id="invoiceRevisionNumber" type="text" readonly value = 0>
 									</div>
 								</div>
 								<div class = "col-lg-6">	
@@ -645,17 +646,13 @@
 							<div class="form-group">
                                 <label for="clientName">Client Name</label>
 								<select class="form-control" id="clientName">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+										
 								</select>
                             </div>
 							
 							<div class="form-group">
 								<label class="form-control-label" for="deliveryAddress">Delivery Address</label>
-								<input id="deliveryAddressSameAsBillingAddress" type="checkbox" style="margin:11px" >Same as Billing Address
+								<!--<input id="deliveryAddressSameAsBillingAddress" type="checkbox" style="margin:11px" >Same as Billing Address-->
 								<textarea class="form-control" rows="3" id="deliveryAddress" readonly></textarea>
 							</div>
 							
@@ -677,11 +674,7 @@
 							<div class="form-group">
                                 <label for="referredBy">Referred By</label>
 								<select class="form-control" id="referredBy">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+											
 								</select>
                             </div>
 							
@@ -731,8 +724,8 @@
 						<div class = "col-lg-5" style="padding-left:100px;">
 							
 							<div class="form-group">
-                                <label for="licenseNumber">License Number</label>
-                                <input class="form-control" id="licenseNumber"  >
+                                <label for="roadPermitOrLicenseNumber">License Number</label>
+                                <input class="form-control" id="roadPermitOrLicenseNumber"  >
                             </div>
 							
 							<div class="form-group">
@@ -744,10 +737,11 @@
 
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createNewInvoice()">Save</button>
+							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createNewInvoice()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnPreview" style="margin:10px; background-color:#5dc698; border-color:#5dc698; visibility:hidden" onclick = "showPreview();">Preview</button>
 						</div>
                     </div>
 				</div>
@@ -759,79 +753,234 @@
 </section>
 
 <script>
+
+	function  showPreview(){
+		window.location = "preview-invoice.html?invoiceId=" + getParameterByName('invoiceId');
+	}
+
+	var linkedPackingListInternalId = -1; // IMPORTANT - internal ID. i.e ID assigned in DB. NOT Packinglist ID
+	var linkedSalesOrderInternalId = -1;// IMPORTANT - internal ID. i.e ID assigned in DB. NOT SalesOrder ID
+	
+	$(window).load(function() {
+		getNextInvoiceId();
+		document.getElementById("invoiceDate").value = print_today();
+		if(getParameterByName('packingListId')!=null 
+			||getParameterByName('invoiceId')!=null ) {
+			getLinkedPackingListAndSalesOrder();
+		} else {
+			getClients();
+		}
+	});
+	
+	function print_today() {
+	  var now = new Date();
+	  var months = new Array('January','February','March','April','May','June','July','August','September','October','November','December');
+	  var date = ((now.getDate()<10) ? "0" : "")+ now.getDate();
+	  function fourdigits(number) {
+		return (number < 1000) ? number + 1900 : number;
+	  }
+	  var today =  months[now.getMonth()] + " " + date + ", " + (fourdigits(now.getYear()));
+	  return today;
+	}
+
+	function getClients(){
+		if(document.getElementById('clientName')!=null){
+		 $.getJSON(base_url + "/AdValoramAdmin/customer/idNameList", function(data){
+				 if(data.result=='error'){
+					return;
+				 }
+				var customerArray = data.result;
+				var customerSelect = document.getElementById('clientName');
+				removeOptions(customerSelect);
+				for(var i = 0; i < customerArray.length; i++){
+					var customer = customerArray[i];
+						var opt = document.createElement('option');
+						opt.value = customer.id;
+						opt.innerHTML = customer.companyName;
+						customerSelect.appendChild(opt);
+				}
+				var clientNames = document.getElementById("clientName");
+				clientNames.selectedIndex = -1;
+				//add event listener only if user is creating an unlinked invoice
+					clientNames.addEventListener("change", function() {
+					var clientId = clientNames.value;
+					if(clientId > 0){
+						$.getJSON(base_url + "/AdValoramAdmin/common/customer/"+clientId, function(data){
+							if(data.result=='error'){
+								return;
+							}
+							document.getElementById('billingAddress').value = data.result[0].billingAddress;
+							document.getElementById('deliveryAddress').value = data.result[0].deliveryAddress;
+							document.getElementById('city').value = data.result[0].city.cityName;
+							document.getElementById('district').value = data.result[0].city.district;
+							document.getElementById('state').value = data.result[0].city.state;
+							document.getElementById('pinCode').value = data.result[0].pinCode;
+							document.getElementById('contactPerson').value = data.result[0].contactPerson;
+							document.getElementById('contactNumber').value = data.result[0].contactNumber;
+							document.getElementById('emailAddress').value = data.result[0].emailAddress;
+							
+							document.getElementById('markDown').value = data.result[0].markDown;
+							document.getElementById('cashDiscount').value = data.result[0].cashDiscount;
+							document.getElementById('promptPaymentDiscount').value = data.result[0].promptPaymentDiscount;
+							document.getElementById('specialDiscount').value = data.result[0].specialDiscount;
+							
+						});
+					}
+				});
+			});
+		}
+	}
+	
+	function getNextInvoiceId(){
+		if(document.getElementById('invoiceId')!=null){
+			$.getJSON(base_url + "/AdValoramAdmin/invoice/nextid", function(data){
+				 if(data.result=='error'){
+					return;
+				 }
+				document.getElementById('invoiceId').value = data.result;
+			});
+		}	
+	}
+
+	
+	function getLinkedPackingListAndSalesOrder(){
+		var packingListId = getParameterByName('packingListId');
+		var invoiceId = getParameterByName('invoiceId');
+		var url;
+		if(invoiceId!=null){
+			url = base_url + "/AdValoramAdmin/invoice/" + invoiceId;
+		} else if(packingListId!=null){
+			linkedPackingListId = packingListId;
+			url = base_url + "/AdValoramAdmin/packingList/" 
+						+ packingListId + "/linkedSalesOrder";
+		}
+		$.getJSON(url, function(data){
+			var salesOrder;
+			var linkedPackingLists;
+			var linkedCustomer;
+			
+			if(invoiceId!=null){
+				salesOrder = data.result[0].linkedSalesOrder;
+				linkedPackingList = data.result[0].linkedPackingList;
+				
+				document.getElementById('invoiceId').value = data.result[0].invoiceId;
+				document.getElementById('numberOfPackages').value = data.result[0].numberOfPackages;
+				document.getElementById('invoiceRevisionNumber').value = data.result[0].invoiceRevisionNumber;
+				document.getElementById('grossWeight').value = data.result[0].grossWeight;
+				document.getElementById('lorryReceiptNumber').value = data.result[0].lorryReceiptNumber;
+				document.getElementById('roadPermitOrLicenseNumber').value = data.result[0].roadPermitOrLicenseNumber;
+				
+				
+				document.getElementById('numberOfPackages').disabled = true;
+				document.getElementById('invoiceRevisionNumber').disabled = true;
+				document.getElementById('grossWeight').disabled = true;
+				document.getElementById('lorryReceiptNumber').disabled = true;
+				document.getElementById('roadPermitOrLicenseNumber').disabled = true;
+				
+				linkedCustomer = salesOrder.linkedCustomer;
+				document.getElementById('btnSave').disabled = true;
+				document.getElementById('btnPreview').style.visibility = "visible";
+			} else if(packingListId!=null){
+				salesOrder = data.result;
+				linkedPackingLists = salesOrder.linkedPackingLists;
+				
+				for(var p = 0; p < linkedPackingLists.length; p++){
+				var linkedPackingList = linkedPackingLists[p];
+					if(parseInt(packingListId) == linkedPackingList.packingListId){
+						linkedPackingListInternalId = linkedPackingList.id;
+						linkedCustomer = linkedPackingList.linkedCustomer;
+					}
+				}
+			}
+			
+			var clientName = document.getElementById("clientName");
+			removeOptions(clientName);
+			
+			var opt = document.createElement('option');
+			opt.value = linkedCustomer.id;
+			opt.innerHTML = linkedCustomer.companyName;
+			clientName.appendChild(opt);
+			clientName.disabled = true;		
+			 
+			linkedSalesOrderInternalId = salesOrder.id;			
+			document.getElementById("purchaseOrderReference").value = salesOrder.purchaseOrderReference;
+			
+			document.getElementById('billingAddress').value = salesOrder.clientBillingAddressOnSalesOrderDate;
+			document.getElementById('deliveryAddress').value = salesOrder.clientDeliveryAddressOnSalesOrderDate;
+			document.getElementById('city').value = salesOrder.clientCityOnSalesOrderDate;
+			document.getElementById('district').value = salesOrder.clientDistrictOnSalesOrderDate;
+			document.getElementById('state').value = salesOrder.clientStateOnSalesOrderDate;
+			document.getElementById('pinCode').value = salesOrder.clientPinCodeOnSalesOrderDate;
+			document.getElementById('contactPerson').value = salesOrder.clientContactPersonOnSalesOrderDate;
+			document.getElementById('contactNumber').value = salesOrder.clientContactPersonOnSalesOrderDate;
+			document.getElementById('emailAddress').value = salesOrder.clientEmailAddressOnSalesOrderDate;
+			
+			document.getElementById('markDown').value = salesOrder.markDownOnSalesOrderDate;
+			document.getElementById('cashDiscount').value = salesOrder.cashDiscountOnSalesOrderDate;
+			document.getElementById('promptPaymentDiscount').value = salesOrder.promptPaymentDiscountOnSalesOrderDate;
+			document.getElementById('specialDiscount').value = salesOrder.specialDiscountOnSalesOrderDate;
+			
+			if(salesOrder.linkedCustomer.linkedTransporter.companyName!=null){
+				document.getElementById('transportName').value = salesOrder.linkedCustomer.linkedTransporter.companyName;		
+			}
+			
+			var referredByEmployee = document.getElementById("referredBy");
+			referredByEmployee.disabled = true;	
+			removeOptions(referredByEmployee);
+			
+			var opt = document.createElement('option');
+			if(salesOrder.referredByEmployee.id!=null){
+				opt.value = salesOrder.referredByEmployee.id;
+				opt.innerHTML = salesOrder.referredByEmployee.firstName + " " + salesOrder.referredByEmployee.lastName;
+				referredByEmployee.appendChild(opt);
+			}
+			referredByEmployee.disabled = true;	
+
+		});
+	}
+	
 	function goBackToLandingPage(){
 		window.location = "landing-invoice.html";
 	}
 	
-	function createCustomer(){
+	function createNewInvoice(){
 
-		var customer = new Object();	
-		customer.companyName = document.getElementById("companyName").value;
-		
-		if (document.getElementById("radioRetailer").checked) {
-			customer.customerType = document.getElementById("radioRetailer").value;
-		} else if (document.getElementById("radioDistributor").checked) {
-			customer.customerType = document.getElementById("radioDistributor").value;
-		} else if (document.getElementById("radioBroker").checked) {
-			customer.customerType = document.getElementById("radioBroker").value;
+		document.getElementById('btnSave').disabled = true;
+		var invoice = new Object();			
+		invoice.linkedPackingListInternalId = linkedPackingListInternalId;
+		invoice.linkedSalesOrderInternalId = linkedSalesOrderInternalId;
+			
+		var referredByEmployee = document.getElementById("referredBy");
+
+		if(referredByEmployee.options[referredByEmployee.selectedIndex]==null){
+			invoice.salesEmployeeId='';
+		} else {
+			invoice.salesEmployeeId = referredByEmployee.options[referredByEmployee.selectedIndex].value;
 		}
-		customer.linkedDistributor = document.getElementById("linkedDistributor").value;
-		customer.linkedBroker = document.getElementById("linkedBroker").value;
-		customer.billingAddress = document.getElementById("billingAddress").value;
-		customer.deliveryAddress = document.getElementById("deliveryAddress").value;
-		customer.city = document.getElementById("city").value;
-		customer.pinCode = document.getElementById("pinCode").value;
-		customer.contactPerson = document.getElementById("contactPerson").value;
-		customer.contactNumber	 = document.getElementById("contactNumber").value;
-		customer.emailAddress = document.getElementById("emailAddress").value;
-		customer.markDown = document.getElementById("markDown").value;
-		customer.cashDiscount = document.getElementById("cashDiscount").value;
-		customer.promptPaymentDiscount = document.getElementById("promptPaymentDiscount").value;
-		customer.specialDiscount = document.getElementById("specialDiscount").value;
-		customer.distributorCommission = document.getElementById("distributorCommission").value;
-		customer.brokerCommission = document.getElementById("brokerCommission").value;
-		customer.creditPeriod = document.getElementById("creditPeriod").value;
-		customer.creditLimit = document.getElementById("creditLimit").value;
-		customer.paymentTerms = document.getElementById("paymentTerms").value;
-		customer.financialGrouping = document.getElementById("financialGrouping").value;
-		customer.vatTinNumber = document.getElementById("vatTinNumber").value;
-		customer.cstTinNumber = document.getElementById("cstTinNumber").value;
-		customer.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
-		customer.panNumber = document.getElementById("panNumber").value;
 		
-		vatIsApplicable = document.getElementById("vatIsApplicable").checked;
-		cstIsApplicable = document.getElementById("cstIsApplicable").checked;
-		gstIsApplicable = document.getElementById("gstIsApplicable").checked;
-		octroiLbtEntryTaxIsApplicable = document.getElementById("octroiLbtEntryTaxIsApplicable").checked;
+		var refereePartnerName = document.getElementById("clientName");
+		if(refereePartnerName.options[refereePartnerName.selectedIndex]==null){
+			invoice.refereePartnerId='';
+		} else {
+			invoice.refereePartnerId = refereePartnerName.options[refereePartnerName.selectedIndex].value;
+		}
 		
-		if(cstIsApplicable) customer.cstRateApplicable = document.getElementById("cstRateApplicable").value;
-		if(vatIsApplicable) customer.vatRateApplicable = document.getElementById("vatRateApplicable").value;
-		if(cstIsApplicable) customer.cstRateAgainstFormC = document.getElementById("cstRateAgainstFormC").value;
-		if(gstIsApplicable) customer.gstRateApplicable = document.getElementById("gstRateApplicable").value;
-		if(octroiLbtEntryTaxIsApplicable) customer.octroiLbtEntryTaxApplicable = document.getElementById("octroiLbtEntryTaxApplicable").value;
-		
-		customer.linkedTransporter = document.getElementById("linkedTransporter").value;
-		
-		customer.transportContactPerson = document.getElementById("transportContactPerson").value;
-		customer.transportContactNumber = document.getElementById("transportContactNumber").value;
-		customer.transportEmailAddress = document.getElementById("transportEmailAddress").value;
-		customer.transportContractTerms = document.getElementById("transportContractTerms").value;
-		customer.transportPaymentTerms = document.getElementById("transportPaymentTerms").value;
-		
-		customer.specialInstructions = document.getElementById("specialInstructions").value;
-		customer.notes = document.getElementById("notes").value;
+		invoice.roadPermitOrLicenseNumber = document.getElementById('roadPermitOrLicenseNumber').value;
+		invoice.numberOfPackages = document.getElementById('numberOfPackages').value;
+		invoice.grossWeight = document.getElementById('grossWeight').value;
+		invoice.lorryReceiptNumber = document.getElementById('lorryReceiptNumber').value;
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
-				console.log("Success");
+				window.location = "invoice.html?invoiceId="+response.invoiceId;
 			}
 		};
 		
-		request.open ("POST", "http://localhost:8080/AdValoramAdmin/customer", true);
+		request.open ("POST", base_url + "/AdValoramAdmin/invoice", true);
 		request.setRequestHeader("content-type", "application/json");
-		request.send(JSON.stringify(customer));
+		request.send(JSON.stringify(invoice));
 	}
 </script>
 </body>

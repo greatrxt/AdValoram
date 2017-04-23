@@ -124,6 +124,7 @@
 		} catch(e) {
 		}
 	</script>
+	<script src="js/common.js"></script>
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
@@ -464,34 +465,48 @@
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
 	
-	 $.getJSON("http://173.212.200.188:8080/AdValoramAdmin/common/invoice", function(data){
+	 $.getJSON(base_url + "/AdValoramAdmin/invoice", function(data){
 		 	var dataTable = $('#displayInvoicesTable').DataTable();			
 			if(data.result == 'error'){
 				return;
 			}
 			
-			var invoiceArray = data.result;
+			var invoice = data.result[0];
 			var dataTable = $('#displayInvoicesTable').DataTable();
-			for(var i = 0; i < invoiceArray.length; i++){
-				var invoiceJson = invoiceArray[i];
-				
-					
-				dataTable.row.add([
-					""+invoiceJson.id,
-					//"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
-					invoiceJson.invoiceName,
-					invoiceJson.branchName,
-					invoiceJson.city.cityName,
-					invoiceJson.createdByUser.username,
-					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editInvoice("+invoiceJson.id+");'><i class='icmn-pencil5'></i> View</a>"
-												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteInvoiceDialog("+invoiceJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
-				]).draw(false);
+			var linkedPackingList = invoice.linkedPackingList;
+
+			var entries = linkedPackingList.entry;
+			var quantity = 0;
+			var orderAmount = 0;
+			for(var q = 0; q < entries.length; q++){
+				var entryJson = entries[q];
+				quantity+=entryJson.quantity;
+				orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
 			}
+			
+			dataTable.row.add([
+				invoice.invoiceId,
+				linkedPackingList.clientNameOnPackingListDate,
+				linkedPackingList.linkedCustomer.city.cityName,
+				quantity,
+				"Rs. "+numberWithCommas(orderAmount),
+				invoice.status,
+				"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=viewInvoice("+invoice.invoiceId+",'"+invoice.status+"');><i class='icmn-pencil5'></i> View</a>"
+				+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+linkedPackingList.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"
+			]).draw(false);
+			
 		});
 	 });
 
 </script>
 <script>
+function viewInvoice(invoiceId, status){
+	if(status == "ISSUED"){
+		window.location = "preview-invoice.html?invoiceId="+invoiceId;
+		return;
+	}				
+	window.location = "invoice.html?invoiceId=" + invoiceId;
+}
 function editInvoice(id){
 	window.location = "invoice.html?id="+id;
 }

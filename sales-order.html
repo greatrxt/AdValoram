@@ -952,7 +952,7 @@
 
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createSalesOrder()">Save</button>
+							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createSalesOrder()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
@@ -1118,6 +1118,8 @@
 	
 	var salesOrderId = -1;
 	function createSalesOrder(){
+	
+		document.getElementById('btnSave').disabled = true;
 		var salesOrder = new Object();
 		
 		//salesOrder.salesOrderId = document.getElementById('salesOrderId').value;

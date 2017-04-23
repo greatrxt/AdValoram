@@ -607,7 +607,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createOrUpdateTax();">Save</button>
+							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createOrUpdateTax();">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
@@ -645,7 +645,7 @@ $(window).load(function() {
 <script>
 	
 	function createOrUpdateTax(){
-
+		document.getElementById('btnSave').disabled = true;
 		var tax = new Object();
 		
 		tax.taxName = document.getElementById("taxName").value;

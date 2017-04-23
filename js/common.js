@@ -1,6 +1,8 @@
 
 	
 	//var base_url = "http://173.212.200.188:8080";
+	var base_url = "http://advaloram.1qubit.com";
+	//var base_url = "http://localhost:8080";
 	// DEFINE ALL GLOBAL VARIABLES HERE	
 	var gendersArray = null;
 	var seasonsArray = null;
@@ -9,7 +11,7 @@
 	var productCategoryArray = null;
 	var brandsArray = null;
 	var selectedStyleCode = null;
-	var base_url = "http://localhost:8080";
+	
 	
 	function removeOptions(selectbox){
 		var i;

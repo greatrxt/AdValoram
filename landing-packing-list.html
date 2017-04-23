@@ -467,11 +467,7 @@
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
 	 $.getJSON(base_url + "/AdValoramAdmin/packingList", function(data){
-		 	var dataTable = $('#displayPackingListsTable').DataTable();			
-			if(data.result == 'error'){
-				return;
-			}
-			
+		 	var dataTable = $('#displayPackingListsTable').DataTable();						
 			var packingListArray = data.result;
 			var dataTable = $('#displayPackingListsTable').DataTable();
 			for(var i = 0; i < packingListArray.length; i++){
