@@ -714,7 +714,7 @@
 						<a id = "3" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Uploads</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
@@ -774,7 +774,9 @@
 							
 							<div class="form-group">
                                 <label for="clientName">Client Name</label>
-								<select class="form-control" id="clientName">
+								<select class="form-control" id="clientName" name="validation[client name]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please select $">
 								</select>
                             </div>
 							
@@ -808,6 +810,7 @@
 					</div>
 					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-12">
+						<div id = "productErrorDiv" style = "display:none"><span style="color:#FF0000; margin:20px;">Please add atleast 1 product</span></br></br></div>
 							<div class="form-group" >
 								<label class="form-control-label" for="productSize">Sizes</label>
                                 <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked onclick = "toggleColumnVisibility(4, this)">28
@@ -952,7 +955,7 @@
 
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createSalesOrder()">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createSalesOrder()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
@@ -1117,9 +1120,7 @@
 	}
 	
 	var salesOrderId = -1;
-	function createSalesOrder(){
-	
-		document.getElementById('btnSave').disabled = true;
+	function createSalesOrder(){				
 		var salesOrder = new Object();
 		
 		//salesOrder.salesOrderId = document.getElementById('salesOrderId').value;
@@ -1128,8 +1129,19 @@
 		salesOrder.purchaseOrderReference = document.getElementById('purchaseOrderReference').value;
 		
 		var clientName = document.getElementById('clientName');
+		if(clientName.value.length <= 0){	//VALIDATE - CLIENT
+			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
+			return;
+		}
 		salesOrder.linkedCustomer = clientName.options[clientName.selectedIndex].value;
-		
+		if(productList.length < 1){					//VALIDATE - PRODUCT
+			$('.nav-tabs-horizontal li:eq(1) a').tab('show');
+			tabFunction(1);
+			document.getElementById('productErrorDiv').style.display = "block";
+			return;
+		} else {
+			document.getElementById('productErrorDiv').style.display = "none";
+		}
 		var employeeName = document.getElementById('referredByEmployee');
 		salesOrder.referredByEmployee = employeeName.value;
 		
@@ -1154,6 +1166,7 @@
 		salesOrder.productList = productList;
 		console.log(JSON.stringify(salesOrder));
 		
+		document.getElementById('btnSave').disabled = true;
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)

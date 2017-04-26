@@ -587,7 +587,7 @@
 						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Others</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
@@ -616,7 +616,7 @@
                             </div>
 						
 							<div class="form-group">
-                                <label for="contactPerson">Contact Person*</label>
+                                <label for="contactPerson">Contact Person</label>
                                 <input class="form-control" id="contactPerson" type="text" readonly>
                             </div>
 							
@@ -645,7 +645,9 @@
 							
 							<div class="form-group">
                                 <label for="clientName">Client Name</label>
-								<select class="form-control" id="clientName">
+								<select class="form-control" id="clientName" name="validation[client]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please choose a $">
 										
 								</select>
                             </div>
@@ -730,14 +732,16 @@
 							
 							<div class="form-group">
                                 <label for="grossWeight">Gross Weight (kgs)*</label>
-                                <input class="form-control" id="grossWeight" type="number">
+                                <input class="form-control" id="grossWeight" type="number" name="validation[gross weight]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please enter $">
                             </div>
 						</div>
 					</div>
 
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createNewInvoice()">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createNewInvoice()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
@@ -862,7 +866,7 @@
 			if(invoiceId!=null){
 				salesOrder = data.result[0].linkedSalesOrder;
 				linkedPackingList = data.result[0].linkedPackingList;
-				
+				linkedPackingListInternalId = linkedPackingList.id;
 				document.getElementById('invoiceId').value = data.result[0].invoiceId;
 				document.getElementById('numberOfPackages').value = data.result[0].numberOfPackages;
 				document.getElementById('invoiceRevisionNumber').value = data.result[0].invoiceRevisionNumber;
@@ -871,14 +875,14 @@
 				document.getElementById('roadPermitOrLicenseNumber').value = data.result[0].roadPermitOrLicenseNumber;
 				
 				
-				document.getElementById('numberOfPackages').disabled = true;
-				document.getElementById('invoiceRevisionNumber').disabled = true;
-				document.getElementById('grossWeight').disabled = true;
-				document.getElementById('lorryReceiptNumber').disabled = true;
-				document.getElementById('roadPermitOrLicenseNumber').disabled = true;
+				//document.getElementById('numberOfPackages').disabled = true;
+				//document.getElementById('invoiceRevisionNumber').disabled = true;
+				////document.getElementById('grossWeight').disabled = true;
+				//document.getElementById('lorryReceiptNumber').disabled = true;
+				//document.getElementById('roadPermitOrLicenseNumber').disabled = true;
 				
 				linkedCustomer = salesOrder.linkedCustomer;
-				document.getElementById('btnSave').disabled = true;
+				//document.getElementById('btnSave').disabled = true;
 				document.getElementById('btnPreview').style.visibility = "visible";
 			} else if(packingListId!=null){
 				salesOrder = data.result;
@@ -944,7 +948,14 @@
 	}
 	
 	function createNewInvoice(){
-
+		if(document.getElementById("clientName").value.length < 1){
+			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
+			return;
+		}
+		if(document.getElementById("grossWeight").value.length < 3){
+			$('.nav-tabs-horizontal li:eq(2) a').tab('show')
+			return;
+		}
 		document.getElementById('btnSave').disabled = true;
 		var invoice = new Object();			
 		invoice.linkedPackingListInternalId = linkedPackingListInternalId;
@@ -974,11 +985,15 @@
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
-				window.location = "invoice.html?invoiceId="+response.invoiceId;
+				window.location = "invoice.html?invoiceId="+JSON.parse(request.responseText).invoiceId;
 			}
 		};
 		
-		request.open ("POST", base_url + "/AdValoramAdmin/invoice", true);
+		if(getParameterByName('invoiceId')!=null){
+			request.open ("PUT", base_url + "/AdValoramAdmin/invoice/"+getParameterByName('invoiceId'), true);
+		} else {
+			request.open ("POST", base_url + "/AdValoramAdmin/invoice", true);
+		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(invoice));
 	}

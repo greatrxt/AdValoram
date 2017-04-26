@@ -778,17 +778,19 @@
 					}
 				}
 				</script>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
-                                <label for="styleCode">Style Code</label>
-                                <input class="form-control" id="styleCode" type="text">
+                                <label for="styleCode">Style Code*</label>
+                                <input class="form-control" id="styleCode" type="text" name="validation[style code]"
+																					   data-validation="[L>=2]"
+																					   data-validation-message="$ must have atleast 2 characters">
                             </div>
 							
 							<div class="form-group">
-								<label class="form-control-label" for="genderCode">Gender Code*</label><br/>
+								<label class="form-control-label" for="genderCode">Gender Code*</label><br/><span id = "genderError" style="color:#FF0000"></span>
 								<div id = "availableGender">
 								</div>
                                 <!--<input id="checkBoxGenderMale" name = "genderCode" type="checkbox" value="genderMale" style="margin:11px">Male
@@ -824,7 +826,7 @@
                             </div>
 			
 							<div class="form-group" >
-								<label class="form-control-label" for="productSize">Size*</label><br/>
+								<label class="form-control-label" for="productSize">Size*</label><br/><span id = "sizeError" style="color:#FF0000"></span>
 								<div id = "availableSizes">
 								</div>
                                 <!--<input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px">28
@@ -861,7 +863,9 @@
 								
 							<div class="form-group">
                                 <label for="mrp">MRP Price*</label>
-                                <input class="form-control" id="mrp" type="number">
+                                <input class="form-control" id="mrp" type="number" name="validation[mrp]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please enter a valid $">
                             </div>
 							
 							<div class="form-group">
@@ -880,7 +884,9 @@
 						</div>
 					</div>
 					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
+						<div id = "colorErrorDiv" style = "display:none"><span id = "colorError" style="color:#FF0000; margin:20px;">Please add atleast 1 color</span></br></br></div>
 						<div class = "col-lg-12">
+						
 							<table class="table table-hover nowrap" id="colorCodesTable" width="100%">
 								<thead class="thead-default">
 								<tr>
@@ -960,7 +966,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createProduct();">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createProduct();">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
@@ -1167,24 +1173,55 @@
 					});
 					
 					function createProduct(){
-						document.getElementById('btnSave').disabled = true;
+						if(document.getElementById("styleCode").value.length < 2){	//VALIDATE - STYLE CODE
+							$('.nav-tabs-horizontal li:eq(0) a').tab('show')
+							return;
+						}
+
+						
 						var product = new Object();
-						/*
-							//public String styleCode;
-							//public Map<String, Color> colorCodes;
-							//public Set<Gender> genderCodes;
-							//public Set<Size> sizeCodes;
-							//public Season seasonCode;
-							//public Brand brand;
-							//public ProductCategory productCategory;
-							//public UnitOfMeasurement unitOfMeasurement;
-							//public Integer mrp;
-							public Integer tradePrice;
-							public String eanCode;
-							public String productName;
-							public String status;
-						*/
-						product.styleCode = document.getElementById('styleCode').value;
+						product.styleCode = document.getElementById('styleCode').value;						
+						product.genderCodes = [];
+						var genderContainer = document.getElementById('availableGender');
+						var children = genderContainer.childNodes;
+						
+						for(var c = 0; c < children.length; c++){
+							if(children[c].checked){
+								product.genderCodes.push(children[c].value);
+							}
+						}
+						
+						if(product.genderCodes.length < 1){			//VALIDATE - GENDER CODE
+							$('.nav-tabs-horizontal li:eq(0) a').tab('show');
+							document.getElementById('genderError').innerHTML = "Please select atleast 1 gender";
+							return;
+						} else {
+							document.getElementById('genderError').innerHTML = "";
+						}
+						
+						product.sizeCodes = [];
+						var sizeContainer = document.getElementById('availableSizes');
+						var children = sizeContainer.childNodes;
+						
+						for(var c = 0; c < children.length; c++){
+							if(children[c].checked){
+								product.sizeCodes.push(children[c].value);
+							}
+						}
+						
+						if(product.sizeCodes.length < 1){		//VALIDATE - SIZE CODE
+							$('.nav-tabs-horizontal li:eq(0) a').tab('show');
+							document.getElementById('sizeError').innerHTML = "Please select atleast 1 size";
+							return;
+						} else {
+							document.getElementById('sizeError').innerHTML = "";
+						}
+						
+						if(document.getElementById("mrp").value.length < 1){	//VALIDATE - MRP
+							$('.nav-tabs-horizontal li:eq(1) a').tab('show')
+							return;
+						}
+						
 						product.colors = [];
 						dataTable.column(2).nodes().each(function (cell, i) {
 							var dropDown = cell.getElementsByTagName('select')[0];	
@@ -1203,27 +1240,14 @@
 								}
 							} 
 						});
-						
-						product.genderCodes = [];
-						var genderContainer = document.getElementById('availableGender');
-						var children = genderContainer.childNodes;
-						
-						for(var c = 0; c < children.length; c++){
-							if(children[c].checked){
-								product.genderCodes.push(children[c].value);
-							}
+						if(product.colors.length < 1){					//VALIDATE - Color
+							$('.nav-tabs-horizontal li:eq(2) a').tab('show');
+							tabFunction(2);
+							document.getElementById('colorErrorDiv').style.display = "block";
+							return;
+						} else {
+							document.getElementById('colorErrorDiv').style.display = "none";
 						}
-						
-						product.sizeCodes = [];
-						var sizeContainer = document.getElementById('availableSizes');
-						var children = sizeContainer.childNodes;
-						
-						for(var c = 0; c < children.length; c++){
-							if(children[c].checked){
-								product.sizeCodes.push(children[c].value);
-							}
-						}
-						
 						product.seasonCode = document.getElementById('season').value;
 						product.brand = document.getElementById('brand').value;
 						product.productCategory = document.getElementById('productCategory').value;
@@ -1233,6 +1257,7 @@
 						product.costPrice = document.getElementById('costPrice').value;
 						product.status = document.getElementById('productStatus').value;
 						
+						document.getElementById('btnSave').disabled = true;	//DISABLE SAVE BUTTON TO AVOID DOUBLE SAVE
 						var request = new XMLHttpRequest();
 						request.onreadystatechange = function(){
 							console.log(request.readyState+" " + request.status)

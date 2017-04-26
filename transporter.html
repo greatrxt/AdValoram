@@ -586,13 +586,15 @@
 						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Alerts & Uploads</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
                                 <label for="companyName">Company Name*</label>
-                                <input class="form-control" id="companyName" type="text">
+                                <input class="form-control" id="companyName" type="text"  name="validation[company name]"
+																					   data-validation="[L>=2]"
+																					   data-validation-message="Please enter a valid $">
                             </div>
 
 							<div class="form-group">
@@ -614,7 +616,9 @@
 						
 							<div class="form-group">
                                 <label for="contactPerson">Contact Person*</label>
-                                <input class="form-control" id="contactPerson" type="text">
+                                <input class="form-control" id="contactPerson" type="text"  name="validation[contact person name]"
+																					   data-validation="[L>=2]"
+																					   data-validation-message="Please enter a valid $">
                             </div>
 							
 							<div class="form-group">
@@ -744,7 +748,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick = "createOrUpdateTransporter()">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick = "createOrUpdateTransporter()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
@@ -811,6 +815,10 @@
 	
 	
 	function createOrUpdateTransporter(){
+		if((document.getElementById("companyName").value.length < 3 ||
+			document.getElementById("contactPerson").value.length < 3 )){
+			return;
+		}
 		document.getElementById('btnSave').disabled = true;
 		var transporter = new Object();
 		transporter.companyName = document.getElementById("companyName").value;

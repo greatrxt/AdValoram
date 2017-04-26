@@ -592,7 +592,7 @@
 						<a id = "5" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">System Rights</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
@@ -609,8 +609,10 @@
 								</div>
 								<div class = "col-lg-10">	
 									<div class="form-group">
-										<label for="firstName">First Name</label>
-										<input class="form-control" id="firstName" type="text">
+										<label for="firstName">First Name*</label>
+										<input class="form-control" id="firstName" type="text" name="validation[first name]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="$ must be at least 3 characters">
 									</div>
 								</div>
 							</div>
@@ -628,7 +630,6 @@
 							<div class="form-group">
                                 <label for="city">City</label>
 								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()">
-									<option value="Option 1">Unable to retrieve data</option>
 								</select>
                             </div>
 							
@@ -639,7 +640,9 @@
 						
 							<div class="form-group">
                                 <label for="contactNumber">Contact Number*</label>
-                                <input class="form-control" id="contactNumber" type="text">
+                                <input class="form-control" id="contactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="validation[contact number]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="Please fill a valid $">
                             </div>
 							
 							<div class="form-group">
@@ -669,7 +672,7 @@
 														
 							<div class="form-group">
                                 <label for="pinCode">Pin Code</label>
-                                <input class="form-control" id="pinCode" type="text">
+                                <input class="form-control" id="pinCode" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                             </div>
 							
 														
@@ -685,7 +688,7 @@
 
 							<div class="form-group">
                                 <label for="alternateContactNumber">Alternate Contact Number</label>
-                                <input class="form-control" id="alternateContactNumber" type="text">
+                                <input class="form-control" id="alternateContactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                             </div>
 							
 						</div>
@@ -809,7 +812,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick = "createOrUpdateEmployee();">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick = "createOrUpdateEmployee();">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
@@ -894,6 +897,11 @@
 	});
 	
 	function createOrUpdateEmployee(){
+		if(document.getElementById("firstName").value.length < 3 
+			|| document.getElementById("contact").value.length < 3){
+			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
+			return;
+		}
 		document.getElementById('btnSave').disabled = true;
 		var employee = new Object();
 		employee.salutation = document.getElementById("salutation").value;

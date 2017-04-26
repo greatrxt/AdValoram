@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+	
+	<title>Invoice</title>
+	
+	<link rel='stylesheet' type='text/css' href='css/preview-style.css' />
+	<link rel='stylesheet' type='text/css' href='css/preview-print.css' media="print" />
+	<script src="assets/vendors/jquery/jquery.min.js"></script>
+	<script src="js/common-sales.js"></script>
+	<script src="js/common.js"></script>
+	
+	<!--<script type='text/javascript' src='js/example.js'></script>-->
+
+</head>
+<script>
+
+$(window).load(function() {
+	if(getParameterByName('creditNoteId')!=null){
+		var creditNoteId = getParameterByName('creditNoteId');
+		$.getJSON(base_url + "/AdValoramAdmin/creditNote/"+creditNoteId, function(data){
+			var result = data.result;
+			if(result!='error'){
+				var salesOrder = data.result[0].linkedInvoice.linkedSalesOrder;
+				var packingList = data.result[0].linkedInvoice.linkedPackingList;
+
+				//entry
+				var entries = data.result[0].entry;
+				var minSize = 999;
+				var maxSize = -1;
+				//var creditNoteEntries = [];
+				var creditNoteEntries = {};
+				var sizeArray = [];
+				for(var s = 0; s < entries.length; s++){
+					var entryJson = entries[s];
+					var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
+					if(size < minSize){
+						minSize = size;
+					}
+					if(size > maxSize){
+						maxSize = size;
+					}
+					if(sizeArray.indexOf(size) == -1){
+						sizeArray.push(size);
+					}
+					var entryId = entryJson.entryId;
+
+					var creditNoteEntry = creditNoteEntries[entryId];
+					if(creditNoteEntry == null){
+						creditNoteEntry = new Object();
+						creditNoteEntry.id = entryJson.entryId;
+						creditNoteEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+						creditNoteEntry.mrp = entryJson.stockKeepingUnit.mrp;
+						creditNoteEntry.genderCode = entryJson.stockKeepingUnit.genderCode.gender;
+						creditNoteEntry.colorCode = entryJson.stockKeepingUnit.colorCode.colorCode;
+						creditNoteEntries[creditNoteEntry.id] = creditNoteEntry;
+						//creditNoteEntries.push(creditNoteEntry.id, creditNoteEntry);
+						//creditNoteEntries.splice(creditNoteEntry.id, 0, creditNoteEntry);
+					} else {
+						//compare
+						if(creditNoteEntry.styleCode != entryJson.stockKeepingUnit.styleCode){
+							console.log("ERROR. Color code does not match " + entryJson.entryId);
+							return;
+						}
+						if(creditNoteEntry.genderCode != entryJson.stockKeepingUnit.genderCode.gender){
+							console.log("ERROR. genderCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(creditNoteEntry.colorCode != entryJson.stockKeepingUnit.colorCode.colorCode){
+							console.log("ERROR. colorCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(creditNoteEntry.mrp != entryJson.stockKeepingUnit.mrp){
+							console.log("ERROR. mrp does not match " + entryJson.entryId);
+							return;
+						}
+					}
+					
+					var key = "quantityForSize" + size;
+					creditNoteEntry[key] = entryJson.quantity;	
+
+				}
+				console.log("done");
+				sizeArray.sort();
+				var tbody = '<tr>'+
+						'<th rowspan = "2">Product No.</th>' +
+						'<th rowspan = "2">Style Code</th>' +
+						'<th rowspan = "2">Color Code</th>' +
+						'<th rowspan = "2">Gender</th>' +
+						'<th colspan = "' + sizeArray.length + '">' +
+						'Size' +
+						'</th>' +
+						'<th rowspan = "2">Total Qty</th>' +
+						'<th rowspan = "2">MRP</th>' +
+						//'<th rowspan = "2">Special Rate</th>' +
+						'<th rowspan = "2">Total<br>(INR)</th>' +
+						'</tr>';
+				//add header
+				tbody+='<tr>';
+				for(var h = 0; h < sizeArray.length; h++){
+					tbody+='<th>'+sizeArray[h]+'</th>';
+				}
+				tbody+='</tr><tbody>';
+				var sorted_keys = Object.keys(creditNoteEntries).sort()
+				//for(var p = 0; p < creditNoteEntries.length; p++){
+				var grandTotal = 0;
+				for(var p = 0; p < sorted_keys.length; p++){
+					var quantity = 0;
+					//var creditNoteEntry = creditNoteEntries[p];
+					var creditNoteEntry = creditNoteEntries[sorted_keys[p]];
+					tbody+='<tr>' + 
+						'<td>'+creditNoteEntry.id+'</td>' +
+						'<td>'+creditNoteEntry.styleCode+'</td>' +
+						'<td>'+creditNoteEntry.colorCode+'</td>' +
+						'<td>'+creditNoteEntry.genderCode+'</td>';
+						
+						for(var h = 0; h < sizeArray.length; h++){
+							var key = "quantityForSize" + sizeArray[h];
+							if(creditNoteEntry[key] != null){
+								quantity = quantity + creditNoteEntry[key];
+								tbody+='<td>'+creditNoteEntry[key]+'</td>';
+							} else {
+								tbody+='<td>0</td>';
+							}
+							
+						}
+					var total = quantity*creditNoteEntry.mrp;
+					tbody+='<td>'+quantity+'</td>' +
+							'<td>'+creditNoteEntry.mrp+'</td>' +
+							'<td>'+numberWithCommas(total)+'</td>'+
+							'</tr>';
+					grandTotal+=total;
+				}
+				tbody+='</tbody>'+
+					'<tr>' +
+					'<td colspan="'+(sizeArray.length+7)+'"></td>'+
+					'</tr>';
+					
+				tbody+='<tr>'+
+					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate' +
+					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ 'the sale of the goods ' +
+					  'specified in this tax invoice is made by me/us and that the transaction of sale covered by this tax invoice ' +
+					  'has been effected by me/us and it shall be accounted for'+ 
+					  'in the turnover of sales while filing of return  and the due tax, if any, payable on the sale has been paid or shall be paid<br><br></td>' +
+					  '<td colspan="2" class="total-line">Total</td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(grandTotal)+'</div></td>'+
+				  '</tr>'+
+				  '<tr>'+
+					  '<td colspan="2" class="total-line">VAT@10%</td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(grandTotal)+'</div></td>'+
+				  '</tr>'+
+				  '<tr>'+
+					  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
+					  'SUBJECT TO MUMBAI JURISDICTION<br>'+
+					  '1. Our responsibility ceases after delivery of goods, from our premises<br>'+
+					  '2. Goods once sold will not be taken back, or exchanged, under any circumstances<br>'+
+					  '3. If payment is not received within 30 days, interest @ 18% p.a. will be charged on Invoice amount.</td>'+
+					  '<td colspan="2" class="total-line">Round Off</td>'+
+					  '<td class="total-value"><textarea id="paid">Rs 0.00</textarea></td>'+
+				  '</tr>'+
+				  '<tr>'+
+					  '<td colspan="'+(sizeArray.length+4)+'"> </td>'+
+					  '<td colspan="2" class="total-line balance">Grand Total</td>'+
+					  '<td class="total-value balance"><div class="due">Rs '+numberWithCommas((1.1*grandTotal).toFixed(2));+'</div></td>'+
+				  '</tr>';
+		  
+				document.getElementById('items').innerHTML = tbody;
+				
+				document.getElementById('customer-name').innerHTML = salesOrder.clientNameOnSalesOrderDate;
+				document.getElementById('billing-address').innerHTML = salesOrder.clientBillingAddressOnSalesOrderDate;
+				document.getElementById('delivery-address').innerHTML = salesOrder.clientDeliveryAddressOnSalesOrderDate;
+				document.getElementById('vat-no').innerHTML = salesOrder.linkedCustomer.vatTinNumber
+				document.getElementById('cst-no').innerHTML = salesOrder.linkedCustomer.cstTinNumber;
+				document.getElementById('pan-no').innerHTML = salesOrder.linkedCustomer.panNumber;
+				
+				document.getElementById('salesOrderNo').innerHTML = salesOrder.salesOrderId;
+				document.getElementById('salesOrderDate').innerHTML = salesOrder.salesOrderDate;
+				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
+				
+				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas((1.1*grandTotal).toFixed(2));
+				if(data.result[0].status == "OPEN"){
+					document.getElementById("buttonIssueInvoice").style.visibility = "visible";
+					document.getElementById("buttonIssueInvoice").style.display = "block";
+				} else {
+					document.getElementById("buttonIssueInvoice").style.visibility = "hidden";
+				}
+				
+				if(data.result[0].status == "CONFIRMED"){
+					document.getElementById("buttonIssueInvoice").style.display = "none";
+				}
+
+				document.getElementById('transport').innerHTML = salesOrder.linkedCustomer.linkedTransporter.companyName;
+				document.getElementById('roadPermit').innerHTML = data.result[0].linkedInvoice.roadPermitOrLicenseNumber;
+				document.getElementById('noOfPackages').innerHTML = data.result[0].linkedInvoice.numberOfPackages;
+				document.getElementById('weight').innerHTML = data.result[0].linkedInvoice.grossWeight;
+				document.getElementById('lrNo').innerHTML = data.result[0].linkedInvoice.roadPermitOrLicenseNumber;
+				document.getElementById('referredBy').innerHTML = data.result[0].linkedSalesOrder.referredByEmployee.firstName + " " + data.result[0].linkedSalesOrder.referredByEmployee.lastName;
+			}
+		});
+	}
+});
+
+function issueInvoice(){
+	$.ajax({
+		url: base_url + '/AdValoramAdmin/creditNote/'+getParameterByName("creditNoteId")+'/issue',
+		type: 'PUT',
+		success: function(result) {
+			window.location = "preview-credit-note.html?creditNoteId="+getParameterByName("creditNoteId");
+		}
+	});
+}
+
+function backToLandingPage(){
+	window.location = "landing-credit-note.html";
+}
+</script>
+<body>
+
+	<div id="page-wrap">
+	<button id="buttonBack" class = "no-print" onClick="backToLandingPage();">Back</button>
+	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
+	<button id = "buttonIssueInvoice" onclick = "issueInvoice();" class = "no-print" style = "float:right; visibility:hidden">Issue</button>
+		<textarea id="header">CREDIT NOTE</textarea>
+		
+		<div id="identity">
+		
+            <textarea id="address" readonly>				
+AD VALORAM CLOTHING PVT LTD.
+
+Head Office :
+102, Paresh Complex,
+Kaher Pipeline, Bhiwandi
+Thane - 421 302
+</textarea>			
+<table id="additionalInfo" class = "borderless-table" readonly>
+	<tr>
+		<td>		
+		<div id="logo">
+		  <img id="image" src="resources/logo.png" alt="logo" />
+		</div>	
+		</td>
+	</tr>
+	<tr>
+		<td>
+<span>Phone no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span><span id = "contactNumber"></span></br>
+<span>Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: advaloramclothing@gmail.com</span></br>
+<span>VAT TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "vatTinNumber"></span></br>
+<span>CST TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "cstTinNumber"></span></br></br>
+		</td>
+	</tr>
+</table>
+			
+		</div>
+		
+		<div style="clear:both"></div>
+		
+		<div id="customer">
+            <table class = "borderless-table" style="float:left">
+                <tr>
+                    <td>
+            <span id="customer-title">NAME OF PARTY : </span><span id="customer-name"></span>
+					</td>
+				</tr>
+				<tr>
+                    <td>
+					<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
+					<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
+					<span>VAT No:</span></br><span id="vat-no"></span></br></br>
+					<span>CST No:</span></br><span id="cst-no"></span></br></br>
+					<span>PAN No:</span></br><span id="pan-no"></span></br></br>
+					</td>
+				</tr>
+			</table>
+
+
+            <table id="meta" style="float:right">
+                <tr>
+                    <td class="meta-head">Sales Order No.</td>
+                    <td><span id="salesOrderNo"></span></td>
+                </tr>
+                <tr>
+                    <td class="meta-head">Date</td>
+                    <td><span id="salesOrderDate"></span></td>
+                </tr>
+				<tr>
+                    <td class="meta-head">PO Reference</td>
+                    <td><span id="purchaseOrderReference"></span></td>
+                </tr>
+				<tr>
+                    <td colspan = "2" style="height:100px; text-align:left">
+
+Transport&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "transport"></span></br>
+Road Permit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "roadPermit"></span></br>
+No Of Packages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "noOfPackages"></span></br>
+Weight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "weight"></span></br>
+L.R No&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "lrNo"></span></br>
+Referred By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "referredBy"></span></br>
+
+					</td>
+                </tr>
+                <tr>
+                    <td class="meta-head">Amount Due</td>
+                    <td><div class="due"><span id = "amountDue"></span></div></td>
+                </tr>
+
+            </table>
+		
+		</div>
+		
+		<table id="items">
+
+		</table>
+		
+		<div id="terms">
+		  <h5>PAYMENT Terms</h5>
+		  <textarea>50% Advance. Balance within one month from the date of delivery</textarea>
+		</div>
+	
+		<div style="float:right;">
+		  For <span style="font-weight: bold"> AD VALORAM CLOTHING</span>
+		  <br><br><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			Authorised Signatory
+			<br><br><br>
+		</div>
+		
+	</div>
+	
+</body>
+
+</html>

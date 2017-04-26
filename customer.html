@@ -593,22 +593,19 @@
 						<a id = "4" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab5" role="tab" aria-expanded="true">Alerts & Uploads</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
                                 <label for="companyName">Customer / Company Name</label>
-                                <input class="form-control" id="companyName" type="text">
+                                <input class="form-control" id="companyName" type="text" name="validation[company name]"
+																					   data-validation="[L>=2]"
+																					   data-validation-message="Please enter a valid $">
                             </div>
 							<div class="form-group">
                                 <label for="linkedDistributor">Linked Distributor, if any</label>
 								<select class="form-control" id="linkedDistributor">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
 								</select>
                             </div>
 
@@ -620,7 +617,6 @@
 							<div class="form-group">
                                 <label for="city">City</label>
 								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()">
-									<option value="Option 1">Unable to retrieve data</option>
 								</select>
                             </div>
 							
@@ -631,7 +627,9 @@
 						
 							<div class="form-group">
                                 <label for="contactPerson">Contact Person*</label>
-                                <input class="form-control" id="contactPerson" type="text">
+                                <input class="form-control" id="contactPerson" type="text" name="validation[name]"
+																					   data-validation="[L>=2]"
+																					   data-validation-message="Please enter a valid $">
                             </div>
 							
 							<div class="form-group">
@@ -902,7 +900,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" id = "btnSave"  style="margin:10px" onclick="createOrUpdateCustomer()">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave"  style="margin:10px" onclick="createOrUpdateCustomer()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
@@ -1044,8 +1042,16 @@ $(window).load(function() {
 	
 	
 	function createOrUpdateCustomer(){
-		document.getElementById('btnSave').disabled = true;
+		
+		if((document.getElementById("companyName").value.length < 3 ||
+			document.getElementById("contactPerson").value.length < 3 )){
+			$('.nav-tabs-horizontal li:eq(0) a').tab('show');
+			tabFunction(1);
+			return;
+		}
+		
 		var customer = new Object();	
+
 		customer.companyName = document.getElementById("companyName").value;
 		
 		if (document.getElementById("radioRetailer").checked) {
@@ -1105,6 +1111,8 @@ $(window).load(function() {
 		customer.filesMetaData = '';
 		customer.specialInstructions = document.getElementById("specialInstructions").value;
 		customer.notes = document.getElementById("notes").value;
+		
+		document.getElementById('btnSave').disabled = true;
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){

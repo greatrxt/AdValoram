@@ -709,7 +709,7 @@
 						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Uploads</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
@@ -746,7 +746,9 @@
 							
 							<div class="form-group">
                                 <label for="clientName">Client Name</label>
-								<select class="form-control" id="clientName">
+								<select class="form-control" id="clientName" name="validation[city name]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please select $">
 								</select>
                             </div>
 							
@@ -754,6 +756,7 @@
 					</div>
 					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-12">
+						<div id = "productErrorDiv" style = "display:none"><span id = "colorError" style="color:#FF0000; margin:20px;">Please add atleast 1 product</span></br></br></div>
 							<div class="form-group" >
 								<label class="form-control-label" for="productSize">Sizes</label>
                                 <input id="productSize28" name = "productSize" type="checkbox" value="28" style="margin:10px" checked onclick = "toggleColumnVisibility(4, this)">28
@@ -865,7 +868,7 @@
 
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" id = "btnSave" onclick="createPackingList()">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" style="margin:10px" id = "btnSave" onclick="createPackingList()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
@@ -881,7 +884,7 @@
         <div class="col-lg-4" id = "packing-list-inv-disp" style = "display:none">
             <section class="panel">
                 <div class="panel-heading">
-                    <h3>Panel in Grid</h3>
+                    <h3>Inventory</h3>
                 </div>
 						<div class="panel-body">
                     		<div class = "col-lg-12">
@@ -910,7 +913,7 @@
 							</div>
 					</div>
                 <div class="panel-footer">
-                    <span>Default panel footer</span>
+                    <span>.</span>
                 </div>
             </section>
         </div>
@@ -953,6 +956,7 @@
 	
 	var balanceQuantityForCurrentPackingList = {};
 	var salesOrderId = -1;
+	var linkedSalesOrderInternalId = -1;
 	//packing list ID = sales order ID
 	$(window).load(function() {
 		document.getElementById('packingListDate').value = print_today();		
@@ -985,6 +989,7 @@
 				if(salesOrder.status == "OPEN"){
 					window.location = "sales-order.html?id=" + salesOrderId;
 				} 
+				linkedSalesOrderInternalId = salesOrder.id;
 				document.getElementById('linkedSalesOrderId').value = salesOrder.salesOrderId;
 				document.getElementById('purchaseOrderReference').value = salesOrder.purchaseOrderReference;				
 				document.getElementById("purchaseOrderReference").readOnly = true;
@@ -1303,6 +1308,15 @@
 	var packingListId = -1;
 	function createPackingList(){
 	
+		if(document.getElementById("clientName").value.length < 1){
+			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
+			return;
+		}
+		if(productList.length < 1){
+			$('.nav-tabs-horizontal li:eq(1) a').tab('show');
+			document.getElementById('productErrorDiv').style.display = "block";
+			return;
+		}
 		document.getElementById('btnSave').disabled = true;
 		var packingList = new Object();
 		
@@ -1322,7 +1336,8 @@
 		}
 		
 		packingList.linkedSalesOrderId = salesOrderId;
-		
+		packingList.linkedSalesOrderInternalId = linkedSalesOrderInternalId;
+		packingList.revisionReason = ''; // To be done later
 		packingList.notes = document.getElementById('notes').value;
 		
 		packingList.productList = productList;
@@ -1440,51 +1455,6 @@
 				"<td>" + product.styleCode + "</td>"+
 				"<td>" + product.colorCode + "</td>"+
 				"<td>" + product.gender + "</td>";
-				<!--<input type="number" name="quantity" min="1" max="5">-->
-				/*
-				if(product.quantityForSize28!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",28," + product.quantityForSize28+"); value='" + product.quantityForSize28 + "' max='" + product.quantityForSize28 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize30!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",30," + product.quantityForSize30+"); value='" + product.quantityForSize30 + "' max='" + product.quantityForSize30 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize32!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",32," + product.quantityForSize32+"); value='" + product.quantityForSize32 + "' max='" + product.quantityForSize32 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize34!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",34,"+product.quantityForSize34+"); value='" + product.quantityForSize34 + "' max='" + product.quantityForSize34 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize36!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",36,"+product.quantityForSize36+"); value='" + product.quantityForSize36 + "' max='" + product.quantityForSize36 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize38!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",38,"+product.quantityForSize38+"); value='" + product.quantityForSize38 + "' max='" + product.quantityForSize38 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize40!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",40,"+product.quantityForSize40+"); value='" + product.quantityForSize40 + "' max='" + product.quantityForSize40 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize42!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",42,"+product.quantityForSize42+"); value='" + product.quantityForSize42 + "' max='" + product.quantityForSize42 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize44!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",44,"+product.quantityForSize44+"); value='" + product.quantityForSize44 + "' max='" + product.quantityForSize44 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize46!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",46,"+product.quantityForSize46+"); value='" + product.quantityForSize46 + "' max='" + product.quantityForSize46 + "'></td>"; else tbody+="<td>0</td>";
-				
-				if(product.quantityForSize48!=null)	tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ",48,"+product.quantityForSize48+"); value='" + product.quantityForSize48 + "' max='" + product.quantityForSize48 + "'></td>"; else tbody+="<td>0</td>";
-				
-				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
-				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
-				
-				*/
-				/*
-				for(var s = 28; s <= 48; s=s+2){
-					var key = "quantityForSize" + s;	
-					if(balanceQuantityForCurrentPackingList[(p+1)]!=null){
-						var balanceForCurrentEntry = balanceQuantityForCurrentPackingList[(p+1)];
-						if(balanceForCurrentEntry[key]!=null){
-							tbody+="<td><input class = 'form-control' type='number' min='0' onchange = limitQuantityTo(this," + p + ","+s+","+balanceForCurrentEntry[key]+"); value='" + balanceForCurrentEntry[key] + "' max='" + balanceForCurrentEntry[key] + "'></td>"; 
-							continue;
-						} 
-					} 
-					
-					tbody+="<td>0</td>";					
-				}
-				
-				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
-				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
-				*/
 				
 				for(var s = 28; s <=48; s = s+2){
 					var prefix = "quantityForSize";
@@ -1523,11 +1493,6 @@
 			dataTable.column(12).visible(document.getElementById('productSize44').checked);
 			dataTable.column(13).visible(document.getElementById('productSize46').checked);
 			dataTable.column(14).visible(document.getElementById('productSize48').checked);
-		/*if(productList.length > 0){
-			$('#btnPreview').show();
-		} else {
-			$('#btnPreview').hide();
-		}*/
 	}
 	
 	function deleteProductEntryAndUpdateView(id){

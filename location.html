@@ -575,13 +575,15 @@
 						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Location Details</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
                                 <label for="textCityName">City Name*</label>
-                                <input class="form-control" id="textCityName" type="text">
+                                <input class="form-control" id="textCityName" type="text" name="validation[city name]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="$ must contain atleast 3 characters">
                             </div>
 
 							<div class="form-group">
@@ -655,7 +657,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" id = "btnSave" onclick="createOrUpdateLocation();">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" style="margin:10px" id = "btnSave" onclick="createOrUpdateLocation();">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
@@ -699,6 +701,10 @@
 					});
 
 					function createOrUpdateLocation(){
+						if(document.getElementById("textCityName").value.length < 3){
+							$('.nav-tabs-horizontal li:eq(0) a').tab('show')
+							return;
+						}
 						document.getElementById('btnSave').disabled = true;
 						var location = new Object();
 						var city = document.getElementById("textCityName").value;

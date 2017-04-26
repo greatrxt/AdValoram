@@ -580,19 +580,22 @@
 						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Account Details</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
                                 <label for="bankName">Bank Name*</label>
-                                <input class="form-control" id="bankName" type="text">
+                                <input class="form-control" id="bankName" type="text" name="validation[bank name]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="$ must be at least 3 characters">
                             </div>
 						
 							<div class="form-group">
                                 <label for="city">City</label>
-								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()">
-									<option value="Option 1">Unable to retrieve data</option>
+								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()" name="validation[city name]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please choose $">
 								</select>
                             </div>
 							
@@ -653,7 +656,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createOrUpdateBank();">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createOrUpdateBank();">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
@@ -712,6 +715,10 @@ $(window).load(function() {
 	}
 	
 	function createOrUpdateBank(){
+		if(document.getElementById("bankName").value.length < 3 
+			|| document.getElementById("city").value.length < 1){
+			return;
+		}
 		document.getElementById('btnSave').disabled = true;
 		var bank = new Object();
 		

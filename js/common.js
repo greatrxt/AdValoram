@@ -1,8 +1,8 @@
 
 	
 	//var base_url = "http://173.212.200.188:8080";
-	var base_url = "http://advaloram.1qubit.com";
-	//var base_url = "http://localhost:8080";
+	//var base_url = "http://advaloram.1qubit.com";
+	var base_url = "http://localhost:8080";
 	// DEFINE ALL GLOBAL VARIABLES HERE	
 	var gendersArray = null;
 	var seasonsArray = null;
@@ -42,6 +42,17 @@
 
 	
 	$(window).load(function() {
+		
+			// Form Validation
+	$('#form-validation').validate({
+		submit: {
+			settings: {
+				inputContainer: '.form-group',
+				errorListClass: 'form-control-error',
+				errorClass: 'has-danger'
+			}
+		}
+	});
 	 // executes when complete page is fully loaded, including all frames, objects and images
 	 //alert("window is loaded");
 	var currentTabIndex = 0;

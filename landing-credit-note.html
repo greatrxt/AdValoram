@@ -468,7 +468,7 @@
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
 	
-	 $.getJSON(base_url + "/AdValoramAdmin/common/creditNote", function(data){
+	 $.getJSON(base_url + "/AdValoramAdmin/creditNote", function(data){
 		 	var dataTable = $('#displayCreditNotesTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -477,18 +477,29 @@
 			var creditNoteArray = data.result;
 			var dataTable = $('#displayCreditNotesTable').DataTable();
 			for(var i = 0; i < creditNoteArray.length; i++){
-				var creditNoteJson = creditNoteArray[i];
+				var creditNote = creditNoteArray[i];	
+				if(data.result == 'error'){
+					return;
+				}
+
+				var entries = creditNote.entry;
+				var quantity = 0;
+				var orderAmount = 0;
+				for(var q = 0; q < entries.length; q++){
+					var entryJson = entries[q];
+					quantity+=entryJson.quantity;
+					orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
+				}
 				
-					
 				dataTable.row.add([
-					""+creditNoteJson.id,
-					//"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
-					creditNoteJson.creditNoteName,
-					creditNoteJson.branchName,
-					creditNoteJson.city.cityName,
-					creditNoteJson.createdByUser.username,
-					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editCreditNote("+creditNoteJson.id+");'><i class='icmn-pencil5'></i> View</a>"
-												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteCreditNoteDialog("+creditNoteJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
+					creditNote.creditNoteId,
+					creditNote.linkedInvoice.linkedPackingList.clientNameOnPackingListDate,
+					creditNote.linkedInvoice.linkedPackingList.linkedCustomer.city.cityName,
+					quantity,
+					"Rs. "+numberWithCommas(orderAmount),
+					creditNote.status,
+					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=viewInvoice("+creditNote.creditNoteId+",'"+creditNote.status+"');><i class='icmn-pencil5'></i> View</a>"
+					+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+creditNote.linkedInvoice.linkedPackingList.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
 		});
@@ -496,8 +507,13 @@
 
 </script>
 <script>
-function editCreditNote(id){
-	window.location = "creditNote.html?id="+id;
+
+function viewInvoice(id, status){				
+	if(status == "ISSUED"){
+		window.location = "preview-credit-note.html?creditNoteId="+id;
+		return;
+	}				
+	window.location = "credit-note.html?creditNoteId=" + id;
 }
 function signOut(){
 	window.location = "index.html";

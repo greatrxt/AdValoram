@@ -577,15 +577,17 @@
 						<a class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Tax Details</a>
 					</li>
 				</ul>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-9">
 							<div class = "row">	
 								<div class = "col-lg-5">	
 									<div class="form-group">
-										<label for="taxName">Tax Name</label>
-										<input class="form-control" id="taxName" type="text">
+										<label for="taxName">Tax Name*</label>
+										<input class="form-control" id="taxName" type="text" name="validation[tax name]"
+																					   data-validation="[L>=2]"
+																					   data-validation-message="$ must have atleast 2 characters">
 									</div>
 								</div>
 								<div class = "col-lg-3">	
@@ -596,8 +598,10 @@
 								</div>
 								<div class = "col-lg-3">	
 									<div class="form-group">
-										<label for="taxRate">Tax Rate</label>
-										<input class="form-control" id="taxRate" type="number" step = 0.01>
+										<label for="taxRate">Tax Rate*</label>
+										<input class="form-control" id="taxRate" type="number" step = 0.01 name="validation[tax rate]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please enter a valid $">
 									</div>
 								</div>
 							</div>
@@ -607,7 +611,7 @@
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createOrUpdateTax();">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createOrUpdateTax();">Save</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
@@ -645,6 +649,11 @@ $(window).load(function() {
 <script>
 	
 	function createOrUpdateTax(){
+	
+		if((document.getElementById("taxName").value.length < 2 ||
+			document.getElementById("taxRate").value.length < 1 )){
+			return;
+		}
 		document.getElementById('btnSave').disabled = true;
 		var tax = new Object();
 		
@@ -661,9 +670,9 @@ $(window).load(function() {
 			}
 		};
 		if(taxId > 0){
-			request.open ("PUT", "http://173.212.200.188:8080/AdValoramAdmin/tax/" + taxId, true);
+			request.open ("PUT", base_url + "/AdValoramAdmin/tax/" + taxId, true);
 		} else {
-			request.open ("POST", "http://173.212.200.188:8080/AdValoramAdmin/tax", true);
+			request.open ("POST", base_url + "/AdValoramAdmin/tax", true);
 		}
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(tax));

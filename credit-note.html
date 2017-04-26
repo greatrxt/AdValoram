@@ -608,18 +608,15 @@
 
 				});
 				</script>
-				<div class="tab-content padding-vertical-20">
+				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
                                 <label for="selectInvoice">Select Invoice For Returns*</label>
-								<select class="form-control" id="selectInvoice">
-											<option value="Option 1">Option 1</option>
-											<option value="Option 2">Option 2</option>
-											<option value="Option 3">Option 3</option>
-											<option value="Option 4">Option 4</option>
-											<option value="Option 5">Option 5</option>
+								<select class="form-control" id="selectInvoice" name="validation[invoice]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please choose a valid $">
 								</select>
                             </div>
 							<div class="form-group">
@@ -659,7 +656,7 @@
 								<div class = "col-lg-6">	
 									<div class="form-group">
 										<label for="invoiceRevisionNumber">Invoice Revision Number</label>
-										<input class="form-control" id="salesOrderRevisionNumber" type="number" readonly>
+										<input class="form-control" id="invoiceRevisionNumber" type="number" readonly>
 									</div>
 								</div>
 								<div class = "col-lg-6">	
@@ -677,7 +674,6 @@
 							
 							<div class="form-group">
 								<label class="form-control-label" for="deliveryAddress">Delivery Address</label>
-								<input id="deliveryAddressSameAsBillingAddress" type="checkbox" style="margin:11px" >Same as Billing Address
 								<textarea class="form-control" rows="3" id="deliveryAddress" readonly></textarea>
 							</div>
 							
@@ -699,6 +695,7 @@
 					</div>
 					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-12">
+						<div id = "productErrorDiv" style = "display:none"><span style="color:#FF0000; margin:20px;">Please add atleast 1 product</span></br></br></div>
 							<table class="table table-hover nowrap" id="productsTable" width="100%">
 								<thead class="thead-default">
 									<tr>
@@ -762,7 +759,7 @@
 										<th>48</th>
 									</tr>
 								</tfoot>
-									<tbody id = 'colorCodesTableBody'>
+									<tbody id = 'productsTableBody'>
 								</tbody>
 							</table>
 						</div>
@@ -791,7 +788,7 @@
 							
 							<div class="form-group">
                                 <label for="returnDate">Return Date</label>
-                                <input class="form-control" id="returnDate" type="date" >
+                                <input class="form-control" id="returnDate">
                             </div>
 							
 							<div class="form-group">
@@ -801,23 +798,24 @@
 							
 							<div class="form-group">
                                 <label for="returnReason">Return Reason</label>
-                                <input class="form-control" id="returnReason" type="number">
+                                <input class="form-control" id="returnReason">
                             </div>
 						</div>
 						<div class = "col-lg-10">
 							<div class="form-group">
-								<label class="form-control-label" for="returnNotes">Return Notes</label>
-								<textarea class="form-control" rows="7" id="returnNotes"></textarea>
+								<label class="form-control-label" for="returnNote">Return Notes</label>
+								<textarea class="form-control" rows="7" id="returnNote"></textarea>
 							</div>							
 						</div>
 					</div>
 
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="button" class="btn width-150 btn-primary" style="margin:10px" onclick="createCustomer()">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createOrUpdateCreditNote()">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick = "goBackToLandingPage();">Cancel</button>
+							<button type="button" class="btn width-150 btn-default" id = "btnPreview" style="margin:10px; background-color:#5dc698; border-color:#5dc698; display:none" onclick = "showPreview();">Preview</button>
 						</div>
                     </div>
 				</div>
@@ -829,79 +827,400 @@
 </section>
 
 <script>
+	var creditNoteId = -1;
 	function goBackToLandingPage(){
 		window.location = "landing-credit-note.html";
 	}
 	
-	function createCustomer(){
+	function showPreview(){				
+		window.location = "preview-credit-note.html?creditNoteId="+ getParameterByName('creditNoteId');
+	}
+	
+	$(window).load(function() {
+		if(getParameterByName('creditNoteId')==null){
+			getInvoiceIds();
+			document.getElementById('returnDate').value = print_today();
+		} else {
+			creditNoteId = getParameterByName('creditNoteId');
+			$.getJSON(base_url + "/AdValoramAdmin/creditNote/"+creditNoteId, function(data){
+				var creditNote = data.result[0];
+				var invoice = creditNote.linkedInvoice;
+				var salesOrder = creditNote.linkedInvoice.linkedSalesOrder;
+				
+				if(creditNote.status == "OPEN" || creditNote.status == "CONFIRMED"){
+					$('#btnPreview').show();
+				} else {
+					$('#btnPreview').hide();
+				}
+				var selectInvoice = document.getElementById('selectInvoice');
+				removeOptions(selectInvoice);
+				var opt = document.createElement('option');
+				opt.value = invoice.invoiceId;	//internal DB ID 
+				opt.innerHTML = invoice.invoiceId;
+				selectInvoice.appendChild(opt);
+				selectInvoice.disabled = true;
+				
+				document.getElementById('invoiceRevisionNumber').value = invoice.invoiceRevisionNumber;
+				document.getElementById('invoiceDate').value = (creditNote.creditNoteDate).split(" ")[0];
+				
+				document.getElementById('numberOfPackages').value = creditNote.numberOfPackages;
+				document.getElementById('lorryReceiptNumber').value = creditNote.lorryReceiptNumber;
+				document.getElementById('returnDate').value = (creditNote.creditNoteDate).split(" ")[0];
+				document.getElementById('grossWeight').value = creditNote.grossWeight;
+				document.getElementById('returnNote').value = creditNote.returnNote;
+				document.getElementById('returnReason').value = creditNote.returnReason;
+				
+				
+				document.getElementById("purchaseOrderReference").value = salesOrder.purchaseOrderReference;
+				
+				document.getElementById('billingAddress').value = salesOrder.clientBillingAddressOnSalesOrderDate;
+				document.getElementById('deliveryAddress').value = salesOrder.clientDeliveryAddressOnSalesOrderDate;
+				document.getElementById('city').value = salesOrder.clientCityOnSalesOrderDate;
+				document.getElementById('district').value = salesOrder.clientDistrictOnSalesOrderDate;
+				document.getElementById('state').value = salesOrder.clientStateOnSalesOrderDate;
+				document.getElementById('pinCode').value = salesOrder.clientPinCodeOnSalesOrderDate;
+				document.getElementById('contactPerson').value = salesOrder.clientContactPersonOnSalesOrderDate;
+				document.getElementById('contactNumber').value = salesOrder.clientContactPersonOnSalesOrderDate;
+				document.getElementById('emailAddress').value = salesOrder.clientEmailAddressOnSalesOrderDate;
+				document.getElementById('clientName').value = salesOrder.clientNameOnSalesOrderDate;	
+				
+				if(salesOrder.linkedCustomer.linkedTransporter.companyName!=null){
+					document.getElementById('transportName').value = salesOrder.linkedCustomer.linkedTransporter.companyName;		
+				}
+				
+				var packingListEntryJson =	invoice.linkedPackingList.entry;
+				var packingListEntries = [];
+				var linkedPackingList = new Object();
+				linkedPackingList.packingListEntries = packingListEntries;
+				
+				//packing list entries start
+				for(var s = 0; s < packingListEntryJson.length; s++){
+					var entryJson = packingListEntryJson[s];
+					var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
 
-		var customer = new Object();	
-		customer.companyName = document.getElementById("companyName").value;
-		
-		if (document.getElementById("radioRetailer").checked) {
-			customer.customerType = document.getElementById("radioRetailer").value;
-		} else if (document.getElementById("radioDistributor").checked) {
-			customer.customerType = document.getElementById("radioDistributor").value;
-		} else if (document.getElementById("radioBroker").checked) {
-			customer.customerType = document.getElementById("radioBroker").value;
+					var entryId = entryJson.entryId;
+					var packingListEntry = packingListEntries[entryId];
+					if(packingListEntry == null){
+						packingListEntry = new Object();
+						packingListEntry.id = entryJson.entryId;
+						packingListEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+						packingListEntry.mrp = entryJson.stockKeepingUnit.mrp;
+						packingListEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
+						packingListEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
+						packingListEntry.colorCode = entryJson.stockKeepingUnit.colorCode.colorCode;
+						packingListEntries[packingListEntry.id] = packingListEntry;
+					} else {
+						//compare
+						if(packingListEntry.styleCode != entryJson.stockKeepingUnit.styleCode){
+							console.log("ERROR. Color code does not match " + entryJson.entryId);
+							return;
+						}
+						if(packingListEntry.gender != entryJson.stockKeepingUnit.genderCode.gender){
+							console.log("ERROR. genderCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(packingListEntry.colorCode != entryJson.stockKeepingUnit.colorCode.colorCode){
+							console.log("ERROR. colorCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(packingListEntry.mrp != entryJson.stockKeepingUnit.mrp){
+							console.log("ERROR. mrp does not match " + entryJson.entryId);
+							return;
+						}
+					}
+					
+					var key = "quantityForSize" + size;
+					packingListEntry[key] = entryJson.quantity;	
+
+					}
+
+					var pl = linkedPackingList;
+					var ple = pl.packingListEntries;
+					var packingListEntryKeys = Object.keys(ple).sort();
+					for(var e = 0; e < packingListEntryKeys.length; e++){
+						var index = packingListEntryKeys[e];
+
+						var packingListEntry = ple[index];
+						packingList.push(packingListEntry);
+					}	
+
+					//credit note entry
+					
+					var creditNoteEntryJson =	creditNote.entry;
+					var creditNoteEntries = [];
+					var linkedCreditNote = new Object();
+					linkedCreditNote.creditNoteEntries = creditNoteEntries;
+					for(var s = 0; s < creditNoteEntryJson.length; s++){
+						var entryJson = creditNoteEntryJson[s];
+						var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
+
+						var entryId = entryJson.entryId;
+						var creditNoteEntry = creditNoteEntries[entryId];
+						if(creditNoteEntry == null){
+							creditNoteEntry = new Object();
+							creditNoteEntry.id = entryJson.entryId;
+							creditNoteEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+							creditNoteEntry.mrp = entryJson.stockKeepingUnit.mrp;
+							creditNoteEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
+							creditNoteEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
+							creditNoteEntry.colorCode = entryJson.stockKeepingUnit.colorCode.colorCode;
+							creditNoteEntries[creditNoteEntry.id] = creditNoteEntry;
+						} else {
+							//compare
+							if(creditNoteEntry.styleCode != entryJson.stockKeepingUnit.styleCode){
+								console.log("ERROR. Color code does not match " + entryJson.entryId);
+								return;
+							}
+							if(creditNoteEntry.gender != entryJson.stockKeepingUnit.genderCode.gender){
+								console.log("ERROR. genderCode does not match " + entryJson.entryId);
+								return;
+							}
+							if(creditNoteEntry.colorCode != entryJson.stockKeepingUnit.colorCode.colorCode){
+								console.log("ERROR. colorCode does not match " + entryJson.entryId);
+								return;
+							}
+							if(creditNoteEntry.mrp != entryJson.stockKeepingUnit.mrp){
+								console.log("ERROR. mrp does not match " + entryJson.entryId);
+								return;
+							}
+						}
+						
+						var key = "quantityForSize" + size;
+						creditNoteEntry[key] = entryJson.quantity;	
+
+						}
+
+						var pl = linkedCreditNote;
+						var ple = pl.creditNoteEntries;
+						var creditNoteEntryKeys = Object.keys(ple).sort();
+						for(var e = 0; e < creditNoteEntryKeys.length; e++){
+							var index = creditNoteEntryKeys[e];
+
+							var creditNoteEntry = ple[index];
+							productList.push(creditNoteEntry);
+						}					
+				
+					refreshProductsTable();
+				
+			});
 		}
-		customer.linkedDistributor = document.getElementById("linkedDistributor").value;
-		customer.linkedBroker = document.getElementById("linkedBroker").value;
-		customer.billingAddress = document.getElementById("billingAddress").value;
-		customer.deliveryAddress = document.getElementById("deliveryAddress").value;
-		customer.city = document.getElementById("city").value;
-		customer.pinCode = document.getElementById("pinCode").value;
-		customer.contactPerson = document.getElementById("contactPerson").value;
-		customer.contactNumber	 = document.getElementById("contactNumber").value;
-		customer.emailAddress = document.getElementById("emailAddress").value;
-		customer.markDown = document.getElementById("markDown").value;
-		customer.cashDiscount = document.getElementById("cashDiscount").value;
-		customer.promptPaymentDiscount = document.getElementById("promptPaymentDiscount").value;
-		customer.specialDiscount = document.getElementById("specialDiscount").value;
-		customer.distributorCommission = document.getElementById("distributorCommission").value;
-		customer.brokerCommission = document.getElementById("brokerCommission").value;
-		customer.creditPeriod = document.getElementById("creditPeriod").value;
-		customer.creditLimit = document.getElementById("creditLimit").value;
-		customer.paymentTerms = document.getElementById("paymentTerms").value;
-		customer.financialGrouping = document.getElementById("financialGrouping").value;
-		customer.vatTinNumber = document.getElementById("vatTinNumber").value;
-		customer.cstTinNumber = document.getElementById("cstTinNumber").value;
-		customer.serviceTaxNumber = document.getElementById("serviceTaxNumber").value;
-		customer.panNumber = document.getElementById("panNumber").value;
+	});
+	
+	function limitQuantityTo(element, productListIndex, key, maxQuantity){
+		if(element.value > maxQuantity){
+			element.value = maxQuantity;
+		}
+		var key = "quantityForSize"+key;
+		productList[productListIndex][key] = parseInt(element.value);
+	}
+	
+	var productList = [];
+	var packingList = [];
+	function refreshProductsTable(){
+		$('#productsTable').dataTable().fnDestroy();
+		var tbody = '';
+		for(var p = 0; p < productList.length; p++){
+			var product = productList[p];
+			var packingListItem = packingList[p];
+				tbody +=  "<tr>" +
+				"<td>" + product.id + "</td>"+
+				"<td>" + product.styleCode + "</td>"+
+				"<td>" + product.colorCode + "</td>"+
+				"<td>" + product.gender + "</td>";
+				
+				for(var s = 28; s <=48; s = s+2){
+					var prefix = "quantityForSize";
+					var key = prefix + s;
+	
+					if(product[key]!=null)	{
+						if(getParameterByName('creditNoteId')!=null){
+							tbody+="<td><input class = 'form-control' type='number' min='0' value='" + product[key] + "' onchange = limitQuantityTo(this," + p + ","+s+"," + packingListItem[key]+"); max='" + packingListItem[key] + "'></td>";
+						} else {
+							tbody+="<td><input class = 'form-control' type='number' min='0' value='" + product[key] + "' onchange = limitQuantityTo(this," + p + ","+s+"," + product[key]+"); max='" + product[key] + "'></td>";
+						}
+					} else {
+						tbody+="<td>0</td>";
+					}
+				
+				}			
+		}
+		$('#productsTableBody').html(tbody);	
+		dataTable = $('#productsTable').DataTable();	
+	}
+	
+	function createOrUpdateCreditNote(){
 		
-		vatIsApplicable = document.getElementById("vatIsApplicable").checked;
-		cstIsApplicable = document.getElementById("cstIsApplicable").checked;
-		gstIsApplicable = document.getElementById("gstIsApplicable").checked;
-		octroiLbtEntryTaxIsApplicable = document.getElementById("octroiLbtEntryTaxIsApplicable").checked;
+		var creditNote = new Object();
+		var selectInvoice = document.getElementById('selectInvoice');
+				
+		if(selectInvoice.value.length <= 0){	//VALIDATE - INVOICE
+			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
+			return;
+		}	
+		var linkedInvoiceId = selectInvoice.options[selectInvoice.selectedIndex].value;
+		creditNote.linkedInvoiceId = linkedInvoiceId;
+
 		
-		if(cstIsApplicable) customer.cstRateApplicable = document.getElementById("cstRateApplicable").value;
-		if(vatIsApplicable) customer.vatRateApplicable = document.getElementById("vatRateApplicable").value;
-		if(cstIsApplicable) customer.cstRateAgainstFormC = document.getElementById("cstRateAgainstFormC").value;
-		if(gstIsApplicable) customer.gstRateApplicable = document.getElementById("gstRateApplicable").value;
-		if(octroiLbtEntryTaxIsApplicable) customer.octroiLbtEntryTaxApplicable = document.getElementById("octroiLbtEntryTaxApplicable").value;
+		creditNote.numberOfPackages = document.getElementById('numberOfPackages').value;
+		creditNote.grossWeight = document.getElementById('grossWeight').value;
+		creditNote.lorryReceiptNumber = document.getElementById('lorryReceiptNumber').value;
+		creditNote.returnReason = document.getElementById('returnReason').value;
+		creditNote.returnNote = document.getElementById('returnNote').value;
 		
-		customer.linkedTransporter = document.getElementById("linkedTransporter").value;
+		if(productList.length < 1){					//VALIDATE - PRODUCT
+			$('.nav-tabs-horizontal li:eq(1) a').tab('show');
+			tabFunction(1);
+			document.getElementById('productErrorDiv').style.display = "block";
+			return;
+		} else {
+			document.getElementById('productErrorDiv').style.display = "none";
+		}
 		
-		customer.transportContactPerson = document.getElementById("transportContactPerson").value;
-		customer.transportContactNumber = document.getElementById("transportContactNumber").value;
-		customer.transportEmailAddress = document.getElementById("transportEmailAddress").value;
-		customer.transportContractTerms = document.getElementById("transportContractTerms").value;
-		customer.transportPaymentTerms = document.getElementById("transportPaymentTerms").value;
+		creditNote.productList = productList;
 		
-		customer.specialInstructions = document.getElementById("specialInstructions").value;
-		customer.notes = document.getElementById("notes").value;
+		document.getElementById('btnSave').disabled = true;
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
-				console.log("Success");
+				var response = JSON.parse(request.response);
+				if(response.result == "success"){	
+					window.location = "credit-note.html?creditNoteId="+response.creditNoteId;			
+				}
 			}
 		};
 		
-		request.open ("POST", "http://localhost:8080/AdValoramAdmin/customer", true);
+		if(creditNoteId < 0){
+			request.open ("POST", base_url + "/AdValoramAdmin/creditNote", true);
+		} else {
+			request.open ("PUT", base_url + "/AdValoramAdmin/creditNote/" + creditNoteId, true);
+		}
 		request.setRequestHeader("content-type", "application/json");
-		request.send(JSON.stringify(customer));
+		request.send(JSON.stringify(creditNote));
+	}
+	
+	function getInvoiceIds(){
+		$.getJSON(base_url + "/AdValoramAdmin/invoice/idlist", function(data){
+			var selectInvoice = document.getElementById('selectInvoice');
+			removeOptions(selectInvoice);
+			for(var i = 0; i < data.result.length; i++){
+				var id = data.result[i];
+				var opt = document.createElement('option');
+				opt.value = id;	//internal DB ID 
+				opt.innerHTML = id;
+				selectInvoice.appendChild(opt);
+			}
+			selectInvoice.selectedIndex = -1;
+			
+			//add event listener only if user is creating an unlinked invoice
+			selectInvoice.addEventListener("change", function() {
+			var invoiceInternalId = selectInvoice.value;
+
+			$.getJSON(base_url + "/AdValoramAdmin/invoice/"+invoiceInternalId, function(data){
+
+				var salesOrder;
+				var linkedPackingLists;
+				var linkedCustomer;
+
+				salesOrder = data.result[0].linkedSalesOrder;
+				linkedPackingList = data.result[0].linkedPackingList;
+
+				document.getElementById('numberOfPackages').value = data.result[0].numberOfPackages;
+				document.getElementById('invoiceRevisionNumber').value = data.result[0].invoiceRevisionNumber;
+				document.getElementById('grossWeight').value = data.result[0].grossWeight;
+				document.getElementById('lorryReceiptNumber').value = data.result[0].lorryReceiptNumber;				
+				
+				document.getElementById('numberOfPackages').disabled = true;
+				document.getElementById('invoiceRevisionNumber').disabled = true;
+				document.getElementById('grossWeight').disabled = true;
+				document.getElementById('lorryReceiptNumber').disabled = true;
+				
+				linkedCustomer = salesOrder.linkedCustomer;				
+
+				document.getElementById('clientName').value = linkedCustomer.companyName;		
+				 
+				linkedSalesOrderInternalId = salesOrder.id;			
+				document.getElementById("purchaseOrderReference").value = salesOrder.purchaseOrderReference;
+				
+				document.getElementById('billingAddress').value = salesOrder.clientBillingAddressOnSalesOrderDate;
+				document.getElementById('deliveryAddress').value = salesOrder.clientDeliveryAddressOnSalesOrderDate;
+				document.getElementById('city').value = salesOrder.clientCityOnSalesOrderDate;
+				document.getElementById('district').value = salesOrder.clientDistrictOnSalesOrderDate;
+				document.getElementById('state').value = salesOrder.clientStateOnSalesOrderDate;
+				document.getElementById('pinCode').value = salesOrder.clientPinCodeOnSalesOrderDate;
+				document.getElementById('contactPerson').value = salesOrder.clientContactPersonOnSalesOrderDate;
+				document.getElementById('contactNumber').value = salesOrder.clientContactPersonOnSalesOrderDate;
+				document.getElementById('emailAddress').value = salesOrder.clientEmailAddressOnSalesOrderDate;
+
+				
+				if(salesOrder.linkedCustomer.linkedTransporter.companyName!=null){
+					document.getElementById('transportName').value = salesOrder.linkedCustomer.linkedTransporter.companyName;		
+				}
+				
+				<!---------- ------------------!>
+				
+				var packingListEntryJson =	data.result[0].linkedPackingList.entry;
+				var packingListEntries = [];
+				linkedPackingList.packingListEntries = packingListEntries;
+				
+				//packing list entries start
+				for(var s = 0; s < packingListEntryJson.length; s++){
+					var entryJson = packingListEntryJson[s];
+					var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
+
+					var entryId = entryJson.entryId;
+					var packingListEntry = packingListEntries[entryId];
+					if(packingListEntry == null){
+						packingListEntry = new Object();
+						packingListEntry.id = entryJson.entryId;
+						packingListEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+						packingListEntry.mrp = entryJson.stockKeepingUnit.mrp;
+						packingListEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
+						packingListEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
+						packingListEntry.colorCode = entryJson.stockKeepingUnit.colorCode.colorCode;
+						packingListEntries[packingListEntry.id] = packingListEntry;
+					} else {
+						//compare
+						if(packingListEntry.styleCode != entryJson.stockKeepingUnit.styleCode){
+							console.log("ERROR. Color code does not match " + entryJson.entryId);
+							return;
+						}
+						if(packingListEntry.gender != entryJson.stockKeepingUnit.genderCode.gender){
+							console.log("ERROR. genderCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(packingListEntry.colorCode != entryJson.stockKeepingUnit.colorCode.colorCode){
+							console.log("ERROR. colorCode does not match " + entryJson.entryId);
+							return;
+						}
+						if(packingListEntry.mrp != entryJson.stockKeepingUnit.mrp){
+							console.log("ERROR. mrp does not match " + entryJson.entryId);
+							return;
+						}
+					}
+					
+					var key = "quantityForSize" + size;
+					packingListEntry[key] = entryJson.quantity;	
+
+					}
+
+					var pl = linkedPackingList;
+					var ple = pl.packingListEntries;
+					var packingListEntryKeys = Object.keys(ple).sort();
+					for(var e = 0; e < packingListEntryKeys.length; e++){
+						var index = packingListEntryKeys[e];
+
+						var packingListEntry = ple[index];
+						productList.push(packingListEntry);
+					}					
+				
+					refreshProductsTable();
+					});
+					
+				});
+			
+		});
 	}
 </script>
 </body>
