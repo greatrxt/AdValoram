@@ -113,6 +113,7 @@
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
+	<script src="js/common-masters.js"></script>
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
@@ -738,6 +739,7 @@
 						}
 						
 						request.setRequestHeader("content-type", "application/json");
+						request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 						request.send(JSON.stringify(location));
 					}
 					</script>

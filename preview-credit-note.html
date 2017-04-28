@@ -11,7 +11,7 @@
 	<script src="assets/vendors/jquery/jquery.min.js"></script>
 	<script src="js/common-sales.js"></script>
 	<script src="js/common.js"></script>
-	
+	<script src="assets/vendors/html5-form-validation/dist/jquery.validation.min.js"></script>
 	<!--<script type='text/javascript' src='js/example.js'></script>-->
 
 </head>
@@ -19,6 +19,11 @@
 
 $(window).load(function() {
 	if(getParameterByName('creditNoteId')!=null){
+		$.ajaxSetup({
+			  headers : {
+				'Authorization' : 'Bearer ' + localStorage.getItem("token")
+			  }
+		});
 		var creditNoteId = getParameterByName('creditNoteId');
 		$.getJSON(base_url + "/AdValoramAdmin/creditNote/"+creditNoteId, function(data){
 			var result = data.result;
@@ -203,6 +208,11 @@ $(window).load(function() {
 });
 
 function issueInvoice(){
+	 $.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	});
 	$.ajax({
 		url: base_url + '/AdValoramAdmin/creditNote/'+getParameterByName("creditNoteId")+'/issue',
 		type: 'PUT',

@@ -121,6 +121,7 @@
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
+	<script src="js/common-masters.js"></script>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 </head>
 
@@ -844,15 +845,14 @@
 							<div class="form-group">
                                 <label for="brand">Brand</label>
 								<select class="form-control" id="brand">
-									<option value="Option 1">No Data</option>
 								</select>
                             </div>
 							
 							<div class="form-group">
                                 <label for="productStatus">Product Status</label>
 								<select class="form-control" id="productStatus">
-									<option value="wip">Work In Progress</option>
-									<option value="finish">Finish</option>
+									<option value="Work In Progress">Work In Progress</option>
+									<option value="Finish">Finish</option>
 								</select>
                             </div>
 
@@ -1292,6 +1292,7 @@
 							request.open ("PUT", base_url + "/AdValoramAdmin/product/" + productId, true);
 						}
 						request.setRequestHeader("content-type", "application/json");
+						request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 						request.send(JSON.stringify(product));
 					}
 					</script>

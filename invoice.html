@@ -995,6 +995,7 @@
 			request.open ("POST", base_url + "/AdValoramAdmin/invoice", true);
 		}
 		request.setRequestHeader("content-type", "application/json");
+		request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 		request.send(JSON.stringify(invoice));
 	}
 </script>

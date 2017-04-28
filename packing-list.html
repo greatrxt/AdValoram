@@ -1379,6 +1379,7 @@
 			request.open ("PUT", base_url + "/AdValoramAdmin/packingList/" + packingListId, true);
 		}
 		request.setRequestHeader("content-type", "application/json");
+		request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 		request.send(JSON.stringify(packingList));
 	}
 	

@@ -114,6 +114,7 @@
     <script src="assets/common/js/demo.temp.js"></script>
 	
 	<script src="js/common.js"></script>
+	<script src="js/common-masters.js"></script>
 	<script src="js/load-locations.js"></script>
 </head>
 
@@ -955,6 +956,7 @@
 			request.open ("PUT", base_url + "/AdValoramAdmin/employee/" + employeeId, true);
 		}
 		request.setRequestHeader("content-type", "application/json");
+		request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 		request.send(JSON.stringify(employee));
 	}
 </script>

@@ -1,4 +1,11 @@
 $(window).load(function() {
+	
+	$.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	});
+	
 	getClients();
 	getNextSalesOrderId();
 	getNextPackingListId();

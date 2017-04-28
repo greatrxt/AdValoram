@@ -113,9 +113,10 @@
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
+	<script src="js/common-masters.js"></script>
 </head>
 
-<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations()">
+<body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
@@ -605,7 +606,6 @@
 							<div class="form-group">
                                 <label for="city">City</label>
 								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()">
-									<option value="Option 1">Unable to retrieve data</option>
 								</select>
                             </div>
 							
@@ -636,9 +636,9 @@
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
 								<label class="form-control-label" for="permitType">Permit Type</label><br/>
-                                <input id="radioTransporterTypeLocal" name = "permitType" type="radio" value="local" style="margin:11px" checked>Local
-								<input id="radioTransporterTypeWithinState" name = "permitType" type="radio" value="withinState" style="margin:11px">Within State
-								<input id="radioTransporterTypeNational" name = "permitType" type="radio" value="national" style="margin:11px">National
+                                <input id="radioTransporterTypeLocal" name = "permitType" type="radio" value="Local" style="margin:11px" checked>Local
+								<input id="radioTransporterTypeWithinState" name = "permitType" type="radio" value="Within State" style="margin:11px">Within State
+								<input id="radioTransporterTypeNational" name = "permitType" type="radio" value="National" style="margin:11px">National
                             </div>
 							
 							
@@ -649,7 +649,7 @@
 							
 							<div class="form-group">
                                 <label for="pinCode">Pin Code</label>
-                                <input class="form-control" id="pinCode" type="text">
+                                <input class="form-control" id="pinCode" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                             </div>
 							
 							<div class="form-group">
@@ -659,12 +659,12 @@
 							
 							<div class="form-group">
                                 <label for="contactNumber">Contact Number</label>
-                                <input class="form-control" id="contactNumber" type="text">
+                                <input class="form-control" id="contactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
                             </div>
 							
 							<div class="form-group">
                                 <label for="alternateContactNumber">Alternate Contact Number</label>
-                                <input class="form-control" id="alternateContactNumber" type="text">
+                                <input class="form-control" id="alternateContactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
                             </div>
 							
 							<div class="form-group">
@@ -768,52 +768,7 @@
 	}
 	
 	var locationsArray = null;
-	function refreshLocationDistrictAndState(){
-		var district = document.getElementById('district');
-		var state = document.getElementById('state');
-		var city = document.getElementById('city');
-		if(locationsArray!=null){
-			for(var i = 0; i < locationsArray.length; i++){
-				var location = locationsArray[i];
-				if(city.options[city.selectedIndex].text.localeCompare(location.cityName) == 0){
-					district.value = location.district;
-					state.value = location.state;
-				}
-			}
-		}
-	}
-	
-	function removeOptions(selectbox){
-    var i;
-    for(i = selectbox.options.length - 1 ; i >= 0 ; i--)
-		{
-			selectbox.remove(i);
-		}
-	}
-	
-	function fetchLocations(){							
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function(){
-			if(request.readyState == 4 && request.status == 200){
-				locationsArray = JSON.parse(request.responseText).result;
-				var city = document.getElementById('city');
-				removeOptions(city);
-				for(var i = 0; i < locationsArray.length; i++){
-					var location = locationsArray[i];
-						var opt = document.createElement('option');
-						opt.value = location.id;
-						opt.innerHTML = location.cityName;
-						city.appendChild(opt);
-				}
-				refreshLocationDistrictAndState();
-			}
-		};
-		
-		request.open ("GET", base_url + "/AdValoramAdmin/location", true);
-		request.send();
-	}
-	
-	
+
 	function createOrUpdateTransporter(){
 		if((document.getElementById("companyName").value.length < 3 ||
 			document.getElementById("contactPerson").value.length < 3 )){
@@ -867,6 +822,7 @@
 		}
 		
 		request.setRequestHeader("content-type", "application/json");
+		request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 		request.send(JSON.stringify(transporter));
 	}
 	

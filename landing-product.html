@@ -466,7 +466,12 @@ tr.shown details-control {
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
 	 //alert("window is loaded");
-	 
+	$.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	}); 
+	
 	$.fn.dataTable.ext.errMode = 'none';
 
 	$('#displayProductTable').on( 'error.dt', function ( e, settings, techNote, message ) {

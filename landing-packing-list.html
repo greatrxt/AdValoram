@@ -460,8 +460,13 @@
 	 // executes when complete page is fully loaded, including all frames, objects and images
 	 //alert("window is loaded");
 	 
-	 	 	 
-	 $.fn.dataTable.ext.errMode = 'none';
+	$.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	}); 
+	
+	$.fn.dataTable.ext.errMode = 'none';
 
 	$('#displayPackingListsTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );

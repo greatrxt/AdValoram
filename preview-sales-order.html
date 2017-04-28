@@ -11,7 +11,7 @@
 	<script src="assets/vendors/jquery/jquery.min.js"></script>
 	<script src="js/common-sales.js"></script>
 	<script src="js/common.js"></script>
-	
+	<script src="assets/vendors/html5-form-validation/dist/jquery.validation.min.js"></script>
 	<!--<script type='text/javascript' src='js/example.js'></script>-->
 
 </head>
@@ -19,8 +19,14 @@
 
 $(window).load(function() {
 	if(getParameterByName('id')!=null){
-		var salesOrderId = getParameterByName('id');
-		$.getJSON(base_url + "/AdValoramAdmin/salesOrder/"+salesOrderId, function(data){
+	 $.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	});
+	
+	var salesOrderId = getParameterByName('id');
+	$.getJSON(base_url + "/AdValoramAdmin/salesOrder/"+salesOrderId, function(data){
 			var result = data.result;
 			if(result!='error'){
 				var salesOrder = result[0];
@@ -201,6 +207,11 @@ function generatePackingList(){
 	window.location="packing-list.html?salesOrderId="+getParameterByName("id");
 }
 function confirmSalesOrder(){
+	 $.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	});
 	$.ajax({
 		url: base_url + '/AdValoramAdmin/salesOrder/'+getParameterByName("id")+'/confirm',
 		type: 'PUT',
