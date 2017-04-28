@@ -974,6 +974,7 @@
 	$(window).load(function() {
 		document.getElementById('salesOrderDate').value = print_today();
 		if(getParameterByName('id')!=null){
+			NProgress.start();
 			salesOrderId = getParameterByName('id');
 			
 			$.getJSON(base_url + "/AdValoramAdmin/salesOrder/"+salesOrderId, function(data){
@@ -1016,7 +1017,7 @@
 						}
 					}
 				}, 100);
-				
+				NProgress.set(0.4);
 				var waitToSelectEmployee = setInterval(function(){
 					if(employeeArray!=null){
 						var referredByEmployee = document.getElementById("referredByEmployee");
@@ -1110,6 +1111,7 @@
 					$('#btnPreview').hide();
 				}
 			}
+			NProgress.done();
 		});
 			
 		}
@@ -1122,7 +1124,7 @@
 	var salesOrderId = -1;
 	function createSalesOrder(){				
 		var salesOrder = new Object();
-		
+		NProgress.start();
 		//salesOrder.salesOrderId = document.getElementById('salesOrderId').value;
 		//salesOrder.salesOrderRevisionNumber = document.getElementById('salesOrderRevisionNumber').value;
 		
@@ -1169,7 +1171,7 @@
 		document.getElementById('btnSave').disabled = true;
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
+			NProgress.inc();
 			if(request.readyState == 4 && request.status == 200){
 				var response = JSON.parse(request.response);
 				if(response.result == "success"){
@@ -1189,7 +1191,7 @@
 						});
 					
 					}
-					
+					NProgress.done();
 					salesOrderId = response.salesOrderId;
 					window.location = "sales-order.html?id="+response.salesOrderId;
 					

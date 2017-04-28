@@ -459,8 +459,8 @@
 	$('#displayTaxsTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
-	
-	 $.getJSON(base_url + "/AdValoramAdmin/common/tax", function(data){
+	NProgress.start();
+	$.getJSON(base_url + "/AdValoramAdmin/common/tax", function(data){
 		 	var dataTable = $('#displayTaxsTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -470,7 +470,7 @@
 			var dataTable = $('#displayTaxsTable').DataTable();
 			for(var i = 0; i < taxArray.length; i++){
 				var taxJson = taxArray[i];
-				
+				NProgress.inc();
 					
 				dataTable.row.add([
 					""+taxJson.id,
@@ -483,6 +483,7 @@
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteTaxDialog("+taxJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			NProgress.done();
 		});
 	 });
 

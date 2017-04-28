@@ -12,8 +12,9 @@
 	<script src="js/common-sales.js"></script>
 	<script src="js/common.js"></script>
 	<script src="assets/vendors/html5-form-validation/dist/jquery.validation.min.js"></script>
+	<script src="assets/vendors/nprogress/nprogress.js"></script>
 	<!--<script type='text/javascript' src='js/example.js'></script>-->
-
+	<link rel="stylesheet" type="text/css" href="assets/vendors/nprogress/nprogress.css">
 </head>
 <script>
 
@@ -27,6 +28,7 @@ $(window).load(function() {
 		var packingListId = getParameterByName('packingListId');
 		$.getJSON(base_url + "/AdValoramAdmin/packingList/"+packingListId, function(data){
 			var result = data.result;
+			NProgress.start();
 			if(result!='error'){
 				var packingList = result[0];
 				console.log(packingList);
@@ -88,6 +90,7 @@ $(window).load(function() {
 				}
 				console.log("done");
 				sizeArray.sort();
+				NProgress.set(0.4);
 				var tbody = '<tr>'+
 						'<th rowspan = "2">Product No.</th>' +
 						'<th rowspan = "2">Style Code</th>' +
@@ -161,6 +164,7 @@ $(window).load(function() {
 				}
 
 			}
+			NProgress.done();
 		});
 	}
 });

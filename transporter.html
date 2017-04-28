@@ -774,6 +774,7 @@
 			document.getElementById("contactPerson").value.length < 3 )){
 			return;
 		}
+		NProgress.start();
 		document.getElementById('btnSave').disabled = true;
 		var transporter = new Object();
 		transporter.companyName = document.getElementById("companyName").value;
@@ -809,8 +810,9 @@
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
+			NProgress.inc();
 			if(request.readyState == 4 && request.status == 200){
+				NProgress.done();
 				window.location = "landing-transporter.html";
 			}
 		};
@@ -832,6 +834,7 @@
 		if(getParameterByName('id')!=null){
 			transporterId = getParameterByName('id');
 			document.getElementById('transporterTitle').innerHTML  = "Edit Transporter";
+			NProgress.start();
 			$.getJSON(base_url + "/AdValoramAdmin/common/transporter/"+transporterId, function(data){
 				var result = data.result;
 				if(result!='error'){
@@ -869,7 +872,7 @@
 					document.getElementById("notes").value = transporter.notes;
 					transporter.filesMetaData = '';
 				
-				
+					NProgress.set(0.4);
 					var waitToSelectLocation = setInterval(function(){
 						if(locationsArray!=null){
 							var city = document.getElementById("city");
@@ -886,6 +889,7 @@
 					
 				}
 			});
+			NProgress.done();
 		}
 	});
 </script>

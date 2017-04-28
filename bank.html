@@ -720,6 +720,7 @@ $(window).load(function() {
 			|| document.getElementById("city").value.length < 1){
 			return;
 		}
+		NProgress.start();
 		document.getElementById('btnSave').disabled = true;
 		var bank = new Object();
 		
@@ -733,12 +734,13 @@ $(window).load(function() {
 		bank.alternateContact = document.getElementById("alternateContact").value;
 		bank.alternateContactNumber = document.getElementById("alternateContactNumber").value;
 		bank.ifscCode = document.getElementById("ifscCode").value;
-		
+		NProgress.set(0.4);
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
 			console.log(request.readyState+" " + request.status)
 			if(request.readyState == 4 && request.status == 200){
 				console.log("Success");
+				NProgress.done();
 				window.location = "landing-bank.html";
 			}
 		};

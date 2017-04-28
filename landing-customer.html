@@ -461,8 +461,8 @@
 	$('#displayCustomersTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	} ) .DataTable();
-	
-	 $.getJSON(base_url + "/AdValoramAdmin/common/customer", function(data){
+	NProgress.start();
+	$.getJSON(base_url + "/AdValoramAdmin/common/customer", function(data){
 		 	var dataTable = $('#displayCustomersTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -473,7 +473,7 @@
 			for(var i = 0; i < customerArray.length; i++){
 				var customerJson = customerArray[i];
 				
-					
+				NProgress.inc();	
 				dataTable.row.add([
 					""+customerJson.id,
 					//"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
@@ -485,6 +485,8 @@
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteCustomerDialog("+customerJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			
+			NProgress.done();
 		});
 	 });
 

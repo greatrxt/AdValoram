@@ -468,37 +468,41 @@
 	$('#displayInvoicesTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
-	
-	 $.getJSON(base_url + "/AdValoramAdmin/invoice", function(data){
+	NProgress.start();
+	$.getJSON(base_url + "/AdValoramAdmin/invoice", function(data){
 		 	var dataTable = $('#displayInvoicesTable').DataTable();			
 			if(data.result == 'error'){
 				return;
 			}
 			
-			var invoice = data.result[0];
-			var dataTable = $('#displayInvoicesTable').DataTable();
-			var linkedPackingList = invoice.linkedPackingList;
+			var invoiceArray = data.result;
+			for(var i = 0; i < invoiceArray.length; i++){
+				var invoice = data.result[i];
+				var dataTable = $('#displayInvoicesTable').DataTable();
+				var linkedPackingList = invoice.linkedPackingList;
 
-			var entries = linkedPackingList.entry;
-			var quantity = 0;
-			var orderAmount = 0;
-			for(var q = 0; q < entries.length; q++){
-				var entryJson = entries[q];
-				quantity+=entryJson.quantity;
-				orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
+				var entries = linkedPackingList.entry;
+				var quantity = 0;
+				var orderAmount = 0;
+				for(var q = 0; q < entries.length; q++){
+					var entryJson = entries[q];
+					quantity+=entryJson.quantity;
+					orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
+				}
+				NProgress.inc();
+				dataTable.row.add([
+					invoice.invoiceId,
+					linkedPackingList.clientNameOnPackingListDate,
+					linkedPackingList.linkedCustomer.city.cityName,
+					quantity,
+					"Rs. "+numberWithCommas(orderAmount),
+					invoice.status,
+					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=viewInvoice("+invoice.invoiceId+",'"+invoice.status+"');><i class='icmn-pencil5'></i> View</a>"
+					+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+linkedPackingList.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"
+				]).draw(false);
+				
 			}
-			
-			dataTable.row.add([
-				invoice.invoiceId,
-				linkedPackingList.clientNameOnPackingListDate,
-				linkedPackingList.linkedCustomer.city.cityName,
-				quantity,
-				"Rs. "+numberWithCommas(orderAmount),
-				invoice.status,
-				"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=viewInvoice("+invoice.invoiceId+",'"+invoice.status+"');><i class='icmn-pencil5'></i> View</a>"
-				+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+linkedPackingList.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"
-			]).draw(false);
-			
+			NProgress.done();
 		});
 	 });
 

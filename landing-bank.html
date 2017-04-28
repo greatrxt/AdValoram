@@ -462,8 +462,8 @@
 	$('#displayBanksTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
-	
-	 $.getJSON(base_url + "/AdValoramAdmin/common/bank", function(data){
+	NProgress.start();
+	$.getJSON(base_url + "/AdValoramAdmin/common/bank", function(data){
 		 	var dataTable = $('#displayBanksTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -473,7 +473,7 @@
 			var dataTable = $('#displayBanksTable').DataTable();
 			for(var i = 0; i < bankArray.length; i++){
 				var bankJson = bankArray[i];
-				
+				NProgress.inc();
 					
 				dataTable.row.add([
 					""+bankJson.id,
@@ -486,6 +486,7 @@
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteBankDialog("+bankJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			NProgress.done();
 		});
 	 });
 

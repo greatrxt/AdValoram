@@ -963,7 +963,7 @@
 		//retrieve corresponding sales order
 		if(getParameterByName('salesOrderId')!=null 
 			|| getParameterByName('packingListId')!=null){
-			
+			NProgress.start();
 			document.getElementById('buttonAddProduct').style.display = "none";
 			document.getElementById('buttonAddProduct').disabled = true;
 			
@@ -984,6 +984,7 @@
 				salesOrderId = salesOrder.salesOrderId;
 				if(salesOrder.salesOrderId < 0){
 					processUnlinkedPackingList(salesOrder.packingList);
+					NProgress.done();
 					return;
 				}
 				if(salesOrder.status == "OPEN"){
@@ -1008,7 +1009,7 @@
 					}
 				}, 100);
 				
-				
+				NProgress.inc();
 				//entry
 				var entries = salesOrder.entry;
 				var minSize = 999;
@@ -1201,7 +1202,7 @@
 				});
 			}
 		});
-			
+		NProgress.done();
 		}
 	});
 	
@@ -1341,11 +1342,10 @@
 		packingList.notes = document.getElementById('notes').value;
 		
 		packingList.productList = productList;
-		console.log(JSON.stringify(packingList));
-		
+		NProgress.start();
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
+			NProgress.inc();
 			if(request.readyState == 4 && request.status == 200){
 				var response = JSON.parse(request.response);
 				if(response.result == "success"){
@@ -1365,7 +1365,7 @@
 						});
 					
 					}
-					
+					NProgress.done();
 					packingListId = response.packingListId;
 					window.location = "packing-list.html?packingListId="+response.packingListId;
 					

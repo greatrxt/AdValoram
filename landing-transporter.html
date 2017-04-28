@@ -463,8 +463,8 @@
 	console.log( 'An error has been reported by DataTables: ', message );
 	} ) .DataTable();
 	//$('#displayTransportersTable').DataTable();
-
-	 $.getJSON(base_url + "/AdValoramAdmin/common/transporter", function(data){
+	NProgress.start();
+	$.getJSON(base_url + "/AdValoramAdmin/common/transporter", function(data){
 		 	var dataTable = $('#displayTransportersTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -473,7 +473,7 @@
 			var transporterArray = data.result;
 			for(var i = 0; i < transporterArray.length; i++){
 				var transporterJson = transporterArray[i];
-				
+				NProgress.inc();
 					
 				dataTable.row.add([
 					""+transporterJson.id,
@@ -487,6 +487,7 @@
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteTransporterDialog("+transporterJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			NProgress.done();
 		});
 	 });
 

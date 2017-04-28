@@ -789,8 +789,10 @@
 
 	function getClients(){
 		if(document.getElementById('clientName')!=null){
-		 $.getJSON(base_url + "/AdValoramAdmin/customer/idNameList", function(data){
+		NProgress.start();
+		$.getJSON(base_url + "/AdValoramAdmin/customer/idNameList", function(data){
 				 if(data.result=='error'){
+					NProgress.done();
 					return;
 				 }
 				var customerArray = data.result;
@@ -831,6 +833,7 @@
 						});
 					}
 				});
+				NProgress.done();
 			});
 		}
 	}
@@ -848,6 +851,7 @@
 
 	
 	function getLinkedPackingListAndSalesOrder(){
+		NProgress.start();
 		var packingListId = getParameterByName('packingListId');
 		var invoiceId = getParameterByName('invoiceId');
 		var url;
@@ -862,7 +866,7 @@
 			var salesOrder;
 			var linkedPackingLists;
 			var linkedCustomer;
-			
+			NProgress.inc();
 			if(invoiceId!=null){
 				salesOrder = data.result[0].linkedSalesOrder;
 				linkedPackingList = data.result[0].linkedPackingList;
@@ -939,7 +943,7 @@
 				referredByEmployee.appendChild(opt);
 			}
 			referredByEmployee.disabled = true;	
-
+			NProgress.done();
 		});
 	}
 	
@@ -956,6 +960,7 @@
 			$('.nav-tabs-horizontal li:eq(2) a').tab('show')
 			return;
 		}
+		NProgress.start();
 		document.getElementById('btnSave').disabled = true;
 		var invoice = new Object();			
 		invoice.linkedPackingListInternalId = linkedPackingListInternalId;
@@ -983,8 +988,10 @@
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
+			NProgress.inc();
+			console.log(request.readyState+" " + request.status);
 			if(request.readyState == 4 && request.status == 200){
+				NProgress.done();
 				window.location = "invoice.html?invoiceId="+JSON.parse(request.responseText).invoiceId;
 			}
 		};

@@ -631,6 +631,7 @@ var taxId = -1;
 $(window).load(function() {
 	fetchLocations();
 	if(getParameterByName('id')!=null){
+		NProgress.start();
 		taxId = getParameterByName('id');
 		document.getElementById('taxTitle').innerHTML  = "Edit Tax";
 		$.getJSON(base_url + "/AdValoramAdmin/common/tax/"+taxId, function(data){
@@ -641,6 +642,7 @@ $(window).load(function() {
 				document.getElementById("shortName").value = tax.shortName;
 				document.getElementById("taxRate").value = tax.taxRate;	
 			}
+			NProgress.done();
 		});
 	}
 });
@@ -655,6 +657,7 @@ $(window).load(function() {
 			document.getElementById("taxRate").value.length < 1 )){
 			return;
 		}
+		NProgress.start();
 		document.getElementById('btnSave').disabled = true;
 		var tax = new Object();
 		
@@ -664,9 +667,9 @@ $(window).load(function() {
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
+			NProgress.inc();
 			if(request.readyState == 4 && request.status == 200){
-				console.log("Success");
+				NProgress.done();
 				window.location = "landing-tax.html";
 			}
 		};

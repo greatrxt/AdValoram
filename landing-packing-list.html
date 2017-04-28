@@ -471,7 +471,8 @@
 	$('#displayPackingListsTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
-	 $.getJSON(base_url + "/AdValoramAdmin/packingList", function(data){
+	NProgress.start();
+	$.getJSON(base_url + "/AdValoramAdmin/packingList", function(data){
 		 	var dataTable = $('#displayPackingListsTable').DataTable();						
 			var packingListArray = data.result;
 			var dataTable = $('#displayPackingListsTable').DataTable();
@@ -485,7 +486,7 @@
 					quantity+=entryJson.quantity;
 					orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
 				}
-				
+				NProgress.inc();
 				dataTable.row.add([
 					packingListJson.packingListId,
 					packingListJson.clientNameOnPackingListDate,
@@ -497,6 +498,7 @@
 					+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeletePackingListDialog("+packingListJson.packingListId+");><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			NProgress.done();
 		});
 	 });
 

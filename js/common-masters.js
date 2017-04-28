@@ -1,5 +1,5 @@
-$(window).load(function() {
-	
+$(window).ready(function() {
+	NProgress.start();
 	$.ajaxSetup({
 		  headers : {
 			'Authorization' : 'Bearer ' + localStorage.getItem("token")
@@ -31,7 +31,7 @@ $(window).load(function() {
 		 });
 	 }
 	
-	
+	NProgress.inc();
 	if(document.getElementById('availableGender')!=null){
 
 		 //load genderCodes
@@ -58,7 +58,7 @@ $(window).load(function() {
 				}
 		});
 	}
-
+	NProgress.inc();
 	if(document.getElementById('season')!=null){
 		 //load seasons
 		 $.getJSON(base_url + "/AdValoramAdmin/common/season", function(data){
@@ -78,7 +78,7 @@ $(window).load(function() {
 				}
 			});
 	}
-	
+	NProgress.inc();
 	if(document.getElementById('brand')!=null){
 		//load Brand
 		 $.getJSON(base_url + "/AdValoramAdmin/common/brand", function(data){
@@ -97,7 +97,7 @@ $(window).load(function() {
 				}
 			});
 	}
-	
+	NProgress.inc();
 	if(document.getElementById('unitOfMeasurement')!=null){
 	//load uom
 	 $.getJSON(base_url + "/AdValoramAdmin/common/unitOfMeasurement", function(data){
@@ -116,7 +116,7 @@ $(window).load(function() {
 			}
 		});
 	}
-	
+	NProgress.inc();
 	if(document.getElementById('unitOfMeasurement')!=null){
 			//load productCategory
 		 $.getJSON(base_url + "/AdValoramAdmin/common/productCategory", function(data){
@@ -135,7 +135,7 @@ $(window).load(function() {
 				}
 			});
 	}
-	
+	NProgress.inc();
 	if(document.getElementById('reportingTo')!=null 
 			|| document.getElementById('linkedEmployee')!=null){
 			//load employee
@@ -155,7 +155,7 @@ $(window).load(function() {
 				}
 			});
 	}
-	
+	NProgress.inc();
 	var distributorArray = null;
 	if(document.getElementById('linkedDistributor')!=null){
 			//load distributor
@@ -181,7 +181,7 @@ $(window).load(function() {
 			
 			
 	}
-	
+	NProgress.inc();
 	var brokerArray = null;
 	if(document.getElementById('linkedBroker')!=null){
 			//load broker
@@ -208,7 +208,7 @@ $(window).load(function() {
 			brokerSelect.selectedIndex = -1;
 		});
 	}
-	
+	NProgress.inc();
 	if(document.getElementById('linkedTransporter')!=null){
 			//load transporter
 		 $.getJSON(base_url + "/AdValoramAdmin/common/transporter", function(data){
@@ -228,6 +228,8 @@ $(window).load(function() {
 				transporterSelect.selectedIndex = -1;
 			});
 	}
+	
+	NProgress.done();
 	});
 
 	var locationsArray = null;

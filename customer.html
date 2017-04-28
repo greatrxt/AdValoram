@@ -951,7 +951,7 @@ $(window).load(function() {
 			var result = data.result;
 			if(result!='error'){
 				var customer = result[0];
-				
+				NProgress.start();
 				//
 				
 				document.getElementById("companyName").value = customer.companyName;
@@ -1032,6 +1032,7 @@ $(window).load(function() {
 				}
 				
 				}
+				NProgress.done();
 		});
 	}
 
@@ -1043,7 +1044,7 @@ $(window).load(function() {
 	
 	
 	function createOrUpdateCustomer(){
-		
+		NProgress.start();
 		if((document.getElementById("companyName").value.length < 3 ||
 			document.getElementById("contactPerson").value.length < 3 )){
 			$('.nav-tabs-horizontal li:eq(0) a').tab('show');
@@ -1114,10 +1115,11 @@ $(window).load(function() {
 		customer.notes = document.getElementById("notes").value;
 		
 		document.getElementById('btnSave').disabled = true;
-		
+		NProgress.inc();
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
+			console.log(request.readyState+" " + request.status);
+			NProgress.inc();
 			if(request.readyState == 4 && request.status == 200){
 				console.log("Success");
 				var uploadDocuments = document.getElementById("uploadDocuments");
@@ -1136,6 +1138,7 @@ $(window).load(function() {
 					});
 				
 				}
+				NProgress.done();
 				window.location = "landing-customer.html";
 			}
 		};

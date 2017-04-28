@@ -471,8 +471,8 @@
 	$('#displayCreditNotesTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	}) .DataTable();
-	
-	 $.getJSON(base_url + "/AdValoramAdmin/creditNote", function(data){
+	NProgress.start();
+	$.getJSON(base_url + "/AdValoramAdmin/creditNote", function(data){
 		 	var dataTable = $('#displayCreditNotesTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -494,7 +494,7 @@
 					quantity+=entryJson.quantity;
 					orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
 				}
-				
+				NProgress.inc();
 				dataTable.row.add([
 					creditNote.creditNoteId,
 					creditNote.linkedInvoice.linkedPackingList.clientNameOnPackingListDate,
@@ -506,6 +506,7 @@
 					+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+creditNote.linkedInvoice.linkedPackingList.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			NProgress.done();
 		});
 	 });
 

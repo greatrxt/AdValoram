@@ -12,8 +12,9 @@
 	<script src="js/common-sales.js"></script>
 	<script src="js/common.js"></script>
 	<script src="assets/vendors/html5-form-validation/dist/jquery.validation.min.js"></script>
+	<script src="assets/vendors/nprogress/nprogress.js"></script>
 	<!--<script type='text/javascript' src='js/example.js'></script>-->
-
+	<link rel="stylesheet" type="text/css" href="assets/vendors/nprogress/nprogress.css">
 </head>
 <script>
 
@@ -22,6 +23,7 @@ $(window).load(function() {
 		var invoiceId = getParameterByName('invoiceId');
 		$.getJSON(base_url + "/AdValoramAdmin/invoice/"+invoiceId, function(data){
 			var result = data.result;
+			NProgress.start();
 			if(result!='error'){
 				var salesOrder = data.result[0].linkedSalesOrder;
 				var packingList = data.result[0].linkedPackingList;
@@ -82,7 +84,7 @@ $(window).load(function() {
 					packingListEntry[key] = entryJson.quantity;	
 
 				}
-				console.log("done");
+				NProgress.set(0.4);
 				sizeArray.sort();
 				var tbody = '<tr>'+
 						'<th rowspan = "2">Product No.</th>' +
@@ -137,7 +139,7 @@ $(window).load(function() {
 					'<tr>' +
 					'<td colspan="'+(sizeArray.length+7)+'"></td>'+
 					'</tr>';
-					
+				NProgress.set(0.8);	
 				tbody+='<tr>'+
 					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate' +
 					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ 'the sale of the goods ' +
@@ -198,6 +200,7 @@ $(window).load(function() {
 				document.getElementById('lrNo').innerHTML = data.result[0].roadPermitOrLicenseNumber;
 				document.getElementById('referredBy').innerHTML = data.result[0].linkedSalesOrder.referredByEmployee.firstName + " " + data.result[0].linkedSalesOrder.referredByEmployee.lastName;
 			}
+			NProgress.done();
 		});
 	}
 });

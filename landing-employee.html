@@ -464,7 +464,7 @@
 	$('#displayEmployeesTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	}).DataTable();
-	
+	NProgress.start();
 	$.getJSON(base_url + "/AdValoramAdmin/common/employee", function(data){
 		 	var dataTable = $('#displayEmployeesTable').DataTable();			
 			if(data.result == 'error'){
@@ -475,7 +475,7 @@
 			for(var i = 0; i < employeeArray.length; i++){
 				var employeeJson = employeeArray[i];
 				
-					
+				NProgress.inc();	
 				dataTable.row.add([
 					""+employeeJson.id,
 					//"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
@@ -488,6 +488,8 @@
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteEmployeeDialog("+employeeJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			
+			NProgress.done();
 		});
 	 });
 

@@ -606,8 +606,8 @@
 									}
 								}
 							};
-							
 							request.open ("GET", base_url + "/AdValoramAdmin/common/color", true);
+							request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 							request.send();
 						}
 						
@@ -980,10 +980,12 @@
 					var loadedProductData = null;
 					$(window).load(function() {
 						if(getParameterByName('id')!=null){
+							
 							productId = getParameterByName('id');
 							document.getElementById('productTitle').innerHTML  = "Edit Product";
 							$.getJSON(base_url + "/AdValoramAdmin/common/product/" + productId, function(data){
 								var result = data.result;
+								NProgress.start();
 								if(result!='error'){
 									var product = result[0];
 									loadedProductData = product;
@@ -1167,6 +1169,7 @@
 									for(var f = 0; f < fileDetailsArray.length; f++){
 										$('.preview-area').append('<img style="width:50%" src="' + fileDetailsArray[f].fileLocation + '" /><br/><br/><br/>');
 									}
+									NProgress.done();
 								}
 							});
 						}
@@ -1177,7 +1180,7 @@
 							$('.nav-tabs-horizontal li:eq(0) a').tab('show')
 							return;
 						}
-
+						NProgress.start();
 						
 						var product = new Object();
 						product.styleCode = document.getElementById('styleCode').value;						
@@ -1258,9 +1261,10 @@
 						product.status = document.getElementById('productStatus').value;
 						
 						document.getElementById('btnSave').disabled = true;	//DISABLE SAVE BUTTON TO AVOID DOUBLE SAVE
+						NProgress.set(0.4);
 						var request = new XMLHttpRequest();
 						request.onreadystatechange = function(){
-							console.log(request.readyState+" " + request.status)
+							NProgress.inc();
 							if(request.readyState == 4 && request.status == 200){
 								var response = JSON.parse(request.response);
 								if(response.result == "success"){
@@ -1281,6 +1285,7 @@
 										});
 									
 									}
+									NProgress.done();
 									window.location = "landing-product.html";
 								}
 							}

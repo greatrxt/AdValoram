@@ -470,6 +470,7 @@
 	}) .DataTable();
 	http://stackoverflow.com/questions/7745609/sql-select-only-rows-with-max-value-on-a-column
 	 $.getJSON(base_url + "/AdValoramAdmin/salesOrder", function(data){
+			NProgress.start();
 		 	var dataTable = $('#displaySalesOrdersTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -487,7 +488,7 @@
 					quantity+=entryJson.quantity;
 					orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
 				}
-				
+				NProgress.inc();
 				dataTable.row.add([
 					salesOrderJson.salesOrderId,
 					salesOrderJson.clientNameOnSalesOrderDate,
@@ -498,6 +499,7 @@
 					+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+salesOrderJson.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			NProgress.done();
 		});
 	 });
 

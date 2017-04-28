@@ -842,6 +842,11 @@
 			document.getElementById('returnDate').value = print_today();
 		} else {
 			creditNoteId = getParameterByName('creditNoteId');
+			$.ajaxSetup({
+				  headers : {
+					'Authorization' : 'Bearer ' + localStorage.getItem("token")
+				  }
+			});
 			$.getJSON(base_url + "/AdValoramAdmin/creditNote/"+creditNoteId, function(data){
 				var creditNote = data.result[0];
 				var invoice = creditNote.linkedInvoice;
@@ -1056,7 +1061,8 @@
 		if(selectInvoice.value.length <= 0){	//VALIDATE - INVOICE
 			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
 			return;
-		}	
+		}
+		NProgress.start();		
 		var linkedInvoiceId = selectInvoice.options[selectInvoice.selectedIndex].value;
 		creditNote.linkedInvoiceId = linkedInvoiceId;
 
@@ -1082,10 +1088,12 @@
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
+			console.log(request.readyState+" " + request.status);
+			NProgress.inc();			
 			if(request.readyState == 4 && request.status == 200){
 				var response = JSON.parse(request.response);
 				if(response.result == "success"){	
+					NProgress.done();
 					window.location = "credit-note.html?creditNoteId="+response.creditNoteId;			
 				}
 			}
@@ -1102,6 +1110,7 @@
 	
 	function getInvoiceIds(){
 		$.getJSON(base_url + "/AdValoramAdmin/invoice/idlist", function(data){
+		
 			var selectInvoice = document.getElementById('selectInvoice');
 			removeOptions(selectInvoice);
 			for(var i = 0; i < data.result.length; i++){
@@ -1118,7 +1127,7 @@
 			var invoiceInternalId = selectInvoice.value;
 
 			$.getJSON(base_url + "/AdValoramAdmin/invoice/"+invoiceInternalId, function(data){
-
+				NProgress.start();
 				var salesOrder;
 				var linkedPackingLists;
 				var linkedCustomer;
@@ -1199,7 +1208,7 @@
 							return;
 						}
 					}
-					
+					NProgress.inc();
 					var key = "quantityForSize" + size;
 					packingListEntry[key] = entryJson.quantity;	
 
@@ -1216,6 +1225,7 @@
 					}					
 				
 					refreshProductsTable();
+					NProgress.done();
 					});
 					
 				});

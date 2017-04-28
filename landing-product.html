@@ -477,12 +477,12 @@ tr.shown details-control {
 	$('#displayProductTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 	console.log( 'An error has been reported by DataTables: ', message );
 	} ) .DataTable();
-	
+	NProgress.start();
 	var dataTable = $('#displayProductTable').DataTable();		
 	
 	var productArray = null;
 	$.getJSON(base_url + "/AdValoramAdmin/common/product", function(data){
-		
+			NProgress.start();
 			if(data.result == 'error'){
 				return;
 			}
@@ -541,6 +541,7 @@ tr.shown details-control {
 				}
 				skuData+='</table>';
 				skuTables.push(skuData);
+				NProgress.inc();
 			}
 			
 			
@@ -552,7 +553,7 @@ tr.shown details-control {
 						);
 				});
 			$('#table_sku').DataTable();
-			
+			NProgress.done();
 			}
 		);
 		

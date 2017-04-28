@@ -836,6 +836,7 @@
 		fetchLocations();
 		if(getParameterByName('id')!=null){
 			employeeId = getParameterByName('id');
+			NProgress.start();
 			document.getElementById('employeeTitle').innerHTML  = "Edit Employee";
 			$.getJSON(base_url + "/AdValoramAdmin/common/employee/"+employeeId, function(data){
 				var result = data.result;
@@ -893,6 +894,7 @@
 					}, 100);
 					
 				}
+				NProgress.done();
 			});
 		}
 	});
@@ -903,6 +905,7 @@
 			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
 			return;
 		}
+		NProgress.start();
 		document.getElementById('btnSave').disabled = true;
 		var employee = new Object();
 		employee.salutation = document.getElementById("salutation").value;
@@ -944,8 +947,10 @@
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
-			console.log(request.readyState+" " + request.status)
+			NProgress.inc();
+			console.log(request.readyState+" " + request.status);
 			if(request.readyState == 4 && request.status == 200){
+				NProgress.done();
 				window.location = "landing-employee.html";
 			}
 		};

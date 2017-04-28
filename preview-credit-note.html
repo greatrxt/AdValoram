@@ -12,8 +12,9 @@
 	<script src="js/common-sales.js"></script>
 	<script src="js/common.js"></script>
 	<script src="assets/vendors/html5-form-validation/dist/jquery.validation.min.js"></script>
+	<script src="assets/vendors/nprogress/nprogress.js"></script>
 	<!--<script type='text/javascript' src='js/example.js'></script>-->
-
+	<link rel="stylesheet" type="text/css" href="assets/vendors/nprogress/nprogress.css">
 </head>
 <script>
 
@@ -27,6 +28,7 @@ $(window).load(function() {
 		var creditNoteId = getParameterByName('creditNoteId');
 		$.getJSON(base_url + "/AdValoramAdmin/creditNote/"+creditNoteId, function(data){
 			var result = data.result;
+			NProgress.start();
 			if(result!='error'){
 				var salesOrder = data.result[0].linkedInvoice.linkedSalesOrder;
 				var packingList = data.result[0].linkedInvoice.linkedPackingList;
@@ -51,7 +53,7 @@ $(window).load(function() {
 						sizeArray.push(size);
 					}
 					var entryId = entryJson.entryId;
-
+					NProgress.inc();
 					var creditNoteEntry = creditNoteEntries[entryId];
 					if(creditNoteEntry == null){
 						creditNoteEntry = new Object();
@@ -201,8 +203,9 @@ $(window).load(function() {
 				document.getElementById('noOfPackages').innerHTML = data.result[0].linkedInvoice.numberOfPackages;
 				document.getElementById('weight').innerHTML = data.result[0].linkedInvoice.grossWeight;
 				document.getElementById('lrNo').innerHTML = data.result[0].linkedInvoice.roadPermitOrLicenseNumber;
-				document.getElementById('referredBy').innerHTML = data.result[0].linkedSalesOrder.referredByEmployee.firstName + " " + data.result[0].linkedSalesOrder.referredByEmployee.lastName;
+				document.getElementById('referredBy').innerHTML = data.result[0].linkedInvoice.linkedSalesOrder.referredByEmployee.firstName + " " + data.result[0].linkedInvoice.linkedSalesOrder.referredByEmployee.lastName;
 			}
+			NProgress.done();
 		});
 	}
 });

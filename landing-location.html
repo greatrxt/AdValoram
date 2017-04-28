@@ -463,8 +463,8 @@
 	$('#displayLocationsTable').on( 'error.dt', function ( e, settings, techNote, message ) {
 		console.log( 'An error has been reported by DataTables: ', message );
 	} ) .DataTable();
-	
-	 $.getJSON(base_url + "/AdValoramAdmin/common/location", function(data){
+	NProgress.start();
+	$.getJSON(base_url + "/AdValoramAdmin/common/location", function(data){
 			var dataTable = $('#displayLocationsTable').DataTable();			
 			if(data.result == 'error'){
 				return;
@@ -473,7 +473,7 @@
 			for(var i = 0; i < locationArray.length; i++){
 				var locationJson = locationArray[i];
 				
-					
+				NProgress.inc();
 				dataTable.row.add([
 					""+locationJson.id,
 					//"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
@@ -485,6 +485,7 @@
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteLocationDialog("+locationJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
+			NProgress.done();
 		});
 	 });
 
