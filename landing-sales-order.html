@@ -140,8 +140,8 @@
         <ul class="left-menu-list left-menu-list-root list-unstyled">   
 		
             <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-home2"><!-- --></i>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
                     Home
                 </a>
             </li>
@@ -377,7 +377,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" onclick = "signOut();" href="#">
+                <a class="left-menu-link" onclick = "sendSignoutRequest();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -512,10 +512,6 @@ function editSalesOrder(id, status){
 		return;
 	}				
 	window.location = "sales-order.html?id=" + id;
-}
-
-function signOut(){
-	window.location = "index.html";
 }
 
 </script>

@@ -115,6 +115,7 @@
 	
 	<script src="js/common.js"></script>
 	<script src="js/common-masters.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
 	<script src="js/load-locations.js"></script>
 </head>
 
@@ -275,8 +276,8 @@
 
             
             <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-home2"><!-- --></i>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
                     Home
                 </a>
             </li>
@@ -356,7 +357,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" href="#">
+                <a class="left-menu-link" onclick = "sendSignoutRequest();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -643,7 +644,7 @@
                                 <label for="contactNumber">Contact Number*</label>
                                 <input class="form-control" id="contactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="validation[contact number]"
 																					   data-validation="[L>=3]"
-																					   data-validation-message="Please fill a valid $">
+																					   data-validation-message="Please fill a valid $" maxlength="10">
                             </div>
 							
 							<div class="form-group">
@@ -689,7 +690,7 @@
 
 							<div class="form-group">
                                 <label for="alternateContactNumber">Alternate Contact Number</label>
-                                <input class="form-control" id="alternateContactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                <input class="form-control" id="alternateContactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
                             </div>
 							
 						</div>
@@ -806,7 +807,8 @@
 								<label class="form-control-label" for="uploadDocuments">Upload Documents</label>
 								<input id="uploadDocuments" type="file">
 								<br>
-								<small>Add Files</small>
+								<div id = "uploadedFiles" style="width:70%">
+								</div>
 							</div>
 							
 						</div>
@@ -825,9 +827,75 @@
 		</div>
 	</section>
 	
-	
+<div id="deleteFileModal" class="modal-outer-body">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+		<h3 style="padding:5px;font-size:15px;">Delete File ?</h3>
+    </div>
+    <div class="modal-body">
+		<span id = "confirmDeleteText">Are you sure you want to delete this File ?</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonConfirmDelete" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Yes</button></br></td>
+			<td><button id="buttonCancel" style = "width:150px;height:40px;display:inline;" class="btn btn Primary" onclick = "closeDeleteFileModal()">Cancel</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+
+</div>	
 	
 <script>
+	function showDeleteFileDialog(fileId) {
+		document.getElementById('deleteFileModal').style.display = "block";
+		document.getElementById('buttonConfirmDelete').onclick = function (){
+				var request = new XMLHttpRequest();
+				NProgress.start();
+				request.onreadystatechange = function(){
+					NProgress.inc();
+					if(request.readyState == 4){
+						var response = JSON.parse(request.response);
+						if(request.status == 200){
+							if(response.result == "success"){
+								window.location = "employee.html?id="+getParameterByName('id'); //refresh
+							} else {
+								//show error dialog box
+								document.getElementById('errorWhileDeletingModal').style.display = "block";
+								document.getElementById('buttonCloseErrorWhileDeletingModal').onclick = function (){
+									document.getElementById('errorWhileDeletingModal').style.display = "none";
+								}
+							}
+						} else {
+							window.location = "index.html";
+						}
+						NProgress.done();
+					}
+				};
+				
+				request.open ("DELETE", base_url + "/AdValoramAdmin/upload/employee/"+getParameterByName('id')+"/"+fileId, true);
+				request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
+				request.send();
+		}
+	}
+
+	function closeDeleteFileModal(){
+		document.getElementById('deleteFileModal').style.display = 'none';
+	}
+	
+	// Get the modal
+	var modal = document.getElementById('deleteFileModal');
+	// Get the <span> element that closes the modal
+	var span = document.getElementsByClassName("close")[0];
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
 	function goBackToLandingPage(){
 		window.location = "landing-employee.html";
 	}
@@ -879,6 +947,17 @@
 					//employee.filesMetadata = '';// document.getElementById("filesMetadata").value;
 					document.getElementById("notes").value = employee.notes;
 		
+					var fileDetailsArray = employee.associatedFiles;
+					var uploadedFiles = document.getElementById('uploadedFiles');
+					var str = "";
+					for(var f = 0; f < fileDetailsArray.length; f++){
+						str+="<div style='border:1px solid #ccc;padding:10px;margin-top:5px;border-radius: 5px;'>";
+						var fileJson = fileDetailsArray[f];
+						str+="<a href='" + fileJson.fileLocation + "'>" + fileJson.name + "</a>";
+						str+="<i class='fa fa-trash fa-2x' onclick='showDeleteFileDialog("+fileJson.id+")' style='float:right;padding:2px;margin:-4px;' aria-hidden='true'></i></div>"
+					}
+				
+					uploadedFiles.innerHTML = str;
 					var waitToSelectLocation = setInterval(function(){
 						if(locationsArray!=null){
 							var city = document.getElementById("city");
@@ -901,7 +980,7 @@
 	
 	function createOrUpdateEmployee(){
 		if(document.getElementById("firstName").value.length < 3 
-			|| document.getElementById("contact").value.length < 3){
+			|| document.getElementById("contactNumber").value.length < 3){
 			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
 			return;
 		}
@@ -950,10 +1029,45 @@
 			NProgress.inc();
 			console.log(request.readyState+" " + request.status);
 			if(request.readyState == 4 && request.status == 200){
-				NProgress.done();
-				window.location = "landing-employee.html";
+				var response = JSON.parse(request.response);
+				if(response.result == "success"){
+					if(document.getElementById('uploadDocuments').files.length==0){
+						window.location = "landing-employee.html";
+						return;
+					}
+					var uploadDocuments = document.getElementById("uploadDocuments");
+					var formData = new FormData();
+					for (var i = 0, len = document.getElementById('uploadDocuments').files.length; i < len; i++) {
+						formData.append("file", document.getElementById('uploadDocuments').files[i]);
+					}
+
+
+					//send formData to server-side
+					$.ajax({
+						url : base_url + '/AdValoramAdmin/upload/employee/' + response.objectId,
+						type : 'post',
+						beforeSend: function(request) {
+							request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
+						},
+						data : formData,
+						dataType : 'json',
+						async : true,
+						processData: false,  // tell jQuery not to process the data
+						contentType: false,   // tell jQuery not to set contentType
+						error : function(request){
+							console.log(request.responseText);
+							alert(request.responseText);
+						},
+						success : function(json){
+							//place your code here
+							NProgress.done();
+							window.location = "landing-employee.html";
+						}
+					});
+				}
+	
+				}
 			}
-		};
 		
 		if(employeeId < 0){
 			request.open ("POST", base_url + "/AdValoramAdmin/employee", true);

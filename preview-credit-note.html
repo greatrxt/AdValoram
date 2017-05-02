@@ -209,7 +209,9 @@ $(window).load(function() {
 		});
 	}
 });
-
+function editCreditNote(){
+	window.location = "credit-note.html?creditNoteId="+getParameterByName("creditNoteId");
+}
 function issueInvoice(){
 	 $.ajaxSetup({
 		  headers : {
@@ -233,6 +235,7 @@ function backToLandingPage(){
 
 	<div id="page-wrap">
 	<button id="buttonBack" class = "no-print" onClick="backToLandingPage();">Back</button>
+	<button class = "no-print" onClick="editCreditNote();">Edit</button>
 	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
 	<button id = "buttonIssueInvoice" onclick = "issueInvoice();" class = "no-print" style = "float:right; visibility:hidden">Issue</button>
 		<textarea id="header">CREDIT NOTE</textarea>

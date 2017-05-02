@@ -13,6 +13,22 @@
 	var selectedStyleCode = null;
 	
 	
+	function sendSignoutRequest(){
+		NProgress.start();
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			NProgress.inc();
+			if(request.readyState == 4){
+				NProgress.done();
+				window.location = "index.html";
+			}
+		};
+		
+		request.open ("POST", base_url + "/AdValoramAdmin/authentication/logout", true);
+		request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
+		request.send();
+	}
+	
 	function removeOptions(selectbox){
 		var i;
 		for(i = selectbox.options.length - 1 ; i >= 0 ; i--)

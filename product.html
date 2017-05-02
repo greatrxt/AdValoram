@@ -102,7 +102,17 @@
     <script src="assets/vendors/angular/angular.min.js"></script>
     <script src="assets/vendors/angular-route/angular-route.min.js"></script>
     <script src="assets/common/js/version_angular/app.js"></script>
-
+	<style>
+		#logo { margin-top: 5px; border: 0px solid #ccc; padding:20px; width:50%}
+		#logo:hover, #logo.edit { border: 2px solid #ccc; margin-top: 0px; }
+		#logoctr { position:absolute; display: none; cursor: pointer; cursor: hand;}
+		#logo:hover #logoctr, #logo.edit #logoctr { display: block; line-height: 25px; padding: 10px; font-size: 20px;}
+		#logohelp { text-align: left; display: none; font-style: italic; padding: 10px 5px;}
+		#logohelp input { margin-bottom: 5px; }
+		.edit #logohelp { display: block; }
+		.edit #save-logo, .edit #cancel-logo { display: inline; }
+		.edit #image, #save-logo, #cancel-logo, .edit #change-logo, .edit #delete-logo { display: none; }
+	</style>
     <!-- Angular Version Controllers -->
 <!--    <script src="pages/register.ctrl.js"></script>
     <script src="pages/login.ctrl.js"></script>
@@ -118,6 +128,7 @@
 		} catch(e) {
 		}
 	</script>
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
@@ -282,8 +293,8 @@
 
             
             <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-home2"><!-- --></i>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
                     Home
                 </a>
             </li>
@@ -363,7 +374,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" href="#">
+                <a class="left-menu-link" onclick="sendSignoutRequest();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -787,7 +798,7 @@
                                 <label for="styleCode">Style Code*</label>
                                 <input class="form-control" id="styleCode" type="text" name="validation[style code]"
 																					   data-validation="[L>=2]"
-																					   data-validation-message="$ must have atleast 2 characters">
+																					   data-validation-message="$ must have atleast 2 characters" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="4">
                             </div>
 							
 							<div class="form-group">
@@ -918,11 +929,15 @@
 							<div class="form-group">
 								<label class="form-control-label" for="uploadDocuments">Upload Images</label>
 								<!--<input id="uploadDocuments" type="file" accept="image/*">-->
-								<input id="uploadDocuments" type="file" multiple accept="image/*">
-								<br/>
+								<input id="uploadDocuments" type="file" accept="image/*">
 								<br/>
 								<!--<small>Press and Hold CTRL button to attach multiple images</small>-->
-								<div class="preview-area"></div>
+								<div id = "uploadedFiles">
+								  
+								</div>
+								<div id = "filesToUpload">
+								  
+								</div>
 							</div>
 					</div>
 					<script>
@@ -933,45 +948,47 @@
 							var fileList = this.files;
 							
 							var anyWindow = window.URL || window.webkitURL;
-							$('.preview-area').html("");
+							$('#filesToUpload').html("");
 							for(var i = 0; i < fileList.length; i++){
 							  var objectUrl = anyWindow.createObjectURL(fileList[i]);
-							  $('.preview-area').append('<img style="width:50%" src="' + objectUrl + '" /><br/><br/><br/>');
+							  $('#filesToUpload').append('<img style="width:50%" src="' + objectUrl + '" /><br/><br/><br/>');
 							  window.URL.revokeObjectURL(fileList[i]);
 							}
 							
 							
 						}
 					</script>
-					<div class="tab-pane" id="tab6" role="tabpanel" aria-expanded="true">
-						<div class = "col-lg-10">
-							<div class="form-group">
-                                <label for="specialInstructions">Special Instructions</label>
-                                <input class="form-control" id="specialInstructions" type="text">
-                            </div>
-							
-							<div class="form-group">
-								<label class="form-control-label" for="notes">Notes</label>
-								<textarea class="form-control" rows="7" id="notes"></textarea>
-							</div>
-							
-							<div class="form-group">
-								<label class="form-control-label" for="uploadDocuments">Upload Documents</label>
-								<input id="uploadDocuments" type="file" multiple>
-								<br>
-								<small>Press and Hold CTRL button to attach multiple files</small>
-							</div>
-							
-						</div>
 					</div>
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
-							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createProduct();">Save</button>
+							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createProductAndSku();">Save</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnBack" style="margin:10px">Back</button>
 							<button type="button" class="btn width-150 btn-default" id = "btnNext" style="margin:10px">Next</button>
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
+					<div id="deleteFileModal" class="modal-outer-body">
+
+				  <!-- Modal content -->
+				  <div class="modal-content">
+					<div class="modal-header">
+					  <span class="close">&times;</span>
+						<h3 style="padding:5px;font-size:15px;">Delete image ?</h3>
+					</div>
+					<div class="modal-body">
+						<span id = "confirmDeleteText">Are you sure you want to delete this image ?</span>	
+					</div>
+					<div class="modal-footer" style="height:70px;">
+						<table>
+						<tr>
+							<td><button id="buttonConfirmDelete" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Yes</button></br></td>
+							<td><button id="buttonCancel" style = "width:150px;height:40px;display:inline;" class="btn btn Primary" onclick = "closeDeleteFileModal()">Cancel</button></td>
+						</tr>
+						</table>
+					</div>
+				  </div>
+
+				</div>
 					<script>
 					function goBackToLandingPage(){
 						window.location = "landing-product.html";
@@ -1165,22 +1182,74 @@
 									});*/
 									
 									var fileDetailsArray = product.associatedFiles;
-									$('.preview-area').html("");
+									
+									var str = "";
 									for(var f = 0; f < fileDetailsArray.length; f++){
-										$('.preview-area').append('<img style="width:50%" src="' + fileDetailsArray[f].fileLocation + '" /><br/><br/><br/>');
+										str+="<div class='preview-area' id = 'logo'>";
+										//str+="<div id='logoctr'><a id='delete-logo' title='Delete'>Delete</a></div>";
+										str+="<div id='logoctr'><i id='delete-logo' class='fa fa-trash fa-2x' onclick='showDeleteFileDialog("+fileDetailsArray[f].id+")'></i></div>"
+										str+='<img style="width:100%" src="' + fileDetailsArray[f].fileLocation + '" />';
+										str+='</div></br>';
 									}
+									$('#uploadedFiles').html(str);
 									NProgress.done();
 								}
 							});
 						}
 					});
 					
-					function createProduct(){
+					function showDeleteFileDialog(fileId) {
+						document.getElementById('deleteFileModal').style.display = "block";
+						document.getElementById('buttonConfirmDelete').onclick = function (){
+								var request = new XMLHttpRequest();
+								NProgress.start();
+								request.onreadystatechange = function(){
+									NProgress.inc();
+									if(request.readyState == 4){
+										var response = JSON.parse(request.response);
+										if(request.status == 200){
+											if(response.result == "success"){
+												window.location = "product.html?id="+getParameterByName('id'); //refresh
+											} else {
+												//show error dialog box
+												document.getElementById('errorWhileDeletingModal').style.display = "block";
+												document.getElementById('buttonCloseErrorWhileDeletingModal').onclick = function (){
+													document.getElementById('errorWhileDeletingModal').style.display = "none";
+												}
+											}
+										} else {
+											window.location = "index.html";
+										}
+										NProgress.done();
+									}
+								};
+								
+								request.open ("DELETE", base_url + "/AdValoramAdmin/upload/product/"+getParameterByName('id')+"/"+fileId, true);
+								request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
+								request.send();
+						}
+					}
+
+					function closeDeleteFileModal(){
+						document.getElementById('deleteFileModal').style.display = 'none';
+					}
+					
+					// Get the modal
+					var modal = document.getElementById('deleteFileModal');
+					// Get the <span> element that closes the modal
+					var span = document.getElementsByClassName("close")[0];
+
+					// When the user clicks on <span> (x), close the modal
+					span.onclick = function() {
+						modal.style.display = "none";
+					}
+					
+					
+					function createProductAndSku(){
 						if(document.getElementById("styleCode").value.length < 2){	//VALIDATE - STYLE CODE
 							$('.nav-tabs-horizontal li:eq(0) a').tab('show')
 							return;
 						}
-						NProgress.start();
 						
 						var product = new Object();
 						product.styleCode = document.getElementById('styleCode').value;						
@@ -1261,33 +1330,47 @@
 						product.status = document.getElementById('productStatus').value;
 						
 						document.getElementById('btnSave').disabled = true;	//DISABLE SAVE BUTTON TO AVOID DOUBLE SAVE
-						NProgress.set(0.4);
+						NProgress.start();
 						var request = new XMLHttpRequest();
 						request.onreadystatechange = function(){
 							NProgress.inc();
 							if(request.readyState == 4 && request.status == 200){
-								var response = JSON.parse(request.response);
-								if(response.result == "success"){
-									console.log("Success");
-									var uploadDocuments = document.getElementById("uploadDocuments");
-									for(var f = 0; f < uploadDocuments.files.length; f++){
-									
-										var formData = new FormData();
-										formData.append('file', uploadDocuments.files[f]);
-
-											$.ajax({
-											  url: base_url + '/AdValoramAdmin/upload/product/' + response.objectId,
-											  type: 'POST',
-											  processData: false, // important
-											  contentType: false, // important
-											  dataType : '*',
-											  data: formData
-										});
-									
-									}
-									NProgress.done();
+							var response = JSON.parse(request.response);
+							if(response.result == "success"){
+								if(document.getElementById('uploadDocuments').files.length==0){
 									window.location = "landing-product.html";
+									return;
 								}
+									
+								var uploadDocuments = document.getElementById("uploadDocuments");
+								var formData = new FormData();
+								for (var i = 0, len = document.getElementById('uploadDocuments').files.length; i < len; i++) {
+									formData.append("file", document.getElementById('uploadDocuments').files[i]);
+								}
+								
+								//send formData to server-side
+								$.ajax({
+									url : base_url + '/AdValoramAdmin/upload/product/' + response.objectId,
+									type : 'post',
+									beforeSend: function(request) {
+										request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
+									},
+									data : formData,
+									dataType : 'json',
+									async : true,
+									processData: false,  // tell jQuery not to process the data
+									contentType: false,   // tell jQuery not to set contentType
+									error : function(request){
+										console.log(request.responseText);
+										alert(request.responseText);
+									},
+									success : function(json){
+										//place your code here
+										NProgress.done();
+										window.location = "landing-product.html";
+									}
+								});
+							}
 							}
 						};
 						

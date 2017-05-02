@@ -115,7 +115,6 @@
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-	<script src="js/JsBarcode.all.min.js"></script>
 	<!--For Electron--><script>if (window.module) module = window.module;</script>
 	<script>
 		try {
@@ -125,6 +124,7 @@
 		} catch(e) {
 		}
 	</script>
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl">
@@ -140,8 +140,8 @@
         <ul class="left-menu-list left-menu-list-root list-unstyled">   
 		
             <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-home2"><!-- --></i>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
                     Home
                 </a>
             </li>
@@ -377,7 +377,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" onclick = "signOut();" href="#">
+                <a class="left-menu-link" onclick = "sendSignoutRequest();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -431,18 +431,101 @@
     <!-- End Ecommerce Products List -->
 
 </div>
-<div id = "printModal" class = "modal printbox">
-    <div class="modal-content">
-		<div class="modal-header">
-			<h3 style="padding:5px;font-size:15px;">Delete Employee ?</h3>
-		</div>
-		<div class="modal-body">
-		<span id = "printMessage"></span></br>
-			<button type="button" class="btn btn-primary"  style = "float:right" onclick = "closeDeleteModal();">No</button>
-			<button type="button" class="btn btn-primary"  style = "float:right" onclick = "delete();">Yes</button>
-		</div>
-	</div>
+<div id="deleteEmployeeModal" class="modal-outer-body">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+		<h3 style="padding:5px;font-size:15px;">Delete Employee ?</h3>
+    </div>
+    <div class="modal-body">
+		<span id = "confirmDeleteText">Are you sure you want to delete this employee ?</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonConfirmDelete" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Yes</button></br></td>
+			<td><button id="buttonCancel" style = "width:150px;height:40px;display:inline;" class="btn btn Primary" onclick = "closeDeleteEmployeeModal()">Cancel</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+
 </div>
+
+<div id="errorWhileDeletingModal" class="modal-outer-body">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+		<h3 style="padding:5px;font-size:15px;">Error while deleting</h3>
+    </div>
+    <div class="modal-body">
+		<span id = "confirmDeleteText">Could not delete this employee since it is linked to other items in the system. Please delete those items first and try deleting again.</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonCloseErrorWhileDeletingModal" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">OK</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+
+	function showDeleteEmployeeDialog(id) {
+		document.getElementById('deleteEmployeeModal').style.display = "block";
+		document.getElementById('buttonConfirmDelete').onclick = function (){
+				var request = new XMLHttpRequest();
+				NProgress.start();
+				request.onreadystatechange = function(){
+					NProgress.inc();
+					if(request.readyState == 4){
+						var response = JSON.parse(request.response);
+						if(request.status == 200){
+							if(response.result == "success"){
+								window.location = "landing-employee.html"; //refresh
+							} else {
+								//show error dialog box
+								document.getElementById('errorWhileDeletingModal').style.display = "block";
+								document.getElementById('buttonCloseErrorWhileDeletingModal').onclick = function (){
+									//document.getElementById('errorWhileDeletingModal').style.display = "none";
+									//document.getElementById('deleteEmployeeModal').style.display = "none";
+									window.location = "landing-employee.html"; //refresh
+								}
+							}
+						} else {
+							window.location = "index.html";
+						}
+						NProgress.done();
+					}
+				};
+				
+				request.open ("DELETE", base_url + "/AdValoramAdmin/common/employee/"+id, true);
+				request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
+				request.send();
+		}
+	}
+
+	function closeDeleteEmployeeModal(){
+		document.getElementById('deleteEmployeeModal').style.display = 'none';
+	}
+	
+	// Get the modal
+	var modal = document.getElementById('deleteEmployeeModal');
+	// Get the <span> element that closes the modal
+	var span = document.getElementsByClassName("close")[0];
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
+</script>
 
 <script>
 	function addEmployee(){
@@ -483,7 +566,7 @@
 					employeeJson.department,
 					employeeJson.designation,
 					employeeJson.city.cityName,
-					employeeJson.lastUpdate,
+					employeeJson.lastUpdate.split(" ")[0],
 					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editEmployee("+employeeJson.id+");'><i class='icmn-pencil5'></i> View</a>"
 												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteEmployeeDialog("+employeeJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
@@ -498,9 +581,7 @@
 function editEmployee(id){
 	window.location = "employee.html?id="+id;
 }
-function signOut(){
-	window.load = "index.html";
-}
+
 function closeBarCodeModal(){
 	modal.style.display = "none";
 }

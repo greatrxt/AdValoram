@@ -164,7 +164,9 @@
                                name="validation[username]"
                                type="text"
                                data-validation="[L>=3]"
-                               data-validation-message="$ must be at least 3 characters">
+                               data-validation-message="$ must be at least 3 characters"
+							   onkeydown = "if (event.keyCode == 13)
+								document.getElementById('btnLogin').click()">
                     </div>
                     <div class="form-group">
                         <input id="validation-password"
@@ -172,10 +174,12 @@
                                name="validation[password]"
                                type="password" data-validation="[L>=5]"
                                data-validation-message="$ must be at least 5 characters"
-                               placeholder="Password">
+                               placeholder="Password"
+							   onkeydown = "if (event.keyCode == 13)
+								document.getElementById('btnLogin').click()">
                     </div>
                     <div class="form-actions">
-                        <button type="submit" onclick = "login();" class="btn btn-primary width-150">Sign In</button>
+                        <button type="submit" id="btnLogin" onclick = "login();" class="btn btn-primary width-150">Sign In</button>
                     </div>
                 </div>
             </div>
@@ -270,7 +274,7 @@
 				request.onreadystatechange = function(){
 					if(request.readyState == 4 && request.status == 200){
 						localStorage.setItem("token", request.response);						
-						window.location = "landing-product.html";
+						window.location = "home.html";
 					} else if(request.readyState == 4 && request.status == 401){
 						window.location = "index.html";
 					}

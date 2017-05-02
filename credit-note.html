@@ -272,8 +272,8 @@
 
             
             <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-home2"><!-- --></i>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
                     Home
                 </a>
             </li>
@@ -353,7 +353,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" href="#">
+                <a class="left-menu-link" onclick = "sendSignoutRequest();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -555,11 +555,7 @@
                     </div>
                 </div>
             </div>
-            <div class="right example-buy-btn hidden-xs-down">
-                <a href="https://themeforest.net/item/clean-ui-premium-bootstrap-4-admin-template-angular-starter-kit/16678285?s_rank=4&amp;ref=mediatec_software" target="_blank" class="btn btn-success-outline btn-rounded">
-                    Buy Now 25$
-                </a>
-            </div>
+
         </div>
     </div>
 </nav>
@@ -575,7 +571,7 @@
                         Add Product
                     </button>
 					</div>
-                Create New Credit Note
+                <span id = "title">Create New Credit Note</span>
             </h2>
         </div>
         <div class="panel-body">
@@ -788,7 +784,7 @@
 							
 							<div class="form-group">
                                 <label for="returnDate">Return Date</label>
-                                <input class="form-control" id="returnDate">
+                                <input class="form-control" id="returnDate" type="date">
                             </div>
 							
 							<div class="form-group">
@@ -841,6 +837,7 @@
 			getInvoiceIds();
 			document.getElementById('returnDate').value = print_today();
 		} else {
+			document.getElementById('title').innerHTML = "Edit Credit Note";
 			creditNoteId = getParameterByName('creditNoteId');
 			$.ajaxSetup({
 				  headers : {
@@ -852,7 +849,7 @@
 				var invoice = creditNote.linkedInvoice;
 				var salesOrder = creditNote.linkedInvoice.linkedSalesOrder;
 				
-				if(creditNote.status == "OPEN" || creditNote.status == "CONFIRMED"){
+				if(creditNote.status == "OPEN" || creditNote.status == "ISSUED"){
 					$('#btnPreview').show();
 				} else {
 					$('#btnPreview').hide();
@@ -866,11 +863,11 @@
 				selectInvoice.disabled = true;
 				
 				document.getElementById('invoiceRevisionNumber').value = invoice.invoiceRevisionNumber;
-				document.getElementById('invoiceDate').value = (creditNote.creditNoteDate).split(" ")[0];
+				document.getElementById('invoiceDate').value = (invoice.invoiceDate).split(" ")[0];
 				
 				document.getElementById('numberOfPackages').value = creditNote.numberOfPackages;
 				document.getElementById('lorryReceiptNumber').value = creditNote.lorryReceiptNumber;
-				document.getElementById('returnDate').value = (creditNote.creditNoteDate).split(" ")[0];
+				document.getElementById('returnDate').value = (creditNote.returnDate).split(" ")[0];
 				document.getElementById('grossWeight').value = creditNote.grossWeight;
 				document.getElementById('returnNote').value = creditNote.returnNote;
 				document.getElementById('returnReason').value = creditNote.returnReason;
@@ -1072,6 +1069,7 @@
 		creditNote.lorryReceiptNumber = document.getElementById('lorryReceiptNumber').value;
 		creditNote.returnReason = document.getElementById('returnReason').value;
 		creditNote.returnNote = document.getElementById('returnNote').value;
+		creditNote.returnDate = document.getElementById('returnDate').value;
 		
 		if(productList.length < 1){					//VALIDATE - PRODUCT
 			$('.nav-tabs-horizontal li:eq(1) a').tab('show');
@@ -1104,6 +1102,7 @@
 		} else {
 			request.open ("PUT", base_url + "/AdValoramAdmin/creditNote/" + creditNoteId, true);
 		}
+		request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 		request.setRequestHeader("content-type", "application/json");
 		request.send(JSON.stringify(creditNote));
 	}

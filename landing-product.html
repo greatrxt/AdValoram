@@ -140,8 +140,8 @@
         <ul class="left-menu-list left-menu-list-root list-unstyled">   
 		
             <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-home2"><!-- --></i>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
                     Home
                 </a>
             </li>
@@ -377,7 +377,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" onclick = "signOut();" href="#">
+                <a class="left-menu-link" onclick = "sendSignoutRequest();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -493,16 +493,17 @@ tr.shown details-control {
 				var productJson = productArray[i];					
 				dataTable.row.add([
 					"<img id = 'expand-row-" + i + "' src='resources/details_open.png'/>",
-					productJson.id,
+					"FP" + productJson.id,
 					"<img style='width:50px;height:50px;' src=''/>",
 					productJson.status,
 					productJson.productCategory.categoryName,
 					productJson.styleCode,
 					productJson.stockKeepingUnits.length,
 					productJson.createdByUser.username,
-					productJson.lastUpdate,
+					productJson.lastUpdate.split(" ")[0],
 					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProduct("+productJson.id+"); event.stopPropagation();'><i class='icmn-pencil5'></i> View</a>"
-												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteLocationDialog("+productJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"
+					/*"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProduct("+productJson.id+"); event.stopPropagation();'><i class='icmn-pencil5'></i> View</a>"
+												+ "<a href='javascript: void(0);' class='link-underlined' onclick='showDeleteLocationDialog("+productJson.id+");'><i class='icmn-cross2'></i> Remove</a>;"*/
 				]).draw(false);
 				
 				//create sku rows
@@ -512,7 +513,7 @@ tr.shown details-control {
 							'<thead>'+
 							'<tr>'+
 								'<th></th>'+
-								'<th>EAN Code</th>'+
+								'<th>Product Code</th>'+
 								'<th>Color Code</th>'+
 								'<th>Size Code</th>'+
 								'<th>Gender Code</th>'+
@@ -522,7 +523,7 @@ tr.shown details-control {
 							'<tfoot>'+
 							'<tr>'+
 								'<th></th>'+
-								'<th>EAN Code</th>'+
+								'<th>Product Code</th>'+
 								'<th>Color Code</th>'+
 								'<th>Size Code</th>'+
 								'<th>Gender Code</th>'+
@@ -581,9 +582,6 @@ function editProduct(id){
 	window.location = "product.html?id="+id;
 }
 
-function signOut(){
-	window.location = "index.html";
-}
 function closeBarCodeModal(){
 	modal.style.display = "none";
 }
