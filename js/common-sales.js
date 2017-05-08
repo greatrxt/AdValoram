@@ -78,7 +78,13 @@ function getNextPackingListId(){
 		});
 	}	
 }
-
+	
+//var cstRateApplicableOnSalesOrderDate = 0;
+//var vatRateApplicableOnSalesOrderDate = 0;
+//var cstRateAgainstFormCOnSalesOrderDate = 0;
+//var gstRateApplicableOnSalesOrderDate = 0;
+//var octroiLbtEntryTaxApplicableOnSalesOrderDate = 0;
+	
 function getClients(){
 	if(document.getElementById('clientName')!=null){
 	 $.getJSON(base_url + "/AdValoramAdmin/customer/idNameList", function(data){
@@ -118,6 +124,13 @@ function getClients(){
 						document.getElementById('cashDiscount').value = data.result[0].cashDiscount;
 						document.getElementById('promptPaymentDiscount').value = data.result[0].promptPaymentDiscount;
 						document.getElementById('specialDiscount').value = data.result[0].specialDiscount;
+						
+						//cstRateApplicableOnSalesOrderDate = data.result[0].cstRateApplicable;
+						//vatRateApplicableOnSalesOrderDate = data.result[0].vatRateApplicable;
+						//cstRateAgainstFormCOnSalesOrderDate = data.result[0].cstRateAgainstFormC;
+						//gstRateApplicableOnSalesOrderDate = data.result[0].gstRateApplicable;
+						//octroiLbtEntryTaxApplicableOnSalesOrderDate = data.result[0].octroiLbtEntryTaxApplicable;
+						
 					});
 				}
 			});

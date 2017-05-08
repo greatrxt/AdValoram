@@ -493,9 +493,8 @@
 					packingListJson.linkedCustomer.city.cityName,
 					quantity,
 					"Rs. "+numberWithCommas(orderAmount),
-					packingListJson.status,
+					packingListJson.status.replace(/_/g, ' '),
 					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=viewPackingList("+packingListJson.packingListId+",'"+packingListJson.status+"');><i class='icmn-pencil5'></i> View</a>"
-					+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeletePackingListDialog("+packingListJson.packingListId+");><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);
 			}
 			NProgress.done();

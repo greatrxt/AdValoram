@@ -494,7 +494,7 @@
 					salesOrderJson.clientNameOnSalesOrderDate,
 					quantity,
 					"Rs. "+numberWithCommas(orderAmount),
-					salesOrderJson.status,
+					salesOrderJson.status.replace(/_/g, ' '),
 					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=editSalesOrder("+salesOrderJson.salesOrderId+",'"+salesOrderJson.status+"');><i class='icmn-pencil5'></i> View</a>"
 					+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+salesOrderJson.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"
 				]).draw(false);

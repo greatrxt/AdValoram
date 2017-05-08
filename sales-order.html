@@ -659,7 +659,7 @@
                         Add Product
                     </button>
 					</div>
-                Create New Sales Order
+                <span id="title">Create New Sales Order</span>
             </h2>
         </div>				
 		<script>
@@ -1047,9 +1047,9 @@
 				var salesOrder = result[0];
 			
 				console.log(salesOrder);
-				
+				document.getElementById('title').innerHTML = "Edit Sales Order";
 				document.getElementById('salesOrderId').value = salesOrder.salesOrderId;
-				document.getElementById('salesOrderRevisionNumber').value = salesOrder.salesOrderRevisionNumber;
+				document.getElementById('salesOrderRevisionNumber').value = "R"+salesOrder.salesOrderRevisionNumber;
 				document.getElementById('purchaseOrderReference').value = salesOrder.purchaseOrderReference;				
 				
 				document.getElementById('billingAddress').value = salesOrder.clientBillingAddressOnSalesOrderDate;
@@ -1181,7 +1181,9 @@
 					//cell.innerHTML = "";
 				});
 				
-				if(salesOrder.status == "OPEN" || salesOrder.status == "CONFIRMED"){
+				if(salesOrder.status == "OPEN" 
+					|| salesOrder.status == "CONFIRMED"
+						|| salesOrder.status == "UNDER_REVISION"){
 					$('#btnPreview').show();
 				} else {
 					$('#btnPreview').hide();
@@ -1198,6 +1200,7 @@
 	}
 	
 	var salesOrderId = -1;
+		
 	function createSalesOrder(){				
 		var salesOrder = new Object();
 		
@@ -1239,6 +1242,12 @@
 		salesOrder.cashDiscountOnSalesOrderDate = document.getElementById('cashDiscount').value;
 		salesOrder.promptPaymentDiscountOnSalesOrderDate = document.getElementById('promptPaymentDiscount').value;
 		salesOrder.specialDiscountOnSalesOrderDate = document.getElementById('specialDiscount').value;
+		
+		//salesOrder.cstRateApplicableOnSalesOrderDate = cstRateApplicableOnSalesOrderDate;
+		//salesOrder.vatRateApplicableOnSalesOrderDate = vatRateApplicableOnSalesOrderDate;
+		//salesOrder.cstRateAgainstFormCOnSalesOrderDate = cstRateAgainstFormCOnSalesOrderDate;
+		//salesOrder.gstRateApplicableOnSalesOrderDate = gstRateApplicableOnSalesOrderDate;
+		//salesOrder.octroiLbtEntryTaxApplicableOnSalesOrderDate = octroiLbtEntryTaxApplicableOnSalesOrderDate;
 		
 		salesOrder.notes = document.getElementById('notes').value;
 		

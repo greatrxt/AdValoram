@@ -718,6 +718,10 @@
                                 <label for="lorryReceiptNumber">Lorry Receipt Number</label>
                                 <input class="form-control" id="lorryReceiptNumber">
                             </div>
+							<div class="form-group">
+                                <label for="transportationCharges">Transportation Charges</label>
+                                <input class="form-control" id="transportationCharges" type="number">
+                            </div>
 						</div>
 						<div class = "col-lg-5" style="padding-left:100px;">
 							
@@ -731,6 +735,10 @@
                                 <input class="form-control" id="grossWeight" type="number" name="validation[gross weight]"
 																					   data-validation="[L>=1]"
 																					   data-validation-message="Please enter $">
+                            </div>
+							<div class="form-group">
+                                <label for="loadingCharges">Loading Charges</label>
+                                <input class="form-control" id="loadingCharges" type="number">
                             </div>
 						</div>
 					</div>
@@ -762,6 +770,11 @@
 	var linkedSalesOrderInternalId = -1;// IMPORTANT - internal ID. i.e ID assigned in DB. NOT SalesOrder ID
 	
 	$(window).load(function() {
+		$.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+		});
 		getNextInvoiceId();
 		document.getElementById("invoiceDate").value = print_today();
 		if(getParameterByName('packingListId')!=null 
@@ -871,6 +884,8 @@
 				document.getElementById('numberOfPackages').value = data.result[0].numberOfPackages;
 				document.getElementById('invoiceRevisionNumber').value = data.result[0].invoiceRevisionNumber;
 				document.getElementById('grossWeight').value = data.result[0].grossWeight;
+				document.getElementById('transportationCharges').value = data.result[0].transportationCharges;
+				document.getElementById('loadingCharges').value = data.result[0].loadingCharges;
 				document.getElementById('lorryReceiptNumber').value = data.result[0].lorryReceiptNumber;
 				document.getElementById('roadPermitOrLicenseNumber').value = data.result[0].roadPermitOrLicenseNumber;
 				
@@ -948,12 +963,12 @@
 	}
 	
 	function createNewInvoice(){
-		if(document.getElementById("clientName").value.length < 1){
-			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
+		if(document.getElementById("clientName").value < 1){
+			$('.nav-tabs-horizontal li:eq(0) a').tab('show');
 			return;
 		}
-		if(document.getElementById("grossWeight").value.length < 3){
-			$('.nav-tabs-horizontal li:eq(2) a').tab('show')
+		if(document.getElementById("grossWeight").value < 1){
+			$('.nav-tabs-horizontal li:eq(2) a').tab('show');
 			return;
 		}
 		NProgress.start();
@@ -980,6 +995,8 @@
 		invoice.roadPermitOrLicenseNumber = document.getElementById('roadPermitOrLicenseNumber').value;
 		invoice.numberOfPackages = document.getElementById('numberOfPackages').value;
 		invoice.grossWeight = document.getElementById('grossWeight').value;
+		invoice.transportationCharges = document.getElementById('transportationCharges').value;
+		invoice.loadingCharges = document.getElementById('loadingCharges').value;
 		invoice.lorryReceiptNumber = document.getElementById('lorryReceiptNumber').value;
 		
 		var request = new XMLHttpRequest();

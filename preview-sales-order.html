@@ -112,7 +112,11 @@ $(window).load(function() {
 				tbody+='</tr><tbody>';
 				var sorted_keys = Object.keys(salesOrderEntries).sort()
 				//for(var p = 0; p < salesOrderEntries.length; p++){
-				var grandTotal = 0;
+				var productTotal = 0;
+				var discount = 0;
+				var taxableAmount = 0;
+				var tax = 0;
+				var grandTotal;
 				for(var p = 0; p < sorted_keys.length; p++){
 					var quantity = 0;
 					//var salesOrderEntry = salesOrderEntries[p];
@@ -138,39 +142,63 @@ $(window).load(function() {
 							'<td>'+salesOrderEntry.mrp+'</td>' +
 							'<td>'+numberWithCommas(total)+'</td>'+
 							'</tr>';
-					grandTotal+=total;
+					productTotal+=total;
 				}
 				tbody+='</tbody>'+
 					'<tr>' +
 					'<td colspan="'+(sizeArray.length+7)+'"></td>'+
 					'</tr>';
-					
+				var linkedCustomer = salesOrder.linkedCustomer;
+				/**
+				Calculations for discount, tax, grandtotal
+				*/
+				
+				var markDown = (salesOrder.markDownOnSalesOrderDate/100) * productTotal;
+				var cashDiscount = (salesOrder.cashDiscountOnSalesOrderDate/100) * (productTotal - markDown);
+				var promptPaymentDiscount = (salesOrder.promptPaymentDiscountOnSalesOrderDate/100) * (productTotal - markDown - cashDiscount);
+				var specialDiscount = (salesOrder.specialDiscountOnSalesOrderDate/100) * (productTotal - markDown - cashDiscount - promptPaymentDiscount)
+				
+				taxableAmount = productTotal - markDown - cashDiscount - promptPaymentDiscount - specialDiscount;
+				
+				var vatApplicable;
+				var grandTotal = taxableAmount;
+				if(linkedCustomer.vatIsApplicable){
+					vatApplicable = taxableAmount * 0.125;
+					grandTotal+=vatApplicable;
+				} else {
+					vatApplicable = "N.A";
+				}
+				
 				tbody+='<tr>'+
 					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate' +
-					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ 'the sale of the goods ' +
+					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ ' the sale of the goods ' +
 					  'specified in this tax invoice is made by me/us and that the transaction of sale covered by this tax invoice ' +
 					  'has been effected by me/us and it shall be accounted for'+ 
 					  'in the turnover of sales while filing of return  and the due tax, if any, payable on the sale has been paid or shall be paid<br><br></td>' +
 					  '<td colspan="2" class="total-line">Total</td>'+
-					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(grandTotal)+'</div></td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(productTotal, 2))+'</div></td>'+
 				  '</tr>'+
 				  '<tr>'+
-					  '<td colspan="2" class="total-line">VAT@10%</td>'+
-					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(grandTotal)+'</div></td>'+
+					  '<td colspan="2" class="total-line">Discount</td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals((markDown + cashDiscount + promptPaymentDiscount + specialDiscount), 2))+'</div></td>'+
 				  '</tr>'+
 				  '<tr>'+
-					  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
+					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "3" class="blank"> '+
 					  'SUBJECT TO MUMBAI JURISDICTION<br>'+
 					  '1. Our responsibility ceases after delivery of goods, from our premises<br>'+
 					  '2. Goods once sold will not be taken back, or exchanged, under any circumstances<br>'+
 					  '3. If payment is not received within 30 days, interest @ 18% p.a. will be charged on Invoice amount.</td>'+
-					  '<td colspan="2" class="total-line">Round Off</td>'+
-					  '<td class="total-value"><textarea id="paid">Rs 0.00</textarea></td>'+
+					  '<td colspan="2" class="total-line">Taxable Amount</td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
 				  '</tr>'+
 				  '<tr>'+
-					  '<td colspan="'+(sizeArray.length+4)+'"> </td>'+
+					  '<td colspan="2" class="total-line">VAT</td>'+
+					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
+				  '</tr>';
+				  
+				  tbody+= '<tr>'+
 					  '<td colspan="2" class="total-line balance">Grand Total</td>'+
-					  '<td class="total-value balance"><div class="due">Rs '+numberWithCommas((1.1*grandTotal).toFixed(2));+'</div></td>'+
+					  '<td class="total-value balance"><div class="due">Rs '+numberWithCommas(truncateDecimals(grandTotal, 2));+'</div></td>'+
 				  '</tr>';
 		  
 				document.getElementById('items').innerHTML = tbody;
@@ -178,16 +206,16 @@ $(window).load(function() {
 				document.getElementById('customer-name').innerHTML = salesOrder.clientNameOnSalesOrderDate;
 				document.getElementById('billing-address').innerHTML = salesOrder.clientBillingAddressOnSalesOrderDate;
 				document.getElementById('delivery-address').innerHTML = salesOrder.clientDeliveryAddressOnSalesOrderDate;
-				document.getElementById('vat-no').innerHTML = salesOrder.linkedCustomer.vatTinNumber
-				document.getElementById('cst-no').innerHTML = salesOrder.linkedCustomer.cstTinNumber;
-				document.getElementById('pan-no').innerHTML = salesOrder.linkedCustomer.panNumber;
+				document.getElementById('vat-no').innerHTML = linkedCustomer.vatTinNumber
+				document.getElementById('cst-no').innerHTML = linkedCustomer.cstTinNumber;
+				document.getElementById('pan-no').innerHTML = linkedCustomer.panNumber;
 				
 				document.getElementById('salesOrderNo').innerHTML = salesOrder.salesOrderId;
 				document.getElementById('salesOrderDate').innerHTML = salesOrder.salesOrderDate;
 				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
 				
-				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas((1.1*grandTotal).toFixed(2));
-				if(salesOrder.status == "OPEN"){
+				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas(truncateDecimals(grandTotal, 2));
+				if(salesOrder.status == "OPEN" || salesOrder.status == "UNDER_REVISION"){
 					document.getElementById("buttonConfirmSalesOrder").style.visibility = "visible";
 				} else {
 					document.getElementById("buttonConfirmSalesOrder").style.visibility = "hidden";
@@ -207,7 +235,18 @@ $(window).load(function() {
 });
 
 function generatePackingList(){
-	window.location="packing-list.html?salesOrderId="+getParameterByName("id");
+	$.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	});
+	$.ajax({
+		url: base_url + '/AdValoramAdmin/salesOrder/'+getParameterByName("id")+'/edit',
+		type: 'PUT',
+		success: function(result) {
+			window.location="packing-list.html?salesOrderId="+getParameterByName("id");
+		}
+	});
 }
 function confirmSalesOrder(){
 	 $.ajaxSetup({
@@ -225,7 +264,18 @@ function confirmSalesOrder(){
 }
 
 function editSalesOrder(){
-	window.location = "sales-order.html?id="+getParameterByName("id");
+	$.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	});
+	$.ajax({
+		url: base_url + '/AdValoramAdmin/salesOrder/'+getParameterByName("id")+'/edit',
+		type: 'PUT',
+		success: function(result) {
+			window.location = "sales-order.html?id="+getParameterByName("id");
+		}
+	});
 }
 function backToLandingPage(){
 	window.location = "landing-sales-order.html";
@@ -296,9 +346,9 @@ Thane - 421 302
                     <td>
 					<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
 					<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
-					<span>VAT No:</span></br><span id="vat-no"></span></br></br>
-					<span>CST No:</span></br><span id="cst-no"></span></br></br>
-					<span>PAN No:</span></br><span id="pan-no"></span></br></br>
+					<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
+					<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
+					<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
 					</td>
 				</tr>
 			</table>

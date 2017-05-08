@@ -107,7 +107,7 @@ $(window).load(function() {
 				tbody+='</tr><tbody>';
 				var sorted_keys = Object.keys(packingListEntries).sort()
 				//for(var p = 0; p < packingListEntries.length; p++){
-				var grandTotal = 0;
+				var productTotal = 0;
 				for(var p = 0; p < sorted_keys.length; p++){
 					var quantity = 0;
 					//var packingListEntry = packingListEntries[p];
@@ -133,40 +133,81 @@ $(window).load(function() {
 							'<td>'+packingListEntry.mrp+'</td>' +
 							'<td>'+numberWithCommas(total)+'</td>'+
 							'</tr>';
-					grandTotal+=total;
+					productTotal+=total;
 				}
 				tbody+='</tbody>'+
 					'<tr>' +
 					'<td colspan="'+(sizeArray.length+7)+'"></td>'+
 					'</tr>';
 				NProgress.set(0.8);	
+				var linkedCustomer = salesOrder.linkedCustomer;
+				/**
+				Calculations for discount, tax, grandtotal
+				*/
+				
+				var markDown = (salesOrder.markDownOnSalesOrderDate/100) * productTotal;
+				var cashDiscount = (salesOrder.cashDiscountOnSalesOrderDate/100) * (productTotal - markDown);
+				var promptPaymentDiscount = (salesOrder.promptPaymentDiscountOnSalesOrderDate/100) * (productTotal - markDown - cashDiscount);
+				var specialDiscount = (salesOrder.specialDiscountOnSalesOrderDate/100) * (productTotal - markDown - cashDiscount - promptPaymentDiscount)
+				
+				taxableAmount = productTotal - markDown - cashDiscount - promptPaymentDiscount - specialDiscount;
+				
+				var vatApplicable;
+				var grandTotal = taxableAmount;
+				if(linkedCustomer.vatIsApplicable){
+					vatApplicable = taxableAmount * 0.125;
+					grandTotal+=vatApplicable;
+				} else {
+					vatApplicable = "N.A";
+				}
+				
+				var loadingAndTransportationCharges = data.result[0].loadingCharges + data.result[0].transportationCharges;
+				var octroiLbt = (grandTotal + loadingAndTransportationCharges) * (5.5/100);
+				var invoiceValue = grandTotal + octroiLbt;
 				tbody+='<tr>'+
 					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate' +
-					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ 'the sale of the goods ' +
+					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ ' the sale of the goods ' +
 					  'specified in this tax invoice is made by me/us and that the transaction of sale covered by this tax invoice ' +
 					  'has been effected by me/us and it shall be accounted for'+ 
 					  'in the turnover of sales while filing of return  and the due tax, if any, payable on the sale has been paid or shall be paid<br><br></td>' +
 					  '<td colspan="2" class="total-line">Total</td>'+
-					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(grandTotal)+'</div></td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(productTotal, 2))+'</div></td>'+
 				  '</tr>'+
 				  '<tr>'+
-					  '<td colspan="2" class="total-line">VAT@10%</td>'+
-					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(grandTotal)+'</div></td>'+
+					  '<td colspan="2" class="total-line">Discount</td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals((markDown + cashDiscount + promptPaymentDiscount + specialDiscount), 2))+'</div></td>'+
 				  '</tr>'+
 				  '<tr>'+
-					  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
+					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "3" class="blank"> '+
 					  'SUBJECT TO MUMBAI JURISDICTION<br>'+
 					  '1. Our responsibility ceases after delivery of goods, from our premises<br>'+
 					  '2. Goods once sold will not be taken back, or exchanged, under any circumstances<br>'+
 					  '3. If payment is not received within 30 days, interest @ 18% p.a. will be charged on Invoice amount.</td>'+
-					  '<td colspan="2" class="total-line">Round Off</td>'+
-					  '<td class="total-value"><textarea id="paid">Rs 0.00</textarea></td>'+
+					  '<td colspan="2" class="total-line">Taxable Amount</td>'+
+					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
 				  '</tr>'+
 				  '<tr>'+
-					  '<td colspan="'+(sizeArray.length+4)+'"> </td>'+
-					  '<td colspan="2" class="total-line balance">Grand Total</td>'+
-					  '<td class="total-value balance"><div class="due">Rs '+numberWithCommas((1.1*grandTotal).toFixed(2));+'</div></td>'+
+					  '<td colspan="2" class="total-line">VAT</td>'+
+					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
 				  '</tr>';
+				  
+				  tbody+= '<tr>'+
+					  '<td colspan="2" class="total-line">Transportation/Loading Charges</td>'+
+					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(loadingAndTransportationCharges, 2));+'</div></td>'+
+				  '</tr>';
+				  
+				  tbody+= '<tr>'+
+				  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
+					  '<td colspan="2" class="total-line">Octroi / LBT @5.5%</td>'+
+					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(octroiLbt, 2));+'</div></td>'+
+				  '</tr>';
+				  
+				  tbody+= '<tr>'+
+				  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
+					  '<td colspan="2" class="total-line balance">Grand Total</td>'+
+					  '<td class="total-value balance"><div class="due">Rs '+numberWithCommas(truncateDecimals(invoiceValue, 2));+'</div></td>'+
+				  '</tr>';
+		  
 		  
 				document.getElementById('items').innerHTML = tbody;
 				
@@ -181,7 +222,7 @@ $(window).load(function() {
 				document.getElementById('salesOrderDate').innerHTML = salesOrder.salesOrderDate;
 				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
 				
-				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas((1.1*grandTotal).toFixed(2));
+				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas(truncateDecimals(invoiceValue, 2));
 				if(data.result[0].status == "OPEN"){
 					document.getElementById("buttonIssueInvoice").style.visibility = "visible";
 					document.getElementById("buttonIssueInvoice").style.display = "block";
@@ -253,7 +294,7 @@ Thane - 421 302
 	<tr>
 		<td>
 <span>Phone no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span><span id = "contactNumber"></span></br>
-<span>Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: advaloramclothing@gmail.com</span></br>
+<span>Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: advaloramclothing@gmail.com</span></br>
 <span>VAT TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "vatTinNumber"></span></br>
 <span>CST TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "cstTinNumber"></span></br></br>
 		</td>
@@ -268,16 +309,16 @@ Thane - 421 302
             <table class = "borderless-table" style="float:left">
                 <tr>
                     <td>
-            <span id="customer-title">NAME OF PARTY : </span><span id="customer-name"></span>
+            <span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><span id="customer-name"></span>
 					</td>
 				</tr>
 				<tr>
                     <td>
 					<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
 					<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
-					<span>VAT No:</span></br><span id="vat-no"></span></br></br>
-					<span>CST No:</span></br><span id="cst-no"></span></br></br>
-					<span>PAN No:</span></br><span id="pan-no"></span></br></br>
+					<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
+					<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
+					<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
 					</td>
 				</tr>
 			</table>

@@ -150,7 +150,7 @@ $(window).load(function() {
 				if(parseInt(packingList.linkedSalesOrderId) < 0){
 					document.getElementById('linkedSalesOrderId').innerHTML = "Not Applicable";
 				}
-				if(packingList.status == "OPEN"){
+				if(packingList.status == "OPEN" || packingList.status == "UNDER_REVISION"){
 					document.getElementById("buttonConfirmPackingList").style.visibility = "visible";
 				} else {
 					document.getElementById("buttonConfirmPackingList").style.visibility = "hidden";
@@ -185,8 +185,20 @@ function confirmPackingList(){
 }
 
 function editPackingList(){
-	window.location = "packing-list.html?packingListId="+getParameterByName("packingListId");
+	$.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	});
+	$.ajax({
+		url: base_url + '/AdValoramAdmin/packingList/'+getParameterByName("packingListId")+'/edit',
+		type: 'PUT',
+		success: function(result) {
+			window.location = "packing-list.html?packingListId="+getParameterByName("packingListId");
+		}
+	});
 }
+
 function backToLandingPage(){
 	window.location = "landing-packing-list.html";
 }

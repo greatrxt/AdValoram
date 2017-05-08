@@ -1157,10 +1157,10 @@
 				for(var p = 0; p < linkedPackingListsJson.length; p++){
 					var packingListJson = linkedPackingListsJson[p];
 					if(parseInt(packingListId) == packingListJson.packingListId){
-						document.getElementById("packingListRevisionNumber").value = packingListJson.packingListRevisionNumber;
+						document.getElementById("packingListRevisionNumber").value = "R"+packingListJson.packingListRevisionNumber;
 						document.getElementById("packingListId").value = packingListJson.packingListId;
 						document.getElementById('notes').value = packingListJson.notes;
-						if(packingListJson.status == "OPEN" || packingListJson.status == "CONFIRMED"){
+						if(packingListJson.status == "OPEN" || packingListJson.status == "CONFIRMED" || packingListJson.status == "UNDER_REVISION"){
 							$('#btnPreview').show();
 						} else {
 							$('#btnPreview').hide();
@@ -1251,20 +1251,22 @@
 							var size = sizeArray[s];
 							var key = "quantityForSize" + size;
 							if(productList[(index - 1)][key]!=null){
-								if(packingListEntry[key]!=null){
-									if(parseInt(packingListId) > 0){	
-										//EDITING AN EXISTING PACKING LIST
-										//packingListId  > 0 while editing existing packing list. Populate table with packing list entries instead of balance 
-										if(parseInt(packingListId) == pl.packingListId){
-											productList[(index - 1)][key] = packingListEntry[key];
-										} else {
+								if(packingListEntry!=null){
+									if(packingListEntry[key]!=null){
+										if(parseInt(packingListId) > 0){	
+											//EDITING AN EXISTING PACKING LIST
+											//packingListId  > 0 while editing existing packing list. Populate table with packing list entries instead of balance 
+											if(parseInt(packingListId) == pl.packingListId){
+												productList[(index - 1)][key] = packingListEntry[key];
+											} else {
+												balanceForCurrentEntry[key] = parseInt(balanceForCurrentEntry[key]) - packingListEntry[key];
+											}
+										} else {	
+											// CREATING NEW PACKING LIST
+											//populate table with balance only while creating
+											productList[(index - 1)][key] = productList[(index - 1)][key] - packingListEntry[key];
 											balanceForCurrentEntry[key] = parseInt(balanceForCurrentEntry[key]) - packingListEntry[key];
 										}
-									} else {	
-										// CREATING NEW PACKING LIST
-										//populate table with balance only while creating
-										productList[(index - 1)][key] = productList[(index - 1)][key] - packingListEntry[key];
-										balanceForCurrentEntry[key] = parseInt(balanceForCurrentEntry[key]) - packingListEntry[key];
 									}
 								}
 							}
@@ -1286,7 +1288,7 @@
 		var packingListJson = packingList[0];
 
 		document.getElementById("linkedSalesOrderId").value = "Not Applicable";
-		document.getElementById("packingListRevisionNumber").value = packingListJson.packingListRevisionNumber;
+		document.getElementById("packingListRevisionNumber").value = "R"+packingListJson.packingListRevisionNumber;
 		document.getElementById("packingListId").value = packingListJson.packingListId;
 		document.getElementById('notes').value = packingListJson.notes;
 		
@@ -1305,7 +1307,9 @@
 		var linkedPackingList = new Object();					
 		linkedPackingList.packingListId = packingListJson.packingListId;
 		linkedPackingList.clientNameOnPackingListDate = packingListJson.clientNameOnPackingListDate;
-		if(packingListJson.status == "OPEN" || packingListJson.status == "CONFIRMED"){
+		if(packingListJson.status == "OPEN" 
+			|| packingListJson.status == "CONFIRMED"
+			|| packingListJson.status == "UNDER_REVISION"){
 			$('#btnPreview').show();
 		} else {
 			$('#btnPreview').hide();

@@ -1041,6 +1041,11 @@ $(window).load(function() {
 				document.getElementById("gstIsApplicable").checked = customer.gstIsApplicable;
 				document.getElementById("octroiLbtEntryTaxIsApplicable").checked = customer.octroiLbtEntryTaxIsApplicable;
 				
+				document.getElementById("cstRateApplicable").disabled = customer.cstIsApplicable;
+				document.getElementById("vatIsApplicable").disabled = customer.vatIsApplicable;
+				document.getElementById("gstIsApplicable").disabled = customer.gstIsApplicable;
+				document.getElementById("octroiLbtEntryTaxIsApplicable").disabled = customer.octroiLbtEntryTaxIsApplicable;
+				
 				if(customer.cstIsApplicable) document.getElementById("cstRateApplicable").value = customer.cstRateApplicable;
 				if(customer.vatIsApplicable) document.getElementById("vatRateApplicable").value = customer.vatRateApplicable;
 				if(customer.cstIsApplicable) document.getElementById("cstRateAgainstFormC").value = customer.cstRateAgainstFormC;
@@ -1094,6 +1099,9 @@ $(window).load(function() {
 </script>
 
 <script>
+	function goBackToLandingPage(){
+		window.location = "landing-customer.html";
+	}
 	
 	
 	function createOrUpdateCustomer(){
