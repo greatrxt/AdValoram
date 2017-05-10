@@ -632,8 +632,8 @@
 		
 		<div class="modal-right-body postServerRequest">
 			<div class = "modal-right-body-bottom">
-				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveProductAndClose()">Save & Close</button></br>
-				<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveProductAndGoToNext()">Save & Add New</button>
+				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveProductAndClose()">Save</button></br>
+				<!--<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveProductAndGoToNext()">Save & Add New</button>-->
 			</div>
 		</div>
     </div>
@@ -704,7 +704,7 @@
 						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Add Product</a>
 					</li>
 					<li class="nav-item" id = "tab-taxation-discounts">
-						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Taxation & Discounts</a>
+						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Discounts</a>
 					</li>
 					<li class="nav-item" id = "tab-uploads">
 						<a id = "3" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Uploads</a>
@@ -871,7 +871,7 @@
 									</tr>
 								</thead>
 								<tfoot>
-																<tr>
+									<tr>
 										<th rowspan = "2">Product No.</th>
 										<th rowspan = "2">Style Code</th>
 										<th rowspan = "2">Color Code</th>					
@@ -987,7 +987,26 @@
   </div>
 
 </div>	
-	
+
+<div id="errorWhileAddingProductModal" class="modal-outer-body">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">Error while adding product</h3>
+    </div>
+    <div class="modal-body">
+		<span id = "errorWhileAddingProductText"></span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonCloseErrorWhileAddingProductModal" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">OK</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+
+</div>	
 <script>
 	function showDeleteFileDialog(fileId, objectId) {
 		document.getElementById('deleteFileModal').style.display = "block";
@@ -1117,6 +1136,9 @@
 				var sizeArray = [];
 				for(var s = 0; s < entries.length; s++){
 					var entryJson = entries[s];
+					if(entryJson.stockKeepingUnit == "No Data"){
+						continue;
+					}
 					var size = parseInt(entryJson.stockKeepingUnit.sizeCode.sizeCode);
 					if(size < minSize){
 						minSize = size;
@@ -1308,6 +1330,27 @@
 		request.send(JSON.stringify(salesOrder));
 	}
 	
+	function entryExists(newProduct){
+		for(var p = 0; p < productList.length; p++){
+			var existingProduct = productList[p];
+			if((existingProduct.styleCode == newProduct.styleCode)
+				&& (existingProduct.colorCode == newProduct.colorCode)
+				&& (existingProduct.genderCode == newProduct.genderCode)){
+					return (p + 1);
+				}
+		}
+		return -1;
+	}
+	
+	function showErrorWhileAddingProductDialog(product, entryIdIfExists){
+		document.getElementById('errorWhileAddingProductModal').style.display = "block";
+		document.getElementById('errorWhileAddingProductText').innerHTML = "Entry for Style Code " + product.styleCode + ", ColorCode " + product.colorCode + ", Gender " + product.gender + " has already been made at " + entryIdIfExists;
+		
+		document.getElementById('buttonCloseErrorWhileAddingProductModal').onclick = function (){
+			document.getElementById('errorWhileAddingProductModal').style.display = "none";
+		}
+	}
+	
 	var productList = [];
 	function saveProductAndClose(){
 		var product = new Object();
@@ -1318,6 +1361,14 @@
 		var dropDownGender = document.getElementById("dropDownGender");
 		product.gender = dropDownGender.options[dropDownGender.selectedIndex].text;	//to display 
 		product.genderCode = document.getElementById("dropDownGender").value;	//to send to server
+		
+		//check if entry for SKU has already been made
+		var entryIdIfExists = entryExists(product);
+		if(entryIdIfExists > 0){
+			showErrorWhileAddingProductDialog(product, entryIdIfExists);
+			return;
+		}
+		
 		product.mrp = document.getElementById("textMrp").value;
 		product.quantityForSize28 = (document.getElementById("quantityForSize28") == null 
 									|| document.getElementById("quantityForSize28").value == 0
@@ -1357,6 +1408,18 @@
 		closeAddProductModal();
 	}
 	
+		
+	function changeProductList(element, productListIndex, key){
+		var key = "quantityForSize"+key;
+		//productList[productListIndex][key] = parseInt(element.value);
+		if(productList[productListIndex][key]!=null){
+			productList[productListIndex][key] = parseInt(element.value);
+		} else {
+			var product = productList[productListIndex];
+			product[key] = parseInt(element.value);
+		}
+	}
+	
 	function refreshProductsTable(){
 		$('#productsTable').dataTable().fnDestroy();
 		var tbody = '';
@@ -1367,7 +1430,7 @@
 				"<td>" + product.styleCode + "</td>"+
 				"<td>" + product.colorCode + "</td>"+
 				"<td>" + product.gender + "</td>";
-				
+				//tbody+="<td><input class = 'form-control' type='number' min='0' value='" + product[key] + "' onchange = limitQuantityTo(this," + p + ","+s+"," + balanceForCurrentEntry[key]+"); max='" + balanceForCurrentEntry[key] + "'></td>";
 				if(product.quantityForSize28!=null)	tbody+="<td>" + product.quantityForSize28 + "</td>"; else tbody+="<td>0</td>";
 				if(product.quantityForSize30!=null)	tbody+="<td>" + product.quantityForSize30 + "</td>"; else tbody+="<td>0</td>";
 				if(product.quantityForSize32!=null)	tbody+="<td>" + product.quantityForSize32 + "</td>"; else tbody+="<td>0</td>";
@@ -1379,29 +1442,34 @@
 				if(product.quantityForSize44!=null)	tbody+="<td>" + product.quantityForSize44 + "</td>"; else tbody+="<td>0</td>";
 				if(product.quantityForSize46!=null)	tbody+="<td>" + product.quantityForSize46 + "</td>"; else tbody+="<td>0</td>";
 				if(product.quantityForSize48!=null)	tbody+="<td>" + product.quantityForSize48 + "</td>"; else tbody+="<td>0</td>";
+				/*
+				for(var size = 28; size<=48; size = size+2){
+					var key = "quantityForSize" + size;
+					var value = 0;
+					if(product[key]!=null && product[key] > 0)	
+						value = product[key];
+					
+					tbody+="<td><input class = 'form-control' style = 'width:60px' type='number' min='0' value='" + product[key] + "' onchange = changeProductList(this," + p + ","+size+");></td>";					
+				}
+				*/
 				
-				
-				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
-				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
+				tbody+="<td>"+
+				//"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id");'><i class='icmn-pencil5'></i> View</a>"+
+				"<a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
 		}
 		$('#productsTableBody').html(tbody);	
 		dataTable = $('#productsTable').DataTable();	
-			dataTable.column(4).visible(document.getElementById('productSize28').checked);
-			dataTable.column(5).visible(document.getElementById('productSize30').checked);
-			dataTable.column(6).visible(document.getElementById('productSize32').checked);
-			dataTable.column(7).visible(document.getElementById('productSize34').checked);
-			dataTable.column(8).visible(document.getElementById('productSize36').checked);
-			dataTable.column(9).visible(document.getElementById('productSize38').checked);
-			dataTable.column(10).visible(document.getElementById('productSize40').checked);
-			dataTable.column(11).visible(document.getElementById('productSize42').checked);
-			dataTable.column(12).visible(document.getElementById('productSize44').checked);
-			dataTable.column(13).visible(document.getElementById('productSize46').checked);
-			dataTable.column(14).visible(document.getElementById('productSize48').checked);
-		/*if(productList.length > 0){
-			$('#btnPreview').show();
-		} else {
-			$('#btnPreview').hide();
-		}*/
+		dataTable.column(4).visible(document.getElementById('productSize28').checked);
+		dataTable.column(5).visible(document.getElementById('productSize30').checked);
+		dataTable.column(6).visible(document.getElementById('productSize32').checked);
+		dataTable.column(7).visible(document.getElementById('productSize34').checked);
+		dataTable.column(8).visible(document.getElementById('productSize36').checked);
+		dataTable.column(9).visible(document.getElementById('productSize38').checked);
+		dataTable.column(10).visible(document.getElementById('productSize40').checked);
+		dataTable.column(11).visible(document.getElementById('productSize42').checked);
+		dataTable.column(12).visible(document.getElementById('productSize44').checked);
+		dataTable.column(13).visible(document.getElementById('productSize46').checked);
+		dataTable.column(14).visible(document.getElementById('productSize48').checked);
 	}
 	
 	function deleteProductEntryAndUpdateView(id){

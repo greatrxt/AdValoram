@@ -596,12 +596,14 @@
                             </div>
 
 							<div class="form-group">
-								<label class="form-control-label" for="billingAddress">Billing Address</label>
-								<textarea class="form-control" rows="3" id="billingAddress"></textarea>
+								<label class="form-control-label" for="billingAddress">Billing Address*</label>
+								<textarea class="form-control" rows="3" id="billingAddress" name="validation[billing address]"
+																					   data-validation="[L>2]"
+																					   data-validation-message="$ must contain atleast 3 characters" ></textarea>
 							</div>
 						
 							<div class="form-group">
-                                <label for="city">City</label>
+                                <label for="city">City*</label>
 								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()">
 								</select>
                             </div>
@@ -645,8 +647,10 @@
 							</div>
 							
 							<div class="form-group">
-                                <label for="pinCode">Pin Code</label>
-                                <input class="form-control" id="pinCode" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                <label for="pinCode">Pin Code*</label>
+                                <input class="form-control" id="pinCode" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="validation[pincode]"
+																																						   data-validation="[L>4]"
+																																						   data-validation-message="$ must contain atleast 5 characters">
                             </div>
 							
 							<div class="form-group">
@@ -655,8 +659,10 @@
                             </div>
 							
 							<div class="form-group">
-                                <label for="contactNumber">Contact Number</label>
-                                <input class="form-control" id="contactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
+                                <label for="contactNumber">Contact Number*</label>
+                                <input class="form-control" id="contactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" name="validation[Contact Number]"
+																																											   data-validation="[L>5]"
+																																											   data-validation-message="$ must contain atleast 6 characters">
                             </div>
 							
 							<div class="form-group">
@@ -835,7 +841,11 @@
 
 	function createOrUpdateTransporter(){
 		if((document.getElementById("companyName").value.length < 3 ||
-			document.getElementById("contactPerson").value.length < 3 )){
+			document.getElementById("contactPerson").value.length < 3 ||
+			document.getElementById("billingAddress").value.length < 3 )
+			document.getElementById("pinCode").value.length < 5 )
+			document.getElementById("contactNumber").value.length < 5 )){
+			$('.nav-tabs-horizontal li:eq(0) a').tab('show');
 			return;
 		}
 		document.getElementById('btnSave').disabled = true;

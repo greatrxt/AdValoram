@@ -942,6 +942,26 @@
 	
 </div>	
 </section>
+
+<div id="salesOrderExhaustedDialog" class="modal-outer-body">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">Sales Order Exhausted</h3>
+    </div>
+    <div class="modal-body">
+		<span>Packing Lists for all quantities for this Sales Order has been generated.</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonRedirectToSalesOrderLanding" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">OK</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+
+</div>
 <script>
 	function changeClass(){
 		document.getElementById('main-body').className  = 'panel panel-with-borders';
@@ -1535,12 +1555,6 @@
 		closeAddProductModal();
 	}
 	
-	/*function limitQuantityTo(element, maxQuantity){
-		if(element.value > maxQuantity){
-			element.value = maxQuantity;
-		}
-	}*/
-	
 	function limitQuantityTo(element, productListIndex, key, maxQuantity){
 		if(element.value > maxQuantity){
 			element.value = maxQuantity;
@@ -1552,6 +1566,7 @@
 	function refreshProductsTable(){
 		$('#productsTable').dataTable().fnDestroy();
 		var tbody = '';
+		var totalQuantity = 0;
 		for(var p = 0; p < productList.length; p++){
 			var product = productList[p];
 				tbody +=  "<tr>" +
@@ -1566,13 +1581,14 @@
 			
 					var balanceForCurrentEntry = balanceQuantityForCurrentPackingList[(p+1)];
 					if(product[key]!=null)	{
+						totalQuantity+= parseInt(product[key]);
 						if(packingListId < 0 && salesOrderId < 0){
 							tbody+="<td>" + product[key]+"</td>";
 						} else {
 							if(salesOrderId < 0){
 								tbody+="<td>" + product[key]+"</td>";
 							} else {
-								tbody+="<td><input class = 'form-control' type='number' min='0' value='" + product[key] + "' onchange = limitQuantityTo(this," + p + ","+s+"," + balanceForCurrentEntry[key]+"); max='" + balanceForCurrentEntry[key] + "'></td>"
+								tbody+="<td><input class = 'form-control' type='number' min='0' value='" + product[key] + "' onchange = limitQuantityTo(this," + p + ","+s+"," + balanceForCurrentEntry[key]+"); max='" + balanceForCurrentEntry[key] + "'></td>";
 							}
 						}
 					} else {
@@ -1583,6 +1599,14 @@
 			
 				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
 				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
+		}
+		
+		if(totalQuantity == 0){
+			document.getElementById('salesOrderExhaustedDialog').style.display = "block";
+			document.getElementById('buttonRedirectToSalesOrderLanding').onclick = function (){
+				window.location = "landing-sales-order.html";
+			}
+			return;
 		}
 		$('#productsTableBody').html(tbody);	
 		dataTable = $('#productsTable').DataTable();	

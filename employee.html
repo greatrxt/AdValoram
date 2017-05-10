@@ -620,13 +620,17 @@
 							</div>
 							
 							<div class="form-group">
-								<label class="form-control-label" for="fatherName">Father's Name</label>
-								<input class="form-control" id="fatherName" type="text">
+								<label class="form-control-label" for="fatherName">Father's Name*</label>
+								<input class="form-control" id="fatherName" type="text" name="validation[name]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="$ must be at least 3 characters">
 							</div>
 							
 							<div class="form-group">
-								<label class="form-control-label" for="permanentAddress">Permanent Address</label>
-								<textarea class="form-control" rows="3" id="permanentAddress"></textarea>
+								<label class="form-control-label" for="permanentAddress">Permanent Address*</label>
+								<textarea class="form-control" rows="3" id="permanentAddress" name="validation[address]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="$ must be at least 3 characters"></textarea>
 							</div>
 						
 							<div class="form-group">
@@ -643,7 +647,7 @@
 							<div class="form-group">
                                 <label for="contactNumber">Contact Number*</label>
                                 <input class="form-control" id="contactNumber" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="validation[contact number]"
-																					   data-validation="[L>=3]"
+																					   data-validation="[L>=5]"
 																					   data-validation-message="Please fill a valid $" maxlength="10">
                             </div>
 							
@@ -658,7 +662,9 @@
 							
 							<div class="form-group">
 								<label class="form-control-label" for="lastName">Last Name</label>
-								<input class="form-control" id="lastName" type="text">
+								<input class="form-control" id="lastName" type="text" name="validation[last name]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="$ must be at least 3 characters">
 							</div>
 							
 							<div class="form-group">
@@ -674,7 +680,9 @@
 														
 							<div class="form-group">
                                 <label for="pinCode">Pin Code</label>
-                                <input class="form-control" id="pinCode" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                <input class="form-control" id="pinCode" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="validation[pincode]"
+																																							   data-validation="[L>=3]"
+																																							   data-validation-message="$ must be at least 3 characters">
                             </div>
 							
 														
@@ -685,7 +693,9 @@
 							
 							<div class="form-group">
                                 <label for="emailAddress">Email Address</label>
-                                <input class="form-control" id="emailAddress" type="text">
+                                <input class="form-control" id="emailAddress" type="text" name="validation[email address]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="$ must be at least 3 characters">
                             </div>
 
 							<div class="form-group">
@@ -700,7 +710,9 @@
 								
 							<div class="form-group">
                                 <label for="designation">Designation</label>
-                                <input class="form-control" id="designation" type="text">
+                                <input class="form-control" id="designation" type="text" name="validation[designation]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="$ must be at least 3 characters">
                             </div>
 							
 							<div class="form-group">
@@ -718,7 +730,9 @@
 											<option value="Option 4">Option 4</option>
 											<option value="Option 5">Option 5</option>
 								</select>-->
-								<input class="form-control" id="department" type="text">
+								<input class="form-control" id="department" type="text" name="validation[department]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="Please enter a valid $">
                             </div>							
 						
 						</div>
@@ -778,7 +792,9 @@
 							
 							<div class="form-group">
                                 <label for="permanentAccountNumber">Permanent Account Number (PAN)*</label>
-                                <input class="form-control" id="permanentAccountNumber" type="text">
+                                <input class="form-control" id="permanentAccountNumber" type="text" name="validation[PAN Number]"
+																					   data-validation="[L>=3]"
+																					   data-validation-message="Please enter a valid $">
                             </div>
 							
 							<div class="form-group">
@@ -980,10 +996,27 @@
 	
 	function createOrUpdateEmployee(){
 		if(document.getElementById("firstName").value.length < 3 
-			|| document.getElementById("contactNumber").value.length < 3){
+		||	document.getElementById("lastName").value.length < 3 
+		||	document.getElementById("fatherName").value.length < 3 
+		||	document.getElementById("permanentAddress").value.length < 3
+		||	document.getElementById("pinCode").value.length < 3		
+		||	document.getElementById("emailAddress").value.length < 3		
+		|| 	document.getElementById("contactNumber").value.length < 3){
 			$('.nav-tabs-horizontal li:eq(0) a').tab('show')
 			return;
 		}
+		
+		if(document.getElementById("designation").value.length < 3 
+		||	document.getElementById("department").value.length < 3 ){
+			$('.nav-tabs-horizontal li:eq(1) a').tab('show')
+			return;
+		}
+		
+		if(document.getElementById("permanentAccountNumber").value.length < 3){
+			$('.nav-tabs-horizontal li:eq(2) a').tab('show')
+			return;
+		}
+		
 		NProgress.start();
 		document.getElementById('btnSave').disabled = true;
 		var employee = new Object();

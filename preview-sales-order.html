@@ -235,18 +235,7 @@ $(window).load(function() {
 });
 
 function generatePackingList(){
-	$.ajaxSetup({
-		  headers : {
-			'Authorization' : 'Bearer ' + localStorage.getItem("token")
-		  }
-	});
-	$.ajax({
-		url: base_url + '/AdValoramAdmin/salesOrder/'+getParameterByName("id")+'/edit',
-		type: 'PUT',
-		success: function(result) {
-			window.location="packing-list.html?salesOrderId="+getParameterByName("id");
-		}
-	});
+	window.location="packing-list.html?salesOrderId="+getParameterByName("id");
 }
 function confirmSalesOrder(){
 	 $.ajaxSetup({

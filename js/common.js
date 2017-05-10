@@ -90,14 +90,14 @@
         xhr.setRequestHeader('passkey', 'Bar');
     }
 	function truncateDecimals (num, digits) {
-    var numS = num.toString(),
-        decPos = numS.indexOf('.'),
-        substrLength = decPos == -1 ? numS.length : 1 + decPos + digits,
-        trimmedResult = numS.substr(0, substrLength),
-        finalResult = isNaN(trimmedResult) ? 0 : trimmedResult;
+		var numS = num.toString(),
+			decPos = numS.indexOf('.'),
+			substrLength = decPos == -1 ? numS.length : 1 + decPos + digits,
+			trimmedResult = numS.substr(0, substrLength),
+			finalResult = isNaN(trimmedResult) ? 0 : trimmedResult;
 
-    return parseFloat(finalResult);
-}
+		return parseFloat(finalResult);
+	}
 	$(window).load(function() {
 		// Form Validation
 		if($('#form-validation')!=null){
@@ -107,9 +107,9 @@
 					inputContainer: '.form-group',
 					errorListClass: 'form-control-error',
 					errorClass: 'has-danger'
+					}
 				}
-			}
-		});
+			});
 		}
 		if(location.pathname.substring(location.pathname.lastIndexOf("/") + 1) == "index.html")
 			return;

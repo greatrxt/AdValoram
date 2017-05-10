@@ -1,3 +1,7 @@
+var distributorArray = null;
+var brokerArray = null;
+var locationsArray = null;
+
 $(window).ready(function() {
 	NProgress.start();
 	$.ajaxSetup({
@@ -156,7 +160,7 @@ $(window).ready(function() {
 			});
 	}
 	NProgress.inc();
-	var distributorArray = null;
+	
 	if(document.getElementById('linkedDistributor')!=null){
 			//load distributor
 		 $.getJSON(base_url + "/AdValoramAdmin/customer/distributor", function(data){
@@ -168,7 +172,9 @@ $(window).ready(function() {
 			}
 			
 			distributorArray = data.result;
-						
+			if(distributorArray.length > 0){
+				distributorSelect.disabled = false;
+			}				
 			for(var i = 0; i < distributorArray.length; i++){
 				var distributor = distributorArray[i];
 					var opt = document.createElement('option');
@@ -182,7 +188,7 @@ $(window).ready(function() {
 			
 	}
 	NProgress.inc();
-	var brokerArray = null;
+	
 	if(document.getElementById('linkedBroker')!=null){
 			//load broker
 		 $.getJSON(base_url + "/AdValoramAdmin/customer/broker", function(data){
@@ -232,7 +238,7 @@ $(window).ready(function() {
 	NProgress.done();
 	});
 
-	var locationsArray = null;
+	
 	function refreshLocationDistrictAndState(){
 		if(document.getElementById('city') == null || document.getElementById('state') == null
 			|| document.getElementById('district') == null)
