@@ -5,7 +5,7 @@ $(window).load(function() {
 			'Authorization' : 'Bearer ' + localStorage.getItem("token")
 		  }
 	});
-	
+	getProductCategories();
 	getClients();
 	getNextSalesOrderId();
 	getNextPackingListId();
@@ -79,6 +79,26 @@ function getNextPackingListId(){
 	}	
 }
 	
+function getProductCategories(){
+	if(document.getElementById('productCategory')!=null){
+			//load productCategory
+		 $.getJSON(base_url + "/AdValoramAdmin/common/productCategory", function(data){
+				if(data.result=='error'){
+					return;
+				 }
+				productCategoryArray = data.result;
+				var productCategorySelect = document.getElementById('productCategory');
+				removeOptions(productCategorySelect);
+				for(var i = 0; i < productCategoryArray.length; i++){
+					var productCategory = productCategoryArray[i];
+						var opt = document.createElement('option');
+						opt.value = productCategory.id;
+						opt.innerHTML = productCategory.categoryName;
+						productCategorySelect.appendChild(opt);
+				}
+			});
+	}
+}
 //var cstRateApplicableOnSalesOrderDate = 0;
 //var vatRateApplicableOnSalesOrderDate = 0;
 //var cstRateAgainstFormCOnSalesOrderDate = 0;

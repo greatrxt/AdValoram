@@ -32,7 +32,7 @@ $(window).load(function() {
 			NProgress.start();
 			if(result!='error'){
 				var salesOrder = result[0];
-				console.log(salesOrder);
+				//console.log(salesOrder);
 				//entry
 				var entries = salesOrder.entry;
 				var minSize = 999;
@@ -161,12 +161,15 @@ $(window).load(function() {
 				taxableAmount = productTotal - markDown - cashDiscount - promptPaymentDiscount - specialDiscount;
 				
 				var vatApplicable;
+				var cstApplicable;
 				var grandTotal = taxableAmount;
 				if(linkedCustomer.vatIsApplicable){
-					vatApplicable = taxableAmount * 0.125;
+					vatApplicable = taxableAmount * 0.1;
 					grandTotal+=vatApplicable;
-				} else {
+				} else if(linkedCustomer.cstIsApplicable){
 					vatApplicable = "N.A";
+					cstApplicable = taxableAmount * 0.125;
+					grandTotal+=cstApplicable;
 				}
 				
 				tbody+='<tr>'+
@@ -190,11 +193,18 @@ $(window).load(function() {
 					  '3. If payment is not received within 30 days, interest @ 18% p.a. will be charged on Invoice amount.</td>'+
 					  '<td colspan="2" class="total-line">Taxable Amount</td>'+
 					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
-				  '</tr>'+
-				  '<tr>'+
-					  '<td colspan="2" class="total-line">VAT</td>'+
-					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
 				  '</tr>';
+				  if(linkedCustomer.vatIsApplicable){
+					tbody+='<tr>'+
+						  '<td colspan="2" class="total-line">VAT</td>'+
+						  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
+					  '</tr>';
+				  } else if (linkedCustomer.cstIsApplicable){
+					  tbody+='<tr>'+
+							  '<td colspan="2" class="total-line">CST</td>'+
+							  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
+						  '</tr>';
+				  }
 				  
 				  tbody+= '<tr>'+
 					  '<td colspan="2" class="total-line balance">Grand Total</td>'+
@@ -210,9 +220,24 @@ $(window).load(function() {
 				document.getElementById('cst-no').innerHTML = linkedCustomer.cstTinNumber;
 				document.getElementById('pan-no').innerHTML = linkedCustomer.panNumber;
 				
-				document.getElementById('salesOrderNo').innerHTML = salesOrder.salesOrderId;
-				document.getElementById('salesOrderDate').innerHTML = salesOrder.salesOrderDate;
+				document.getElementById('salesOrderNo').innerHTML = salesOrder.salesOrderId + " - R" + salesOrder.salesOrderRevisionNumber;
+				document.getElementById('salesOrderDate').innerHTML = salesOrder.salesOrderDate.split(" ")[0];
 				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
+				
+				var referredByFirstName = salesOrder.referredByEmployee.firstName;
+				var referredByLastName = salesOrder.referredByEmployee.lastName;
+				
+				if(referredByFirstName == null){
+					referredByFirstName = '';
+				}
+				
+				if(referredByLastName == null){
+					referredByLastName = '';
+				}
+				
+				var referredBy = referredByFirstName +" "+ referredByLastName;
+
+				document.getElementById('referredBy').innerHTML = referredBy;
 				
 				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas(truncateDecimals(grandTotal, 2));
 				if(salesOrder.status == "OPEN" || salesOrder.status == "UNDER_REVISION"){
@@ -357,16 +382,16 @@ Thane - 421 302
                     <td><span id="purchaseOrderReference"></span></td>
                 </tr>
 				<tr>
-                    <td colspan = "2">
-					<textarea style="height:100px; text-align:left">
-Transport:
-Road Permit:
-No Of Packages:
-Weight:
-L.R No:
-Referred By:
-					</textarea>
-					</td>
+                    <td colspan = "2" style="height:100px; text-align:left">
+
+Transport&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "transport"></span></br>
+Road Permit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "roadPermit"></span></br>
+No Of Packages&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "noOfPackages"></span></br>
+Weight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "weight"></span></br>
+L.R No&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "lrNo"></span></br>
+Referred By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "referredBy"></span></br>
+
+</td>
                 </tr>
                 <tr>
                     <td class="meta-head">Amount Due</td>

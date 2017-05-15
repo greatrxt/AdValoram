@@ -128,17 +128,226 @@
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
-        <a href="#" class="logo">
+        <a href="#/dashboards/alpha" class="logo">
             <img src="assets/common/img/logo.png" alt="AdValoram Clothing" />
             <img class="logo-inverse" src="assets/common/img/logo.png" alt="AdValoram Clothing" />
         </a>
     </div>
     <div class="left-menu-inner scroll-pane">
-        <ul class="left-menu-list left-menu-list-root list-unstyled">
+        <ul class="left-menu-list left-menu-list-root list-unstyled">   
+		
+            <li>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
+                    Home
+                </a>
+            </li>
+
+            <li class="left-menu-list-separator"><!-- --></li>
             <li class="left-menu-list-submenu">
                 <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Dashboard
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="#">
+                            Purchase
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="#">
+                            Inventory
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="#">
+                            Sales
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="#">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Purchase
+                </a>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="#">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Inventory
+                </a>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Sales
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="landing-sales-order.html">
+                            Sales Order
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="landing-packing-list.html">
+                            Packing List
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-invoice.html">
+                            Invoice
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-credit-note.html">
+                            Credit Note
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="barcode-printing.html">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Barcode Printing
+                </a>
+            </li>
+            <li class="left-menu-list-separator"><!-- --></li>
+			<!-- remove "horizontal-left-direction" class, for get submenu with right direction (horizontal menu option) -->
+            <li class="left-menu-list-submenu horizontal-left-direction">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    Create
+                </a>
+                <!-- level 1 -->
+                <ul class="left-menu-list list-unstyled">
+                    <li class="left-menu-list-submenu">
+                        <a class="left-menu-link" href="javascript: void(0);">
+                            Master
+                        </a>
+                        <!-- level 2 -->
+                        <ul class="left-menu-list list-unstyled">
+						<li>
+							<a class="left-menu-link" href="bank.html">
+								Bank
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="customer.html">
+								Customer
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="employee.html">
+								Employee
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="location.html">
+								Location
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="product.html">
+								Product
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="tax.html">
+								Tax
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="transporter.html">
+								Transporter
+							</a>
+						</li>
+                        </ul>
+                    </li>
+					<li class="left-menu-list-submenu">
+                        <a class="left-menu-link" href="javascript: void(0);">
+                            Sales
+                        </a>
+                        <!-- level 2 -->
+                        <ul class="left-menu-list list-unstyled">
+							<li>
+								<a class="left-menu-link" href="sales-order.html">
+									Sales Order
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="packing-list.html">
+									Packing List
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="invoice.html">
+									Invoice
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="credit-note.html">
+									Credit Note
+								</a>
+							</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Masters
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="landing-bank.html">
+                            Bank
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="landing-customer.html">
+                            Customer
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-employee.html">
+                            Employee
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-location.html">
+                            Location
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-product.html">
+                            Product
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-tax.html">
+                            Tax
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-transporter.html">
+                            Transporter
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+			<li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon icmn-cog util-spin-delayed-pseudo"><!-- --></i>
-                    <span class="menu-top-hidden">Theme</span>Theme Settings
+                    <span class="menu-top-hidden">Theme</span>Theme
                 </a>
                 <ul class="left-menu-list list-unstyled">
                     <li>
@@ -278,70 +487,7 @@
                     </li>
                 </ul>
             </li>
-
-            
-            <li>
-                <a class="left-menu-link" href="home.html">
-                    <i class="left-menu-link-icon icmn-home2"></i>
-                    Home
-                </a>
-            </li>
-
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li class="left-menu-list-submenu">
-                <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
-                    Dashboard
-                </a>
-                <ul class="left-menu-list list-unstyled">
-                    <li>
-                        <a class="left-menu-link" href="#">
-                            Sales
-                        </a>
-                    </li>
-                    <li>
-                        <a class="left-menu-link" href="#">
-                            Purchase
-                        </a>
-                    </li>
-                </ul>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Purchase
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Inventory
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Sales
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="barcode-printing.html">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Barcode Printing
-                </a>
-            </li>
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Create
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
+			<li class="left-menu-list-separator"></li>
             <li>
                 <a class="left-menu-link" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
@@ -362,7 +508,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" onclick="sendSignoutRequest();" href="#">
+                <a class="left-menu-link" onclick = "sendSignoutRequest();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -582,6 +728,7 @@
 			<table class="tg">
 			  <tr>
 				<th class="tg-yw4l"><span>ID</span></th>
+				<th class="tg-yw4l"><span>Product Category</span></th>
 				<th class="tg-yw4l"><span>Style Code</span></th>
 				<th class="tg-yw4l postServerRequest"><span>Color Code</span></th>
 				<th class="tg-yw4l postServerRequest"><span>Gender</span></th>
@@ -589,6 +736,10 @@
 			  </tr>
 			  <tr>
 				<td class="tg-yw42"><div class="form-group"><span id = "productId">1</span></div></td>
+				<td class="tg-yw42"><div class="form-group">						
+						<select class="form-control" id = "productCategory">
+						</select></div>
+				</td>
 				<td class="tg-yw42">
 					<div class="form-group">
 						<input class="form-control" id = "productStyleCodes" type="search" list="styleCodes" placeholder="Select Style Code">
@@ -812,7 +963,7 @@
 										<th>48</th>
 									</tr>
 								</thead>
-								<tfoot>
+								<!--<tfoot>
 																<tr>
 										<th rowspan = "2">Product No.</th>
 										<th rowspan = "2">Style Code</th>
@@ -839,7 +990,7 @@
 										<th>46</th>
 										<th>48</th>
 									</tr>
-								</tfoot>
+								</tfoot>-->
 									<tbody id = 'productsTableBody'>
 								</tbody>
 							</table>
@@ -1017,18 +1168,20 @@
 	}
 
 	function tabFunction(tabId){
+	//SHOW and HIDE Inventory view
 		if(tabId == 0){
-			$("#packing-list-main-div").attr("class", "col-lg-12");
-			$("#packing-list-inv-disp").hide();
+			//$("#packing-list-main-div").attr("class", "col-lg-12");
+			//$("#packing-list-inv-disp").hide();
+			$('#buttonAddProduct').hide();
 		} else if(tabId == 1){
 			$('#buttonAddProduct').show();
-			$("#packing-list-main-div").attr("class", "col-lg-8");
-			$("#packing-list-inv-disp").attr("class", "col-lg-4");
-			$("#packing-list-inv-disp").show(1200);
+			//$("#packing-list-main-div").attr("class", "col-lg-8");
+			//$("#packing-list-inv-disp").attr("class", "col-lg-4");
+			//$("#packing-list-inv-disp").show(1200);
 		} else if(tabId == 2){
 			$('#buttonAddProduct').hide();
-			$("#packing-list-main-div").attr("class", "col-lg-12");
-			$("#packing-list-inv-disp").hide(500);
+			//$("#packing-list-main-div").attr("class", "col-lg-12");
+			//$("#packing-list-inv-disp").hide(500);
 		}
 	}
 	
@@ -1046,8 +1199,8 @@
 		if(getParameterByName('salesOrderId')!=null 
 			|| getParameterByName('packingListId')!=null){
 			NProgress.start();
-			document.getElementById('buttonAddProduct').style.display = "none";
-			document.getElementById('buttonAddProduct').disabled = true;
+			//document.getElementById('buttonAddProduct').style.display = "none";
+			//document.getElementById('buttonAddProduct').disabled = true;
 			
 			salesOrderId = getParameterByName('salesOrderId');			
 			packingListId = getParameterByName('packingListId');
@@ -1075,7 +1228,7 @@
 				linkedSalesOrderInternalId = salesOrder.id;
 				document.getElementById('linkedSalesOrderId').value = salesOrder.salesOrderId;
 				document.getElementById('purchaseOrderReference').value = salesOrder.purchaseOrderReference;				
-				document.getElementById("purchaseOrderReference").readOnly = true;
+				//document.getElementById("purchaseOrderReference").readOnly = true;
 
 				var waitToSelectClient = setInterval(function(){
 					if(customerArray!=null){
@@ -1121,6 +1274,7 @@
 						salesOrderEntry = new Object();
 						salesOrderEntry.id = entryJson.entryId;
 						salesOrderEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+						salesOrderEntry.productCategory = entryJson.stockKeepingUnit.productCategory.id;
 						salesOrderEntry.mrp = entryJson.stockKeepingUnit.mrp;
 						salesOrderEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
 						salesOrderEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
@@ -1221,6 +1375,7 @@
 							packingListEntry = new Object();
 							packingListEntry.id = entryJson.entryId;
 							packingListEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+							packingListEntry.productCategory = entryJson.stockKeepingUnit.productCategory.id;
 							packingListEntry.mrp = entryJson.stockKeepingUnit.mrp;
 							packingListEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
 							packingListEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
@@ -1294,13 +1449,13 @@
 					}					
 				}
 				refreshProductsTable();
-				dataTable.column(15).nodes().each(function (cell, i) {
+				/*dataTable.column(15).nodes().each(function (cell, i) {
 					cell.innerHTML = "";
-				});
+				});*/
 				NProgress.done();
 			}
 		});
-		}
+		} 
 	});
 	
 	//special case where user has directly created a Packing list without any sales order
@@ -1351,6 +1506,7 @@
 				packingListEntry = new Object();
 				packingListEntry.id = entryJson.entryId;
 				packingListEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+				packingListEntry.productCategory = entryJson.stockKeepingUnit.productCategory.id;
 				packingListEntry.mrp = entryJson.stockKeepingUnit.mrp;
 				packingListEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
 				packingListEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
@@ -1392,11 +1548,11 @@
 			}					
 		
 		refreshProductsTable();
-		dataTable.column(15).nodes().each(function (cell, i) {
+		/*dataTable.column(15).nodes().each(function (cell, i) {
 			cell.innerHTML = "";
-		});
+		});*/
 		document.getElementById('purchaseOrderReference').value = packingListJson.purchaseOrderReference;
-		document.getElementById("purchaseOrderReference").readOnly = true;
+		//document.getElementById("purchaseOrderReference").readOnly = true;
 		var waitToSelectClient = setInterval(function(){
 			if(customerArray!=null){
 				var clientName = document.getElementById("clientName");
@@ -1516,6 +1672,7 @@
 		var dropDownGender = document.getElementById("dropDownGender");
 		product.gender = dropDownGender.options[dropDownGender.selectedIndex].text;	//to display 
 		product.genderCode = document.getElementById("dropDownGender").value;	//to send to server
+		product.productCategory = document.getElementById("productCategory").value;
 		product.mrp = document.getElementById("textMrp").value;
 		product.quantityForSize28 = (document.getElementById("quantityForSize28") == null 
 									|| document.getElementById("quantityForSize28").value == 0
@@ -1597,8 +1754,9 @@
 				
 				}			
 			
-				tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
-				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
+				/*tbody+="<td><a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick='editProductEntry("+product.id
+				+");'><i class='icmn-pencil5'></i> View</a><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";*/
+				tbody+="<td><a href='javascript: void(0);' class='link-underlined' onclick='deleteProductEntryAndUpdateView("+product.id+");'><i class='icmn-cross2'></i> Remove</a></td></tr>";
 		}
 		
 		if(totalQuantity == 0){

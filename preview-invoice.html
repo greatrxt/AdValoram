@@ -153,17 +153,21 @@ $(window).load(function() {
 				taxableAmount = productTotal - markDown - cashDiscount - promptPaymentDiscount - specialDiscount;
 				
 				var vatApplicable;
+				var cstApplicable;
 				var grandTotal = taxableAmount;
 				if(linkedCustomer.vatIsApplicable){
-					vatApplicable = taxableAmount * 0.125;
+					vatApplicable = taxableAmount * 0.1;
 					grandTotal+=vatApplicable;
-				} else {
+				} else if(linkedCustomer.cstIsApplicable){
 					vatApplicable = "N.A";
+					cstApplicable = taxableAmount * 0.125;
+					grandTotal+=cstApplicable;
 				}
 				
 				var loadingAndTransportationCharges = data.result[0].loadingCharges + data.result[0].transportationCharges;
-				var octroiLbt = (grandTotal + loadingAndTransportationCharges) * (5.5/100);
-				var invoiceValue = grandTotal + octroiLbt;
+				var postLoadingTransportationCharges = grandTotal + loadingAndTransportationCharges;
+				var octroiLbt = 0;
+				
 				tbody+='<tr>'+
 					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate' +
 					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ ' the sale of the goods ' +
@@ -185,22 +189,34 @@ $(window).load(function() {
 					  '3. If payment is not received within 30 days, interest @ 18% p.a. will be charged on Invoice amount.</td>'+
 					  '<td colspan="2" class="total-line">Taxable Amount</td>'+
 					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
-				  '</tr>'+
-				  '<tr>'+
-					  '<td colspan="2" class="total-line">VAT</td>'+
-					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
 				  '</tr>';
+				  if(linkedCustomer.vatIsApplicable){
+					tbody+='<tr>'+
+						  '<td colspan="2" class="total-line">VAT</td>'+
+						  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
+					  '</tr>';
+				  } else if (linkedCustomer.cstIsApplicable){
+					  tbody+='<tr>'+
+							  '<td colspan="2" class="total-line">CST</td>'+
+							  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
+						  '</tr>';
+				  }
 				  
 				  tbody+= '<tr>'+
-					  '<td colspan="2" class="total-line">Transportation/Loading Charges</td>'+
+					  '<td colspan="2" class="total-line">Transportation + Loading Charges</td>'+
 					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(loadingAndTransportationCharges, 2));+'</div></td>'+
 				  '</tr>';
 				  
-				  tbody+= '<tr>'+
-				  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
-					  '<td colspan="2" class="total-line">Octroi / LBT @5.5%</td>'+
-					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(octroiLbt, 2));+'</div></td>'+
-				  '</tr>';
+				  if(linkedCustomer.octroiLbtEntryTaxIsApplicable){
+					octroiLbt = (postLoadingTransportationCharges) * (5.5/100)
+					tbody+= '<tr>'+
+					  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
+						  '<td colspan="2" class="total-line">Octroi / LBT @5.5%</td>'+
+						  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(octroiLbt, 2));+'</div></td>'+
+					  '</tr>';
+				  }
+				  
+				  var invoiceValue = postLoadingTransportationCharges + octroiLbt;
 				  
 				  tbody+= '<tr>'+
 				  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
@@ -218,42 +234,60 @@ $(window).load(function() {
 				document.getElementById('cst-no').innerHTML = salesOrder.linkedCustomer.cstTinNumber;
 				document.getElementById('pan-no').innerHTML = salesOrder.linkedCustomer.panNumber;
 				
-				document.getElementById('salesOrderNo').innerHTML = salesOrder.salesOrderId;
-				document.getElementById('salesOrderDate').innerHTML = salesOrder.salesOrderDate;
+				document.getElementById('invoiceNo').innerHTML = data.result[0].invoiceId;
+				document.getElementById('invoiceDate').innerHTML = data.result[0].invoiceDate.split(" ")[0];
 				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
 				
 				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas(truncateDecimals(invoiceValue, 2));
 				if(data.result[0].status == "OPEN"){
-					document.getElementById("buttonIssueInvoice").style.visibility = "visible";
-					document.getElementById("buttonIssueInvoice").style.display = "block";
+					document.getElementById("buttonConfirmInvoice").style.visibility = "visible";
+					document.getElementById("buttonConfirmInvoice").style.display = "block";
 				} else {
-					document.getElementById("buttonIssueInvoice").style.visibility = "hidden";
+					document.getElementById("buttonConfirmInvoice").style.visibility = "hidden";
 				}
 				
 				if(data.result[0].status == "CONFIRMED"){
-					document.getElementById("buttonIssueInvoice").style.display = "none";
+					document.getElementById("buttonConfirmInvoice").style.display = "none";
 				}
 
-				document.getElementById('transport').innerHTML = data.result[0].linkedSalesOrder.linkedCustomer.linkedTransporter.companyName;
+				var transporterName = data.result[0].linkedSalesOrder.linkedCustomer.linkedTransporter.companyName;
+				if(transporterName == null){
+					transporterName = '';
+				}
+				document.getElementById('transport').innerHTML = transporterName;
 				document.getElementById('roadPermit').innerHTML = data.result[0].roadPermitOrLicenseNumber;
 				document.getElementById('noOfPackages').innerHTML = data.result[0].numberOfPackages;
 				document.getElementById('weight').innerHTML = data.result[0].grossWeight;
 				document.getElementById('lrNo').innerHTML = data.result[0].roadPermitOrLicenseNumber;
-				document.getElementById('referredBy').innerHTML = data.result[0].linkedSalesOrder.referredByEmployee.firstName + " " + data.result[0].linkedSalesOrder.referredByEmployee.lastName;
+				
+				var referredByFirstName = data.result[0].linkedSalesOrder.referredByEmployee.firstName;
+				var referredByLastName = data.result[0].linkedSalesOrder.referredByEmployee.lastName;
+				
+				if(referredByFirstName == null){
+					referredByFirstName = '';
+				}
+				
+				if(referredByLastName == null){
+					referredByLastName = '';
+				}
+				
+				var referredBy = referredByFirstName + " " + referredByLastName;
+
+				document.getElementById('referredBy').innerHTML = referredBy;
 			}
 			NProgress.done();
 		});
 	}
 });
 
-function issueInvoice(){
+function confirmInvoice(){
 	 $.ajaxSetup({
 		  headers : {
 			'Authorization' : 'Bearer ' + localStorage.getItem("token")
 		  }
 	});
 	$.ajax({
-		url: base_url + '/AdValoramAdmin/invoice/'+getParameterByName("invoiceId")+'/issue',
+		url: base_url + '/AdValoramAdmin/invoice/'+getParameterByName("invoiceId")+'/confirm',
 		type: 'PUT',
 		success: function(result) {
 			window.location = "preview-invoice.html?invoiceId="+getParameterByName("invoiceId");
@@ -269,8 +303,9 @@ function backToLandingPage(){
 
 	<div id="page-wrap">
 	<button id="buttonBack" class = "no-print" onClick="backToLandingPage();">Back</button>
+	<!--<button class = "no-print" onClick="editInvoice();">Edit</button>-->
 	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
-	<button id = "buttonIssueInvoice" onclick = "issueInvoice();" class = "no-print" style = "float:right; visibility:hidden">Issue</button>
+	<button id = "buttonConfirmInvoice" onclick = "confirmInvoice();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
 		<textarea id="header">INVOICE</textarea>
 		
 		<div id="identity">
@@ -326,12 +361,12 @@ Thane - 421 302
 
             <table id="meta" style="float:right">
                 <tr>
-                    <td class="meta-head">Sales Order No.</td>
-                    <td><span id="salesOrderNo"></span></td>
+                    <td class="meta-head">Invoice No.</td>
+                    <td><span id="invoiceNo"></span></td>
                 </tr>
                 <tr>
                     <td class="meta-head">Date</td>
-                    <td><span id="salesOrderDate"></span></td>
+                    <td><span id="invoiceDate"></span></td>
                 </tr>
 				<tr>
                     <td class="meta-head">PO Reference</td>
@@ -340,13 +375,13 @@ Thane - 421 302
 				<tr>
                     <td colspan = "2" style="height:100px; text-align:left">
 
-Transport&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "transport"></span></br>
-Road Permit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "roadPermit"></span></br>
-No Of Packages&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "noOfPackages"></span></br>
-Weight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "weight"></span></br>
-L.R No&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "lrNo"></span></br>
-Referred By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "referredBy"></span></br>
 
+Transport&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "transport"></span></br>
+Road Permit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "roadPermit"></span></br>
+No Of Packages&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "noOfPackages"></span></br>
+Weight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "weight"></span></br>
+L.R No&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "lrNo"></span></br>
+Referred By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "referredBy"></span></br>
 					</td>
                 </tr>
                 <tr>

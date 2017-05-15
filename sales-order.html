@@ -121,17 +121,226 @@
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
-        <a href="#" class="logo">
+        <a href="#/dashboards/alpha" class="logo">
             <img src="assets/common/img/logo.png" alt="AdValoram Clothing" />
             <img class="logo-inverse" src="assets/common/img/logo.png" alt="AdValoram Clothing" />
         </a>
     </div>
     <div class="left-menu-inner scroll-pane">
-        <ul class="left-menu-list left-menu-list-root list-unstyled">
+        <ul class="left-menu-list left-menu-list-root list-unstyled">   
+		
+            <li>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
+                    Home
+                </a>
+            </li>
+
+            <li class="left-menu-list-separator"><!-- --></li>
             <li class="left-menu-list-submenu">
                 <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Dashboard
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="#">
+                            Purchase
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="#">
+                            Inventory
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="#">
+                            Sales
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="#">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Purchase
+                </a>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="#">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Inventory
+                </a>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Sales
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="landing-sales-order.html">
+                            Sales Order
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="landing-packing-list.html">
+                            Packing List
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-invoice.html">
+                            Invoice
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-credit-note.html">
+                            Credit Note
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="barcode-printing.html">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Barcode Printing
+                </a>
+            </li>
+            <li class="left-menu-list-separator"><!-- --></li>
+			<!-- remove "horizontal-left-direction" class, for get submenu with right direction (horizontal menu option) -->
+            <li class="left-menu-list-submenu horizontal-left-direction">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    Create
+                </a>
+                <!-- level 1 -->
+                <ul class="left-menu-list list-unstyled">
+                    <li class="left-menu-list-submenu">
+                        <a class="left-menu-link" href="javascript: void(0);">
+                            Master
+                        </a>
+                        <!-- level 2 -->
+                        <ul class="left-menu-list list-unstyled">
+						<li>
+							<a class="left-menu-link" href="bank.html">
+								Bank
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="customer.html">
+								Customer
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="employee.html">
+								Employee
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="location.html">
+								Location
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="product.html">
+								Product
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="tax.html">
+								Tax
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="transporter.html">
+								Transporter
+							</a>
+						</li>
+                        </ul>
+                    </li>
+					<li class="left-menu-list-submenu">
+                        <a class="left-menu-link" href="javascript: void(0);">
+                            Sales
+                        </a>
+                        <!-- level 2 -->
+                        <ul class="left-menu-list list-unstyled">
+							<li>
+								<a class="left-menu-link" href="sales-order.html">
+									Sales Order
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="packing-list.html">
+									Packing List
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="invoice.html">
+									Invoice
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="credit-note.html">
+									Credit Note
+								</a>
+							</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Masters
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="landing-bank.html">
+                            Bank
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="landing-customer.html">
+                            Customer
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-employee.html">
+                            Employee
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-location.html">
+                            Location
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-product.html">
+                            Product
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-tax.html">
+                            Tax
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-transporter.html">
+                            Transporter
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+			<li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon icmn-cog util-spin-delayed-pseudo"><!-- --></i>
-                    <span class="menu-top-hidden">Theme</span>Theme Settings
+                    <span class="menu-top-hidden">Theme</span>Theme
                 </a>
                 <ul class="left-menu-list list-unstyled">
                     <li>
@@ -271,70 +480,7 @@
                     </li>
                 </ul>
             </li>
-
-            
-            <li>
-                <a class="left-menu-link" href="home.html">
-                    <i class="left-menu-link-icon icmn-home2"></i>
-                    Home
-                </a>
-            </li>
-
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li class="left-menu-list-submenu">
-                <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
-                    Dashboard
-                </a>
-                <ul class="left-menu-list list-unstyled">
-                    <li>
-                        <a class="left-menu-link" href="#">
-                            Sales
-                        </a>
-                    </li>
-                    <li>
-                        <a class="left-menu-link" href="#">
-                            Purchase
-                        </a>
-                    </li>
-                </ul>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Purchase
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Inventory
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Sales
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="barcode-printing.html">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Barcode Printing
-                </a>
-            </li>
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Create
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
+			<li class="left-menu-list-separator"></li>
             <li>
                 <a class="left-menu-link" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
@@ -355,7 +501,7 @@
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
             <li>
-                <a class="left-menu-link" onclick="sendSignoutRequest();" href="#">
+                <a class="left-menu-link" onclick = "sendSignoutRequest();" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
                     Sign Out
                 </a>
@@ -583,6 +729,7 @@
 			<table class="tg">
 			  <tr>
 				<th class="tg-yw4l"><span>ID</span></th>
+				<th class="tg-yw4l"><span>Product Category</span></th>
 				<th class="tg-yw4l"><span>Style Code</span></th>
 				<th class="tg-yw4l postServerRequest"><span>Color Code</span></th>
 				<th class="tg-yw4l postServerRequest"><span>Gender</span></th>
@@ -590,6 +737,10 @@
 			  </tr>
 			  <tr>
 				<td class="tg-yw42"><div class="form-group"><span id = "productId">1</span></div></td>
+				<td class="tg-yw42"><div class="form-group">						
+						<select class="form-control" id = "productCategory">
+						</select></div>
+				</td>
 				<td class="tg-yw42">
 					<div class="form-group">
 						<input class="form-control" id = "productStyleCodes" type="search" list="styleCodes" placeholder="Select Style Code">
@@ -741,12 +892,12 @@
 						
 							<div class="form-group">
                                 <label for="contactPerson">Contact Person*</label>
-                                <input class="form-control" id="contactPerson" type="text" readonly>
+                                <input class="form-control" id="contactPerson" type="text">
                             </div>
 							
 							<div class="form-group">
                                 <label for="emailAddress">Email Address</label>
-                                <input class="form-control" id="emailAddress" type="text" readonly>
+                                <input class="form-control" id="emailAddress" type="text">
                             </div>
 						</div>
 						
@@ -778,7 +929,7 @@
 							
 							<div class="form-group">
 								<label class="form-control-label" for="deliveryAddress">Delivery Address</label>
-								<textarea class="form-control" rows="3" id="deliveryAddress" readonly></textarea>
+								<textarea class="form-control" rows="3" id="deliveryAddress"></textarea>
 							</div>
 							
 							<div class="form-group">
@@ -793,7 +944,7 @@
 							
 							<div class="form-group">
                                 <label for="contactNumber">Contact Number</label>
-                                <input class="form-control" id="contactNumber" type="text" readonly>
+                                <input class="form-control" id="contactNumber" type="text">
                             </div>
 							
 							<div class="form-group">
@@ -870,7 +1021,7 @@
 										<th>48</th>
 									</tr>
 								</thead>
-								<tfoot>
+								<!--<tfoot>
 									<tr>
 										<th rowspan = "2">Product No.</th>
 										<th rowspan = "2">Style Code</th>
@@ -901,7 +1052,7 @@
 										<th>46</th>
 										<th>48</th>
 									</tr>
-								</tfoot>
+								</tfoot>-->
 								<tbody id = 'productsTableBody'>								
 								</tbody>
 							</table>
@@ -928,7 +1079,7 @@
 							
 							<div class="form-group">
                                 <label for="specialDiscount">Special Discount (%)</label>
-                                <input class="form-control" id="specialDiscount" type="text" readonly>
+                                <input class="form-control" id="specialDiscount" type="text">
                             </div>
 						</div>
 					</div>
@@ -1157,6 +1308,7 @@
 						salesOrderEntry = new Object();
 						salesOrderEntry.id = entryJson.entryId;
 						salesOrderEntry.styleCode = entryJson.stockKeepingUnit.styleCode;
+						salesOrderEntry.productCategory = entryJson.stockKeepingUnit.productCategory.id;
 						salesOrderEntry.mrp = entryJson.stockKeepingUnit.mrp;
 						salesOrderEntry.gender = entryJson.stockKeepingUnit.genderCode.gender;
 						salesOrderEntry.genderCode = entryJson.stockKeepingUnit.genderCode.genderCode;
@@ -1355,6 +1507,7 @@
 	function saveProductAndClose(){
 		var product = new Object();
 		product.id = document.getElementById("productId").innerHTML;
+		product.productCategory = document.getElementById("productCategory").value;
 		product.styleCode = selectedStyleCode;
 		product.colorCode = document.getElementById("dropDownColorCode").value;
 		

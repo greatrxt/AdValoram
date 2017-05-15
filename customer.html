@@ -122,17 +122,226 @@
 
 <nav class="left-menu" left-menu ng-class="{'hidden-left-menu': hideLeftMenu}">
     <div class="logo-container">
-        <a href="#" class="logo">
+        <a href="#/dashboards/alpha" class="logo">
             <img src="assets/common/img/logo.png" alt="AdValoram Clothing" />
             <img class="logo-inverse" src="assets/common/img/logo.png" alt="AdValoram Clothing" />
         </a>
     </div>
     <div class="left-menu-inner scroll-pane">
-        <ul class="left-menu-list left-menu-list-root list-unstyled">
+        <ul class="left-menu-list left-menu-list-root list-unstyled">   
+		
+            <li>
+                <a class="left-menu-link" href="home.html">
+                    <i class="left-menu-link-icon icmn-home2"></i>
+                    Home
+                </a>
+            </li>
+
+            <li class="left-menu-list-separator"><!-- --></li>
             <li class="left-menu-list-submenu">
                 <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Dashboard
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="#">
+                            Purchase
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="#">
+                            Inventory
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="#">
+                            Sales
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="#">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Purchase
+                </a>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="#">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Inventory
+                </a>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Sales
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="landing-sales-order.html">
+                            Sales Order
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="landing-packing-list.html">
+                            Packing List
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-invoice.html">
+                            Invoice
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-credit-note.html">
+                            Credit Note
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li>
+                <a class="left-menu-link" href="barcode-printing.html">
+                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+                    Barcode Printing
+                </a>
+            </li>
+            <li class="left-menu-list-separator"><!-- --></li>
+			<!-- remove "horizontal-left-direction" class, for get submenu with right direction (horizontal menu option) -->
+            <li class="left-menu-list-submenu horizontal-left-direction">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    Create
+                </a>
+                <!-- level 1 -->
+                <ul class="left-menu-list list-unstyled">
+                    <li class="left-menu-list-submenu">
+                        <a class="left-menu-link" href="javascript: void(0);">
+                            Master
+                        </a>
+                        <!-- level 2 -->
+                        <ul class="left-menu-list list-unstyled">
+						<li>
+							<a class="left-menu-link" href="bank.html">
+								Bank
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="customer.html">
+								Customer
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="employee.html">
+								Employee
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="location.html">
+								Location
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="product.html">
+								Product
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="tax.html">
+								Tax
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="transporter.html">
+								Transporter
+							</a>
+						</li>
+                        </ul>
+                    </li>
+					<li class="left-menu-list-submenu">
+                        <a class="left-menu-link" href="javascript: void(0);">
+                            Sales
+                        </a>
+                        <!-- level 2 -->
+                        <ul class="left-menu-list list-unstyled">
+							<li>
+								<a class="left-menu-link" href="sales-order.html">
+									Sales Order
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="packing-list.html">
+									Packing List
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="invoice.html">
+									Invoice
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="credit-note.html">
+									Credit Note
+								</a>
+							</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+			<li class="left-menu-list-separator"><!-- --></li>
+            <li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
+                    Masters
+                </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="landing-bank.html">
+                            Bank
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="landing-customer.html">
+                            Customer
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-employee.html">
+                            Employee
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-location.html">
+                            Location
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-product.html">
+                            Product
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-tax.html">
+                            Tax
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-transporter.html">
+                            Transporter
+                        </a>
+                    </li>
+                </ul>
+            </li>
+			<li class="left-menu-list-separator"><!-- --></li>
+			<li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
                     <i class="left-menu-link-icon icmn-cog util-spin-delayed-pseudo"><!-- --></i>
-                    <span class="menu-top-hidden">Theme</span>Theme Settings
+                    <span class="menu-top-hidden">Theme</span>Theme
                 </a>
                 <ul class="left-menu-list list-unstyled">
                     <li>
@@ -272,70 +481,7 @@
                     </li>
                 </ul>
             </li>
-
-            
-            <li>
-                <a class="left-menu-link" href="home.html">
-                    <i class="left-menu-link-icon icmn-home2"></i>
-                    Home
-                </a>
-            </li>
-
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li class="left-menu-list-submenu">
-                <a class="left-menu-link" href="javascript: void(0);">
-                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
-                    Dashboard
-                </a>
-                <ul class="left-menu-list list-unstyled">
-                    <li>
-                        <a class="left-menu-link" href="#">
-                            Sales
-                        </a>
-                    </li>
-                    <li>
-                        <a class="left-menu-link" href="#">
-                            Purchase
-                        </a>
-                    </li>
-                </ul>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Purchase
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Inventory
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Sales
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="barcode-printing.html">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Barcode Printing
-                </a>
-            </li>
-            <li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
-                    Create
-                </a>
-            </li>
-			<li class="left-menu-list-separator"><!-- --></li>
+			<li class="left-menu-list-separator"></li>
             <li>
                 <a class="left-menu-link" href="#">
                     <i class="left-menu-link-icon icmn-profile"><!-- --></i>
@@ -608,15 +754,17 @@
                             </div>
 
 							<div class="form-group">
-								<label class="form-control-label" for="billingAddress">Billing Address</label>
+								<label class="form-control-label" for="billingAddress">Billing Address*</label>
 								<textarea class="form-control" rows="3" id="billingAddress" name="validation[Billing address]"
 																					   data-validation="[L>=3]"
 																					   data-validation-message="$ must contain atleast 3 characters"></textarea>
 							</div>
 						
 							<div class="form-group">
-                                <label for="city">City</label>
-								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()">
+                                <label for="city">City*</label>
+								<select class="form-control" id="city" onChange = "refreshLocationDistrictAndState()" name="validation[City]"
+																														   data-validation="[L>=1]"
+																														   data-validation-message="Please select a valid $">
 								</select>
                             </div>
 							
@@ -641,7 +789,7 @@
 						
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
-								<label class="form-control-label" for="customerType" >Customer Type</label><br/>
+								<label class="form-control-label" for="customerType" >Customer Type*</label><br/>
                                 <input id="radioRetailer" name = "customerType" type="radio" value="Retailer" style="margin:11px" checked onclick="displayHideDistBrokerRow();">Retailer
 								<input id="radioDistributor" name = "customerType" type="radio" value="Distributor" style="margin:11px" onclick="displayHideDistBrokerRow();;">Distributor
 								<input id="radioBroker" name = "customerType" type="radio" value="Broker" style="margin:11px" onclick="displayHideDistBrokerRow();;">Broker
@@ -655,26 +803,26 @@
                             </div>
 							
 							<div class="form-group">
-								<label class="form-control-label" for="deliveryAddress">Delivery Address</label>
+								<label class="form-control-label" for="deliveryAddress">Delivery Address*</label>
 								<textarea class="form-control" rows="3" id="deliveryAddress" name="validation[Delivery Address]"
 																					   data-validation="[L>=3]"
 																					   data-validation-message="$ must contain atleast 3 characters"></textarea>
 							</div>
 							
 							<div class="form-group">
-                                <label for="pinCode">Pin Code</label>
+                                <label for="pinCode">Pin Code*</label>
                                 <input class="form-control" id="pinCode" type="text" name="validation[pincode]"
 																					   data-validation="[L>=2]"
 																					   data-validation-message="Please enter a valid $" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                             </div>
 							
 							<div class="form-group">
-                                <label for="state">State</label>
+                                <label for="state">State*</label>
 								<input class="form-control" id="state" type="text" readonly>
                             </div>
 							
 							<div class="form-group">
-                                <label for="contactNumber">Contact Number</label>
+                                <label for="contactNumber">Contact Number*</label>
                                 <input class="form-control" id="contactNumber" type="text" name="validation[contact number]"
 																					   data-validation="[L>=2]"
 																					   data-validation-message="Please enter a valid $" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
@@ -693,8 +841,8 @@
 						<div class = "col-lg-5">
 								
 							<div class="form-group">
-                                <label for="markDown">Mark Down(%)</label>
-                                <input class="form-control" id="markDown"  value = "0.01" type="number" step="0.01" name="validation[mark down]" min = "0.01"
+                                <label for="markDown">Mark Down(%)*</label>
+                                <input class="form-control" id="markDown"  value = "0.00" type="number" step="0.01" name="validation[mark down]" min = "0.00"
 																					   data-validation="[L>=1]"
 																					   data-validation-message="Please enter a valid $">
                             </div>
@@ -779,7 +927,7 @@
 						</div>
 						<div class = "col-lg-5" style="padding-left:100px;">
 							<div class="form-group">
-								<label class="form-control-label" for="taxApplicable">Tax Applicable</label><br/>
+								<label class="form-control-label" for="taxApplicable">Tax Applicable*</label><br/>
                                 <input id="vatIsApplicable" name = "taxApplicable" type="checkbox" value="vat" style="margin:11px" 
 								onclick="document.getElementById('vatRateApplicable').disabled=!this.checked;
 										document.getElementById('vatRateApplicable').value ='';
@@ -1149,6 +1297,7 @@ $(window).load(function() {
 			document.getElementById("contactPerson").value.length < 2 ||
 			document.getElementById("deliveryAddress").value.length < 3 ||
 			document.getElementById("pinCode").value.length < 2 ||
+			document.getElementById("city").value == "" ||
 			document.getElementById("contactNumber").value.length < 2
 			)){
 			$('.nav-tabs-horizontal li:eq(0) a').tab('show');

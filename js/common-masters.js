@@ -121,7 +121,7 @@ $(window).ready(function() {
 		});
 	}
 	NProgress.inc();
-	if(document.getElementById('unitOfMeasurement')!=null){
+	if(document.getElementById('productCategory')!=null){
 			//load productCategory
 		 $.getJSON(base_url + "/AdValoramAdmin/common/productCategory", function(data){
 				if(data.result=='error'){
@@ -263,6 +263,9 @@ $(window).ready(function() {
 			return;
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
+			if(JSON.parse(request.responseText).result == 'error'){
+				return;
+			}
 			if(request.readyState == 4 && request.status == 200){
 				locationsArray = JSON.parse(request.responseText).result;
 				var city = document.getElementById('city');
@@ -274,6 +277,7 @@ $(window).ready(function() {
 						opt.innerHTML = location.cityName;
 						city.appendChild(opt);
 				}
+				city.selectedIndex = -1;
 				refreshLocationDistrictAndState();
 			}
 		};

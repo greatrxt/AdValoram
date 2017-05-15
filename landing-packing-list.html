@@ -184,11 +184,33 @@
                 </a>
             </li>
 			<li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+            <li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
                     Sales
                 </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="landing-sales-order.html">
+                            Sales Order
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="landing-packing-list.html">
+                            Packing List
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-invoice.html">
+                            Invoice
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-credit-note.html">
+                            Credit Note
+                        </a>
+                    </li>
+                </ul>
             </li>
 			<li class="left-menu-list-separator"><!-- --></li>
             <li>
@@ -198,18 +220,130 @@
                 </a>
             </li>
             <li class="left-menu-list-separator"><!-- --></li>
-            <li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-profile"><!-- --></i>
+			<!-- remove "horizontal-left-direction" class, for get submenu with right direction (horizontal menu option) -->
+            <li class="left-menu-list-submenu horizontal-left-direction">
+                <a class="left-menu-link" href="javascript: void(0);">
                     Create
                 </a>
+                <!-- level 1 -->
+                <ul class="left-menu-list list-unstyled">
+                    <li class="left-menu-list-submenu">
+                        <a class="left-menu-link" href="javascript: void(0);">
+                            Master
+                        </a>
+                        <!-- level 2 -->
+                        <ul class="left-menu-list list-unstyled">
+						<li>
+							<a class="left-menu-link" href="bank.html">
+								Bank
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="customer.html">
+								Customer
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="employee.html">
+								Employee
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="location.html">
+								Location
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="product.html">
+								Product
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="tax.html">
+								Tax
+							</a>
+						</li>
+						<li>
+							<a class="left-menu-link" href="transporter.html">
+								Transporter
+							</a>
+						</li>
+                        </ul>
+                    </li>
+					<li class="left-menu-list-submenu">
+                        <a class="left-menu-link" href="javascript: void(0);">
+                            Sales
+                        </a>
+                        <!-- level 2 -->
+                        <ul class="left-menu-list list-unstyled">
+							<li>
+								<a class="left-menu-link" href="sales-order.html">
+									Sales Order
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="packing-list.html">
+									Packing List
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="invoice.html">
+									Invoice
+								</a>
+							</li>
+							<li>
+								<a class="left-menu-link" href="credit-note.html">
+									Credit Note
+								</a>
+							</li>
+                        </ul>
+                    </li>
+                </ul>
             </li>
+
 			<li class="left-menu-list-separator"><!-- --></li>
-			<li>
-                <a class="left-menu-link" href="#">
-                    <i class="left-menu-link-icon icmn-home2"><!-- --></i>
+            <li class="left-menu-list-submenu">
+                <a class="left-menu-link" href="javascript: void(0);">
+                    <i class="left-menu-link-icon icmn-files-empty2"><!-- --></i>
                     Masters
                 </a>
+                <ul class="left-menu-list list-unstyled">
+                    <li>
+                        <a class="left-menu-link" href="landing-bank.html">
+                            Bank
+                        </a>
+                    </li>
+                    <li>
+                        <a class="left-menu-link" href="landing-customer.html">
+                            Customer
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-employee.html">
+                            Employee
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-location.html">
+                            Location
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-product.html">
+                            Product
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-tax.html">
+                            Tax
+                        </a>
+                    </li>
+					<li>
+                        <a class="left-menu-link" href="landing-transporter.html">
+                            Transporter
+                        </a>
+                    </li>
+                </ul>
             </li>
 			<li class="left-menu-list-separator"><!-- --></li>
 			<li class="left-menu-list-submenu">
@@ -461,6 +595,10 @@
 	}) .DataTable();
 	NProgress.start();
 	$.getJSON(base_url + "/AdValoramAdmin/packingList", function(data){
+			if(data.result == 'error'){
+				NProgress.done();
+				return;
+			}
 		 	var dataTable = $('#displayPackingListsTable').DataTable();						
 			var packingListArray = data.result;
 			var dataTable = $('#displayPackingListsTable').DataTable();

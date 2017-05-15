@@ -143,12 +143,14 @@ $(window).load(function() {
 				
 				document.getElementById('customer-name').innerHTML = packingList.clientNameOnPackingListDate;
 				
-				document.getElementById('packingListNo').innerHTML = packingList.packingListId;
+				document.getElementById('packingListNo').innerHTML = packingList.packingListId + " - " + "R" + packingList.packingListRevisionNumber;
 				document.getElementById('packingListDate').innerHTML = packingList.packingListDate;
 				document.getElementById('purchaseOrderReference').innerHTML = packingList.purchaseOrderReference;
-				document.getElementById('linkedSalesOrderId').innerHTML = packingList.linkedSalesOrderId;
+				
 				if(parseInt(packingList.linkedSalesOrderId) < 0){
 					document.getElementById('linkedSalesOrderId').innerHTML = "Not Applicable";
+				} else {
+					document.getElementById('linkedSalesOrderId').innerHTML = packingList.linkedSalesOrderId;				
 				}
 				if(packingList.status == "OPEN" || packingList.status == "UNDER_REVISION"){
 					document.getElementById("buttonConfirmPackingList").style.visibility = "visible";
@@ -157,7 +159,8 @@ $(window).load(function() {
 				}
 				
 				if(packingList.status == "CONFIRMED"){
-					document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
+					//document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
+					showGeneratePackingListButtonIfInvoiceNotGenerated(packingList.id);
 					document.getElementById("buttonConfirmPackingList").style.display = "none";
 				} else {
 					document.getElementById("buttonGeneratePackingList").style.visibility = "hidden";
@@ -169,8 +172,25 @@ $(window).load(function() {
 	}
 });
 
-function confirmPackingList(){
+function showGeneratePackingListButtonIfInvoiceNotGenerated(packingListInternalId){
 	 $.ajaxSetup({
+		  headers : {
+			'Authorization' : 'Bearer ' + localStorage.getItem("token")
+		  }
+	});
+	$.ajax({
+		url: base_url + '/AdValoramAdmin/invoice/packingListId/invoiceStatus/'+packingListInternalId,
+		type: 'GET',
+		success: function(result) {
+			if(!result.result){
+				document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
+			}
+		}
+	});
+}
+
+function confirmPackingList(){
+	$.ajaxSetup({
 		  headers : {
 			'Authorization' : 'Bearer ' + localStorage.getItem("token")
 		  }
