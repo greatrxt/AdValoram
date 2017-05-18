@@ -95,7 +95,7 @@ $(window).load(function() {
 						'Size' +
 						'</th>' +
 						'<th rowspan = "2">Total Qty</th>' +
-						'<th rowspan = "2">MRP</th>' +
+						'<th rowspan = "2">Special Price</th>' +
 						//'<th rowspan = "2">Special Rate</th>' +
 						'<th rowspan = "2">Total<br>(INR)</th>' +
 						'</tr>';
@@ -107,31 +107,33 @@ $(window).load(function() {
 				tbody+='</tr><tbody>';
 				var sorted_keys = Object.keys(packingListEntries).sort()
 				//for(var p = 0; p < packingListEntries.length; p++){
+				var markDown = (salesOrder.markDownOnSalesOrderDate/100);
 				var productTotal = 0;
 				for(var p = 0; p < sorted_keys.length; p++){
 					var quantity = 0;
 					//var packingListEntry = packingListEntries[p];
 					var packingListEntry = packingListEntries[sorted_keys[p]];
 					tbody+='<tr>' + 
-						'<td>'+packingListEntry.id+'</td>' +
-						'<td>'+packingListEntry.styleCode+'</td>' +
-						'<td>'+packingListEntry.colorCode+'</td>' +
-						'<td>'+packingListEntry.genderCode+'</td>';
+						'<td align="center">'+packingListEntry.id+'</td>' +
+						'<td align="center">'+packingListEntry.styleCode+'</td>' +
+						'<td align="center">'+packingListEntry.colorCode+'</td>' +
+						'<td align="center">'+packingListEntry.genderCode+'</td>';
 						
 						for(var h = 0; h < sizeArray.length; h++){
 							var key = "quantityForSize" + sizeArray[h];
 							if(packingListEntry[key] != null){
 								quantity = quantity + packingListEntry[key];
-								tbody+='<td>'+packingListEntry[key]+'</td>';
+								tbody+='<td align="center">'+packingListEntry[key]+'</td>';
 							} else {
-								tbody+='<td>0</td>';
+								tbody+='<td align="center">0</td>';
 							}
 							
 						}
-					var total = quantity*packingListEntry.mrp;
-					tbody+='<td>'+quantity+'</td>' +
-							'<td>'+packingListEntry.mrp+'</td>' +
-							'<td>'+numberWithCommas(total)+'</td>'+
+					var markedDownPrice = (packingListEntry.mrp * ( 1- markDown ));
+					var total = quantity * markedDownPrice;
+					tbody+='<td align="center">'+quantity+'</td>' +
+							'<td align="center">'+ numberWithCommas(truncateDecimals(markedDownPrice, 2))+'</td>' +
+							'<td align="center">'+numberWithCommas(truncateDecimals(total, 2))+'</td>'+
 							'</tr>';
 					productTotal+=total;
 				}
@@ -145,12 +147,12 @@ $(window).load(function() {
 				Calculations for discount, tax, grandtotal
 				*/
 				
-				var markDown = (salesOrder.markDownOnSalesOrderDate/100) * productTotal;
-				var cashDiscount = (salesOrder.cashDiscountOnSalesOrderDate/100) * (productTotal - markDown);
-				var promptPaymentDiscount = (salesOrder.promptPaymentDiscountOnSalesOrderDate/100) * (productTotal - markDown - cashDiscount);
-				var specialDiscount = (salesOrder.specialDiscountOnSalesOrderDate/100) * (productTotal - markDown - cashDiscount - promptPaymentDiscount)
+				//var markDown = (salesOrder.markDownOnSalesOrderDate/100) * productTotal;
+				var cashDiscount = (salesOrder.cashDiscountOnSalesOrderDate/100) * (productTotal);
+				var promptPaymentDiscount = (salesOrder.promptPaymentDiscountOnSalesOrderDate/100) * (productTotal - cashDiscount);
+				var specialDiscount = (salesOrder.specialDiscountOnSalesOrderDate/100) * (productTotal - cashDiscount - promptPaymentDiscount);
 				
-				taxableAmount = productTotal - markDown - cashDiscount - promptPaymentDiscount - specialDiscount;
+				taxableAmount = productTotal - cashDiscount - promptPaymentDiscount - specialDiscount;
 				
 				var vatApplicable;
 				var cstApplicable;
@@ -308,58 +310,71 @@ function backToLandingPage(){
 	<button id = "buttonConfirmInvoice" onclick = "confirmInvoice();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
 		<textarea id="header">INVOICE</textarea>
 		
-		<div id="identity">
+		<div id="identity">		
+			<table id="additionalInfo" class = "borderless-table" readonly>
+				<tr>
+					<td>
+						<div id="logo">
+						  <img id="image" src="resources/logo.png" alt="logo" />
+						</div>	
+					</td>
+				</tr>	
+			</table>		
+		</div>
 		
-            <textarea id="address" readonly>				
+		<div id="upper-section">
+			<table class = "borderless-table" style="float:left;width:50%">
+				<tr>
+					<td>
+						<span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><span id="customer-name"></span>
+					</td>	
+				</tr>
+				<tr>
+                    <td>
+						<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
+						<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
+						<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
+						<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
+						<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
+					</td>
+				</tr>
+			</table>
+			<table class = "borderless-table" style="float:right;width:40%">
+			<tr>
+					<td>
+						<textarea id="address" readonly>				
 AD VALORAM CLOTHING PVT LTD.
 
 Head Office :
 102, Paresh Complex,
 Kaher Pipeline, Bhiwandi
 Thane - 421 302
-</textarea>			
-<table id="additionalInfo" class = "borderless-table" readonly>
-	<tr>
-		<td>		
-		<div id="logo">
-		  <img id="image" src="resources/logo.png" alt="logo" />
-		</div>	
-		</td>
-	</tr>
-	<tr>
-		<td>
-<span>Phone no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span><span id = "contactNumber"></span></br>
-<span>Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: advaloramclothing@gmail.com</span></br>
-<span>VAT TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "vatTinNumber"></span></br>
-<span>CST TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "cstTinNumber"></span></br></br>
-		</td>
-	</tr>
-</table>
-			
+						</textarea>	
+					</td>
+				</tr>
+			    <tr>
+                    <td class="meta-head">Phone no</td>
+                    <td><span></span></td>
+                </tr>
+                <tr>
+                    <td class="meta-head">Email</td>
+                    <td><span></span></td>
+                </tr>	
+                <tr>
+                    <td class="meta-head">VAT TIN no</td>
+                    <td><span></span></td>
+                </tr>
+                <tr>
+                    <td class="meta-head">CST TIN no</td>
+                    <td><span></span></td>
+                </tr>				
+			</table>
 		</div>
 		
 		<div style="clear:both"></div>
 		
-		<div id="customer">
-            <table class = "borderless-table" style="float:left">
-                <tr>
-                    <td>
-            <span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><span id="customer-name"></span>
-					</td>
-				</tr>
-				<tr>
-                    <td>
-					<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
-					<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
-					<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
-					<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
-					<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
-					</td>
-				</tr>
-			</table>
-
-
-            <table id="meta" style="float:right">
+		<div id="lower-section">
+            <table id="meta" style="float:left;width:40%">
                 <tr>
                     <td class="meta-head">Invoice No.</td>
                     <td><span id="invoiceNo"></span></td>
@@ -372,28 +387,44 @@ Thane - 421 302
                     <td class="meta-head">PO Reference</td>
                     <td><span id="purchaseOrderReference"></span></td>
                 </tr>
-				<tr>
-                    <td colspan = "2" style="height:100px; text-align:left">
-
-
-Transport&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "transport"></span></br>
-Road Permit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "roadPermit"></span></br>
-No Of Packages&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "noOfPackages"></span></br>
-Weight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "weight"></span></br>
-L.R No&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "lrNo"></span></br>
-Referred By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "referredBy"></span></br>
-					</td>
-                </tr>
                 <tr>
                     <td class="meta-head">Amount Due</td>
                     <td><div class="due"><span id = "amountDue"></span></div></td>
                 </tr>
 
+			</table>
+
+
+            <table id="meta" style="float:right;width:40%">
+			    <tr>
+                    <td class="meta-head">Transport</td>
+                    <td><span id = "transport"></span></td>
+                </tr>
+				<tr>
+                    <td class="meta-head">Road Permit</td>
+                    <td><span id = "roadPermit"></span></td>
+                </tr>
+					    <tr>
+                    <td class="meta-head">No Of Packages</td>
+                    <td><span id = "noOfPackages"></span></td>
+                </tr>		
+			    <tr>
+                    <td class="meta-head">Weight</td>
+                    <td><span id = "weight"></span></td>
+                </tr>
+			    <tr>
+                    <td class="meta-head">L.R No</td>
+                    <td><span id = "lrNo"></span></td>
+                </tr>
+			    <tr>
+                    <td class="meta-head">Referred By</td>
+                    <td><span id = "referredBy"></span></td>
+                </tr>					
             </table>
 		
 		</div>
-		
-		<table id="items">
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+		<table id="items" style="padding-top:20px">
 
 		</table>
 		

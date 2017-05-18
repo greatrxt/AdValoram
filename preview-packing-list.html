@@ -115,22 +115,22 @@ $(window).load(function() {
 					//var packingListEntry = packingListEntries[p];
 					var packingListEntry = packingListEntries[sorted_keys[p]];
 					tbody+='<tr>' + 
-						'<td>'+packingListEntry.id+'</td>' +
-						'<td>'+packingListEntry.styleCode+'</td>' +
-						'<td>'+packingListEntry.colorCode+'</td>' +
-						'<td>'+packingListEntry.genderCode+'</td>';
+						'<td align="center">'+packingListEntry.id+'</td>' +
+						'<td align="center">'+packingListEntry.styleCode+'</td>' +
+						'<td align="center">'+packingListEntry.colorCode+'</td>' +
+						'<td align="center">'+packingListEntry.genderCode+'</td>';
 						
 						for(var h = 0; h < sizeArray.length; h++){
 							var key = "quantityForSize" + sizeArray[h];
 							if(packingListEntry[key] != null){
 								quantity = quantity + packingListEntry[key];
-								tbody+='<td>'+packingListEntry[key]+'</td>';
+								tbody+='<td align="center">'+packingListEntry[key]+'</td>';
 							} else {
-								tbody+='<td>0</td>';
+								tbody+='<td align="center">0</td>';
 							}
 							
 						}
-					tbody+='<td>'+quantity+'</td>' +
+					tbody+='<td align="center">'+quantity+'</td>' +
 							'</tr>';
 				}
 				tbody+='</tbody>'+
@@ -164,6 +164,7 @@ $(window).load(function() {
 					document.getElementById("buttonConfirmPackingList").style.display = "none";
 				} else {
 					document.getElementById("buttonGeneratePackingList").style.visibility = "hidden";
+					document.getElementById("buttonGeneratePackingList").style.display = "none";
 				}
 
 			}
@@ -184,6 +185,7 @@ function showGeneratePackingListButtonIfInvoiceNotGenerated(packingListInternalI
 		success: function(result) {
 			if(!result.result){
 				document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
+				document.getElementById("buttonGeneratePackingList").style.display = "block";
 			}
 		}
 	});
@@ -235,65 +237,74 @@ function generateInvoice(){
 	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
 	<button id = "buttonConfirmPackingList" onclick = "confirmPackingList();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
 	<button id = "buttonGeneratePackingList" onclick = "generateInvoice();" class = "no-print green" style = "float:right; visibility:hidden">Generate Invoice</button>
-		<textarea id="header">PACKING LIST</textarea>
+	<textarea id="header">PACKING LIST</textarea>
 		
-		<div id="identity">
+<div id="identity">		
+			<table id="additionalInfo" class = "borderless-table" readonly>
+				<tr>
+					<td>
+						<div id="logo">
+						  <img id="image" src="resources/logo.png" alt="logo" />
+						</div>	
+					</td>
+				</tr>	
+			</table>		
+		</div>
 		
-            <textarea id="address" readonly>				
+		<div id="upper-section">
+			<table class = "borderless-table" style="float:left;width:50%">
+				<tr>
+					<td>
+						<span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><span id="customer-name"></span>
+					</td>	
+				</tr>
+				<tr>
+                    <td>
+						<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
+						<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
+						<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
+						<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
+						<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
+					</td>
+				</tr>
+			</table>
+			<table class = "borderless-table" style="float:right;width:40%">
+			<tr>
+					<td>
+						<textarea id="address" readonly>				
 AD VALORAM CLOTHING PVT LTD.
 
 Head Office :
 102, Paresh Complex,
 Kaher Pipeline, Bhiwandi
 Thane - 421 302
-</textarea>			
-<table id="additionalInfo" class = "borderless-table" readonly>
-	<tr>
-		<td>		
-		<div id="logo">
-		  <div id="logoctr">
-			<a href="javascript:;" id="change-logo" title="Change logo">Change Logo</a>
-			<a href="javascript:;" id="save-logo" title="Save changes">Save</a>
-
-			<a href="javascript:;" id="delete-logo" title="Delete logo">Delete Logo</a>
-			<a href="javascript:;" id="cancel-logo" title="Cancel changes">Cancel</a>
-		  </div>
-
-		  <div id="logohelp">
-			<input id="imageloc" type="text" size="50" value="" /><br />
-			(max width: 540px, max height: 100px)
-		  </div>
-		  <img id="image" src="resources/logo.png" alt="logo" />
-		</div>	
-		</td>
-	</tr>
-	<tr>
-		<td>
-<span>Phone no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span><span id = "contactNumber"></span></br>
-<span>Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: advaloramclothing@gmail.com</span></br>
-<span>VAT TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "vatTinNumber"></span></br>
-<span>CST TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "cstTinNumber"></span></br></br>
-		</td>
-	</tr>
-</table>
-			
+						</textarea>	
+					</td>
+				</tr>
+			    <tr>
+                    <td class="meta-head">Phone no</td>
+                    <td><span></span></td>
+                </tr>
+                <tr>
+                    <td class="meta-head">Email</td>
+                    <td><span></span></td>
+                </tr>	
+                <tr>
+                    <td class="meta-head">VAT TIN no</td>
+                    <td><span></span></td>
+                </tr>
+                <tr>
+                    <td class="meta-head">CST TIN no</td>
+                    <td><span></span></td>
+                </tr>				
+			</table>
 		</div>
 		
 		<div style="clear:both"></div>
 		
-		<div id="customer">
-            <table class = "borderless-table" style="float:left">
-                <tr>
-                    <td>
-					<span id="customer-title">NAME OF PARTY :&nbsp;&nbsp;&nbsp;&nbsp; </span><span id="customer-name"></span>
-					</td>
-				</tr>
-				<tr>
-				</tr>
-			</table>
+		<div id="lower-section">
 
-
-            <table id="meta" style="float:right">
+            <table id="meta" style="float:right; width:40%">
                 <tr>
                     <td class="meta-head">Packing List No.</td>
                     <td><span id="packingListNo"></span></td>
@@ -314,7 +325,7 @@ Thane - 421 302
             </table>
 		
 		</div>
-		</br>
+		<br/><br/><br/><br/><br/><br/><br/><br/>
 		<table id="items">
 
 		</table>

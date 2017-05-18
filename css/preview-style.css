@@ -5,24 +5,24 @@
 */
 
 * { margin: 0; padding: 0; }
-body { font: 14px/1.4 Georgia, serif; }
+body { font: 14px/1.4 Arial, Helvetica, sans-serif; }
 #page-wrap { width: 800px; margin: 0 auto; }
 
-textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none;}
+textarea { border: 0; font: 14px Arial, Helvetica, sans-serif; overflow: hidden; resize: none;}
 textarea:focus {outline: none !important;border:0px solid red;box-shadow: 0 0 0px #719ECE;}
-table { border-collapse: collapse; text-align: center }
-table td, table th { border: 1px solid black; padding: 4px; }
+table { border-collapse: collapse;}
+table td, table th { border: 1px solid; padding: 4px; }
 
-#header { height: 15px; width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px; }
+#header { height: 15px; width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Arial, Helvetica, sans-serif; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px; }
 
 #address { width: 250px; height: 150px; float: left; }
-#additionalInfo { width: 300px; float: right; }
+#additionalInfo { width: 100%; }
 .borderless-table td{border:none !important;}
 #contactInfo { width: 290px; height: 100px; }
-#customer { overflow: hidden; }
+#upper-section #lower-section { overflow: auto; }
 #taxInfo{ width: 250px;height:200px;}
 #logo { text-align: right; float: right; position: relative; margin-top: 5px; border: 1px solid #fff; max-width: 540px; max-height: 100px; overflow: hidden; }
-#logo:hover, #logo.edit { border: 1px solid #000; margin-top: 0px; max-height: 125px; }
+/*#logo:hover, #logo.edit { border: 1px solid #000; margin-top: 0px; max-height: 125px; }*/
 #logoctr { display: none; }
 #logo:hover #logoctr, #logo.edit #logoctr { display: block; text-align: right; line-height: 25px; background: #eee; padding: 0 5px; }
 #logohelp { text-align: left; display: none; font-style: italic; padding: 10px 5px;}
@@ -51,7 +51,7 @@ table td, table th { border: 1px solid black; padding: 4px; }
 #items td.blank { border: 0; }
 
 #terms { text-align: center; margin: 20px 0 0 0; }
-#terms h5 { text-transform: uppercase; font: 13px Helvetica, Sans-Serif; letter-spacing: 10px; border-bottom: 1px solid black; padding: 0 0 8px 0; margin: 0 0 8px 0; }
+#terms h5 { text-transform: uppercase; font: 13px Arial, Helvetica, sans-serif; letter-spacing: 10px; border-bottom: 1px solid black; padding: 0 0 8px 0; margin: 0 0 8px 0; }
 #terms textarea { width: 100%; text-align: center;}
 
 /*textarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; }*/

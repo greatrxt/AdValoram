@@ -100,7 +100,7 @@ $(window).load(function() {
 						'Size' +
 						'</th>' +
 						'<th rowspan = "2">Total Qty</th>' +
-						'<th rowspan = "2">MRP</th>' +
+						'<th rowspan = "2">Special Price</th>' +
 						//'<th rowspan = "2">Special Rate</th>' +
 						'<th rowspan = "2">Total<br>(INR)</th>' +
 						'</tr>';
@@ -113,6 +113,7 @@ $(window).load(function() {
 				var sorted_keys = Object.keys(salesOrderEntries).sort()
 				//for(var p = 0; p < salesOrderEntries.length; p++){
 				var productTotal = 0;
+				var markDown = (salesOrder.markDownOnSalesOrderDate/100);
 				var discount = 0;
 				var taxableAmount = 0;
 				var tax = 0;
@@ -122,25 +123,26 @@ $(window).load(function() {
 					//var salesOrderEntry = salesOrderEntries[p];
 					var salesOrderEntry = salesOrderEntries[sorted_keys[p]];
 					tbody+='<tr>' + 
-						'<td>'+salesOrderEntry.id+'</td>' +
-						'<td>'+salesOrderEntry.styleCode+'</td>' +
-						'<td>'+salesOrderEntry.colorCode+'</td>' +
-						'<td>'+salesOrderEntry.genderCode+'</td>';
+						'<td align="center">'+salesOrderEntry.id+'</td>' +
+						'<td align="center">'+salesOrderEntry.styleCode+'</td>' +
+						'<td align="center">'+salesOrderEntry.colorCode+'</td>' +
+						'<td align="center">'+salesOrderEntry.genderCode+'</td>';
 						
 						for(var h = 0; h < sizeArray.length; h++){
 							var key = "quantityForSize" + sizeArray[h];
 							if(salesOrderEntry[key] != null){
 								quantity = quantity + salesOrderEntry[key];
-								tbody+='<td>'+salesOrderEntry[key]+'</td>';
+								tbody+='<td align="center">'+salesOrderEntry[key]+'</td>';
 							} else {
-								tbody+='<td>0</td>';
+								tbody+='<td align="center">0</td>';
 							}
 							
 						}
-					var total = quantity*salesOrderEntry.mrp;
-					tbody+='<td>'+quantity+'</td>' +
-							'<td>'+salesOrderEntry.mrp+'</td>' +
-							'<td>'+numberWithCommas(total)+'</td>'+
+					var markedDownPrice = (salesOrderEntry.mrp * ( 1- markDown ));
+					var total = quantity * markedDownPrice;
+					tbody+='<td align="center">'+quantity+'</td>' +
+							'<td align="center">'+salesOrderEntry.mrp+'</td>' +
+							'<td align="center">'+numberWithCommas(total)+'</td>'+
 							'</tr>';
 					productTotal+=total;
 				}
@@ -153,12 +155,12 @@ $(window).load(function() {
 				Calculations for discount, tax, grandtotal
 				*/
 				
-				var markDown = (salesOrder.markDownOnSalesOrderDate/100) * productTotal;
-				var cashDiscount = (salesOrder.cashDiscountOnSalesOrderDate/100) * (productTotal - markDown);
-				var promptPaymentDiscount = (salesOrder.promptPaymentDiscountOnSalesOrderDate/100) * (productTotal - markDown - cashDiscount);
-				var specialDiscount = (salesOrder.specialDiscountOnSalesOrderDate/100) * (productTotal - markDown - cashDiscount - promptPaymentDiscount)
 				
-				taxableAmount = productTotal - markDown - cashDiscount - promptPaymentDiscount - specialDiscount;
+				var cashDiscount = (salesOrder.cashDiscountOnSalesOrderDate/100) * (productTotal);
+				var promptPaymentDiscount = (salesOrder.promptPaymentDiscountOnSalesOrderDate/100) * (productTotal - cashDiscount);
+				var specialDiscount = (salesOrder.specialDiscountOnSalesOrderDate/100) * (productTotal - cashDiscount - promptPaymentDiscount)
+				
+				taxableAmount = productTotal - cashDiscount - promptPaymentDiscount - specialDiscount;
 				
 				var vatApplicable;
 				var cstApplicable;
@@ -248,9 +250,11 @@ $(window).load(function() {
 				
 				if(salesOrder.status == "CONFIRMED"){
 					document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
+					document.getElementById("buttonGeneratePackingList").style.display = "block";
 					document.getElementById("buttonConfirmSalesOrder").style.display = "none";
 				} else {
 					document.getElementById("buttonGeneratePackingList").style.visibility = "hidden";
+					document.getElementById("buttonGeneratePackingList").style.display = "none";
 				}
 
 			}
@@ -303,72 +307,74 @@ function backToLandingPage(){
 	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
 	<button id = "buttonConfirmSalesOrder" onclick = "confirmSalesOrder();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
 	<button id = "buttonGeneratePackingList" onclick = "generatePackingList();" class = "no-print green" style = "float:right; visibility:hidden">Generate Packing List</button>
-		<textarea id="header">SALES ORDER</textarea>
+	<textarea id="header">SALES ORDER</textarea>
 		
-		<div id="identity">
+	<div id="identity">		
+			<table id="additionalInfo" class = "borderless-table" readonly>
+				<tr>
+					<td>
+						<div id="logo">
+						  <img id="image" src="resources/logo.png" alt="logo" />
+						</div>	
+					</td>
+				</tr>	
+			</table>		
+		</div>
 		
-            <textarea id="address" readonly>				
+		<div id="upper-section">
+			<table class = "borderless-table" style="float:left;width:50%">
+				<tr>
+					<td>
+						<span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><span id="customer-name"></span>
+					</td>	
+				</tr>
+				<tr>
+                    <td>
+						<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
+						<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
+						<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
+						<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
+						<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
+					</td>
+				</tr>
+			</table>
+			<table class = "borderless-table" style="float:right;width:40%">
+			<tr>
+					<td>
+						<textarea id="address" readonly>				
 AD VALORAM CLOTHING PVT LTD.
 
 Head Office :
 102, Paresh Complex,
 Kaher Pipeline, Bhiwandi
 Thane - 421 302
-</textarea>			
-<table id="additionalInfo" class = "borderless-table" readonly>
-	<tr>
-		<td>		
-		<div id="logo">
-		  <div id="logoctr">
-			<a href="javascript:;" id="change-logo" title="Change logo">Change Logo</a>
-			<a href="javascript:;" id="save-logo" title="Save changes">Save</a>
-
-			<a href="javascript:;" id="delete-logo" title="Delete logo">Delete Logo</a>
-			<a href="javascript:;" id="cancel-logo" title="Cancel changes">Cancel</a>
-		  </div>
-
-		  <div id="logohelp">
-			<input id="imageloc" type="text" size="50" value="" /><br />
-			(max width: 540px, max height: 100px)
-		  </div>
-		  <img id="image" src="resources/logo.png" alt="logo" />
-		</div>	
-		</td>
-	</tr>
-	<tr>
-		<td>
-<span>Phone no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span><span id = "contactNumber"></span></br>
-<span>Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: advaloramclothing@gmail.com</span></br>
-<span>VAT TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "vatTinNumber"></span></br>
-<span>CST TIN no&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;</span><span id = "cstTinNumber"></span></br></br>
-		</td>
-	</tr>
-</table>
-			
+						</textarea>	
+					</td>
+				</tr>
+			    <tr>
+                    <td class="meta-head">Phone no</td>
+                    <td><span></span></td>
+                </tr>
+                <tr>
+                    <td class="meta-head">Email</td>
+                    <td><span></span></td>
+                </tr>	
+                <tr>
+                    <td class="meta-head">VAT TIN no</td>
+                    <td><span></span></td>
+                </tr>
+                <tr>
+                    <td class="meta-head">CST TIN no</td>
+                    <td><span></span></td>
+                </tr>				
+			</table>
 		</div>
+		
 		
 		<div style="clear:both"></div>
 		
-		<div id="customer">
-            <table class = "borderless-table" style="float:left">
-                <tr>
-                    <td>
-            <span id="customer-title">NAME OF PARTY : </span><span id="customer-name"></span>
-					</td>
-				</tr>
-				<tr>
-                    <td>
-					<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
-					<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
-					<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
-					<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
-					<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
-					</td>
-				</tr>
-			</table>
-
-
-            <table id="meta" style="float:right">
+		<div id="lower-section">
+            <table id="meta" style="float:left">
                 <tr>
                     <td class="meta-head">Sales Order No.</td>
                     <td><span id="salesOrderNo"></span></td>
@@ -381,27 +387,40 @@ Thane - 421 302
                     <td class="meta-head">PO Reference</td>
                     <td><span id="purchaseOrderReference"></span></td>
                 </tr>
-				<tr>
-                    <td colspan = "2" style="height:100px; text-align:left">
-
-Transport&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "transport"></span></br>
-Road Permit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "roadPermit"></span></br>
-No Of Packages&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "noOfPackages"></span></br>
-Weight&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "weight"></span></br>
-L.R No&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "lrNo"></span></br>
-Referred By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;<span id = "referredBy"></span></br>
-
-</td>
-                </tr>
                 <tr>
                     <td class="meta-head">Amount Due</td>
                     <td><div class="due"><span id = "amountDue"></span></div></td>
                 </tr>
 
             </table>
-		
+		            <table id="meta" style="float:right;width:40%">
+			    <tr>
+                    <td class="meta-head">Transport</td>
+                    <td><span id = "transport"></span></td>
+                </tr>
+				<tr>
+                    <td class="meta-head">Road Permit</td>
+                    <td><span id = "roadPermit"></span></td>
+                </tr>
+					    <tr>
+                    <td class="meta-head">No Of Packages</td>
+                    <td><span id = "noOfPackages"></span></td>
+                </tr>		
+			    <tr>
+                    <td class="meta-head">Weight</td>
+                    <td><span id = "weight"></span></td>
+                </tr>
+			    <tr>
+                    <td class="meta-head">L.R No</td>
+                    <td><span id = "lrNo"></span></td>
+                </tr>
+			    <tr>
+                    <td class="meta-head">Referred By</td>
+                    <td><span id = "referredBy"></span></td>
+                </tr>					
+            </table>
 		</div>
-		
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 		<table id="items">
 
 		</table>
