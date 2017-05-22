@@ -15,6 +15,7 @@
 	<script src="assets/vendors/nprogress/nprogress.js"></script>
 	<!--<script type='text/javascript' src='js/example.js'></script>-->
 	<link rel="stylesheet" type="text/css" href="assets/vendors/nprogress/nprogress.css">
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
 </head>
 <script>
 
@@ -154,17 +155,24 @@ $(window).load(function() {
 				}
 				if(packingList.status == "OPEN" || packingList.status == "UNDER_REVISION"){
 					document.getElementById("buttonConfirmPackingList").style.visibility = "visible";
+					document.getElementById("buttonEdit").innerHTML = "Continue Editing";
+					document.getElementById('buttonEdit').onclick = function (){
+						window.location = "packing-list.html?packingListId="+getParameterByName("packingListId");
+					}
 				} else {
 					document.getElementById("buttonConfirmPackingList").style.visibility = "hidden";
 				}
 				
 				if(packingList.status == "CONFIRMED"){
-					//document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
+					document.getElementById("buttonPrintPage").style.visibility = "visible";
+					document.getElementById("buttonPrintPage").style.display = "inline-block";
 					showGeneratePackingListButtonIfInvoiceNotGenerated(packingList.id);
 					document.getElementById("buttonConfirmPackingList").style.display = "none";
 				} else {
 					document.getElementById("buttonGeneratePackingList").style.visibility = "hidden";
 					document.getElementById("buttonGeneratePackingList").style.display = "none";
+					document.getElementById("buttonPrintPage").style.visibility = "hidden";
+					document.getElementById("buttonPrintPage").style.display = "none";
 				}
 
 			}
@@ -201,24 +209,35 @@ function confirmPackingList(){
 		url: base_url + '/AdValoramAdmin/packingList/'+getParameterByName("packingListId")+'/confirm',
 		type: 'PUT',
 		success: function(result) {
-			window.location = "preview-packing-list.html?packingListId="+getParameterByName("packingListId");
+			document.getElementById('notificationDialog').style.display = "block";
+			document.getElementById('buttonNotificationAcknowledged').onclick = function (){
+				window.location = "preview-packing-list.html?packingListId="+getParameterByName("packingListId");
+			}
 		}
 	});
 }
 
 function editPackingList(){
-	$.ajaxSetup({
-		  headers : {
-			'Authorization' : 'Bearer ' + localStorage.getItem("token")
-		  }
-	});
-	$.ajax({
-		url: base_url + '/AdValoramAdmin/packingList/'+getParameterByName("packingListId")+'/edit',
-		type: 'PUT',
-		success: function(result) {
-			window.location = "packing-list.html?packingListId="+getParameterByName("packingListId");
-		}
-	});
+
+	document.getElementById('editDialog').style.display = "block";
+	document.getElementById('buttonConfirmEdit').onclick = function (){
+		$.ajaxSetup({
+			  headers : {
+				'Authorization' : 'Bearer ' + localStorage.getItem("token")
+			  }
+		});
+		$.ajax({
+			url: base_url + '/AdValoramAdmin/packingList/'+getParameterByName("packingListId")+'/edit',
+			type: 'PUT',
+			success: function(result) {
+				window.location = "packing-list.html?packingListId="+getParameterByName("packingListId");
+			}
+		});
+	}
+	
+	document.getElementById('buttonCancel').onclick = function (){
+		document.getElementById('editDialog').style.display = "none";
+	}
 }
 
 function backToLandingPage(){
@@ -230,11 +249,45 @@ function generateInvoice(){
 }
 </script>
 <body>
+<div id="editDialog" class="modal-outer-body">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">Edit Sales Order</h3>
+    </div>
+    <div class="modal-body">
+		<span>Do you want to edit a confirmed Packing List ? This cannot be reversed.</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<button id="buttonConfirmEdit" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Yes</button>
+		<button id="buttonCancel" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Cancel</button>
+    </div>
+  </div>
+</div>
+<div id="notificationDialog" class="modal-outer-body">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">Packing List Created</h3>
+    </div>
+    <div class="modal-body">
+		<span>Packing List has been created</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonNotificationAcknowledged" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">OK</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+</div>
 
 	<div id="page-wrap">
 	<button id="buttonBack" class = "no-print" onClick="backToLandingPage();">Back</button>
-	<button class = "no-print" onClick="editPackingList();">Edit</button>
-	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
+	<button id = "buttonEdit" class = "no-print" onClick="editPackingList();">Edit</button>
+	<button id = "buttonPrintPage" class = "no-print" onClick="window.print();" style = "display:none">Print</button>
 	<button id = "buttonConfirmPackingList" onclick = "confirmPackingList();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
 	<button id = "buttonGeneratePackingList" onclick = "generateInvoice();" class = "no-print green" style = "float:right; visibility:hidden">Generate Invoice</button>
 	<textarea id="header">PACKING LIST</textarea>

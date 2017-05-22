@@ -15,9 +15,10 @@
 	<script src="assets/vendors/nprogress/nprogress.js"></script>
 	<!--<script type='text/javascript' src='js/example.js'></script>-->
 	<link rel="stylesheet" type="text/css" href="assets/vendors/nprogress/nprogress.css">
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
+	
 </head>
-<script>
-
+<script>	
 $(window).load(function() {
 	if(getParameterByName('invoiceId')!=null){
 		var invoiceId = getParameterByName('invoiceId');
@@ -25,6 +26,13 @@ $(window).load(function() {
 			var result = data.result;
 			NProgress.start();
 			if(result!='error'){
+				var invoice = data.result[0];
+				if(invoice.status == 'CONFIRMED' && 
+					(invoice.lorryReceiptNumber == '' || invoice.lorryReceiptNumber == 'No Data')){
+					document.getElementById('buttonAddLrNumber').style.display = "inline-block";
+				} else {
+					document.getElementById('buttonAddLrNumber').style.display = "none";
+				}
 				var salesOrder = data.result[0].linkedSalesOrder;
 				var packingList = data.result[0].linkedPackingList;
 				console.log(packingList);
@@ -154,16 +162,38 @@ $(window).load(function() {
 				
 				taxableAmount = productTotal - cashDiscount - promptPaymentDiscount - specialDiscount;
 				
-				var vatApplicable;
-				var cstApplicable;
+				var vatApplicable, vatRateApplicable = 0.1;
+				var cstApplicable, cstAgainstFormCApplicable = false, cstRateApplicable = 0.125;
+				var gstApplicable, gstRateApplicable = 0.1;
 				var grandTotal = taxableAmount;
-				if(linkedCustomer.vatIsApplicable){
-					vatApplicable = taxableAmount * 0.1;
+				if(salesOrder.vatIsApplicableOnSalesOrderDate){
+					if(salesOrder.vatRateApplicableOnSalesOrderDate != null){
+						if(salesOrder.vatRateApplicableOnSalesOrderDate > 0){
+							vatRateApplicable = salesOrder.vatRateApplicableOnSalesOrderDate/100; //special case where user has provided vat applicable rate in customer master
+						}
+					}
+					vatApplicable = taxableAmount * vatRateApplicable;	//default calculation
 					grandTotal+=vatApplicable;
-				} else if(linkedCustomer.cstIsApplicable){
-					vatApplicable = "N.A";
-					cstApplicable = taxableAmount * 0.125;
+				} else if(salesOrder.cstIsApplicableOnSalesOrderDate){
+					if(salesOrder.cstRateApplicableOnSalesOrderDate != null){
+						
+						if(salesOrder.cstRateAgainstFormCOnSalesOrderDate > 0){
+							cstRateApplicable = salesOrder.cstRateAgainstFormCOnSalesOrderDate/100; // Form C
+							cstAgainstFormCApplicable = true;
+						} else if(salesOrder.cstRateApplicableOnSalesOrderDate > 0){
+							cstRateApplicable = salesOrder.cstRateApplicableOnSalesOrderDate/100; //special case where user has provided cst applicable rate in customer master
+						}
+					}
+					cstApplicable = taxableAmount * cstRateApplicable;	//default calculation
 					grandTotal+=cstApplicable;
+				} else if(salesOrder.gstIsApplicableOnSalesOrderDate){
+					if(salesOrder.gstRateApplicableOnSalesOrderDate != null){
+						if(salesOrder.gstRateApplicableOnSalesOrderDate > 0){
+							gstRateApplicable = salesOrder.gstRateApplicableOnSalesOrderDate/100; //special case where user has provided gst applicable rate in customer master
+						}
+					}
+					gstApplicable = taxableAmount * gstRateApplicable;	//default calculation
+					grandTotal+=gstApplicable;
 				}
 				
 				var loadingAndTransportationCharges = data.result[0].loadingCharges + data.result[0].transportationCharges;
@@ -192,15 +222,28 @@ $(window).load(function() {
 					  '<td colspan="2" class="total-line">Taxable Amount</td>'+
 					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
 				  '</tr>';
-				  if(linkedCustomer.vatIsApplicable){
+				  if(salesOrder.vatIsApplicableOnSalesOrderDate){
 					tbody+='<tr>'+
-						  '<td colspan="2" class="total-line">VAT</td>'+
+						  '<td colspan="2" class="total-line">VAT@'+(vatRateApplicable*100)+'%</td>'+
 						  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
 					  '</tr>';
-				  } else if (linkedCustomer.cstIsApplicable){
-					  tbody+='<tr>'+
-							  '<td colspan="2" class="total-line">CST</td>'+
+				  } else if (salesOrder.cstIsApplicableOnSalesOrderDate){
+					if(cstAgainstFormCApplicable){
+						tbody+='<tr>'+
+							  '<td colspan="2" class="total-line">CST(Form C)@'+(cstRateApplicable*100)+'%</td>'+
 							  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
+						  '</tr>';
+
+					} else {
+						tbody+='<tr>'+
+								  '<td colspan="2" class="total-line">CST@'+(cstRateApplicable*100)+'%</td>'+
+								  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
+							  '</tr>';
+						  }
+				  } else if (salesOrder.gstIsApplicableOnSalesOrderDate){
+					tbody+='<tr>'+
+							  '<td colspan="2" class="total-line">GST@'+(gstRateApplicable*100)+'%</td>'+
+							  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(gstApplicable, 2));+'</div></td>'+
 						  '</tr>';
 				  }
 				  
@@ -241,15 +284,23 @@ $(window).load(function() {
 				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
 				
 				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas(truncateDecimals(invoiceValue, 2));
-				if(data.result[0].status == "OPEN"){
+				if(data.result[0].status == "OPEN" || data.result[0].status == "UNDER_REVISION"){
 					document.getElementById("buttonConfirmInvoice").style.visibility = "visible";
-					document.getElementById("buttonConfirmInvoice").style.display = "block";
+					document.getElementById("buttonConfirmInvoice").style.display = "inline-block";
+					document.getElementById("buttonEdit").innerHTML = "Continue Editing";
+					document.getElementById('buttonEdit').onclick = function (){
+						window.location = "invoice.html?invoiceId="+getParameterByName("invoiceId");
+					}
 				} else {
 					document.getElementById("buttonConfirmInvoice").style.visibility = "hidden";
 				}
 				
 				if(data.result[0].status == "CONFIRMED"){
-					document.getElementById("buttonConfirmInvoice").style.display = "none";
+					document.getElementById("buttonPrintPage").style.visibility = "visible";
+					document.getElementById("buttonPrintPage").style.display = "inline-block";
+				} else {
+					document.getElementById("buttonPrintPage").style.visibility = "hidden";
+					document.getElementById("buttonPrintPage").style.display = "none";
 				}
 
 				var transporterName = data.result[0].linkedSalesOrder.linkedCustomer.linkedTransporter.companyName;
@@ -260,7 +311,7 @@ $(window).load(function() {
 				document.getElementById('roadPermit').innerHTML = data.result[0].roadPermitOrLicenseNumber;
 				document.getElementById('noOfPackages').innerHTML = data.result[0].numberOfPackages;
 				document.getElementById('weight').innerHTML = data.result[0].grossWeight;
-				document.getElementById('lrNo').innerHTML = data.result[0].roadPermitOrLicenseNumber;
+				document.getElementById('lrNo').innerHTML = data.result[0].lorryReceiptNumber;
 				
 				var referredByFirstName = data.result[0].linkedSalesOrder.referredByEmployee.firstName;
 				var referredByLastName = data.result[0].linkedSalesOrder.referredByEmployee.lastName;
@@ -297,16 +348,140 @@ function confirmInvoice(){
 	});
 }
 
+function editInvoice(){
+	document.getElementById('editDialog').style.display = "block";
+	document.getElementById('buttonConfirmEdit').onclick = function (){
+			$.ajaxSetup({
+			  headers : {
+				'Authorization' : 'Bearer ' + localStorage.getItem("token")
+			  }
+			});
+			$.ajax({
+				url: base_url + '/AdValoramAdmin/invoice/'+getParameterByName("invoiceId")+'/edit',
+				type: 'PUT',
+				success: function(result) {
+					window.location = "invoice.html?invoiceId="+getParameterByName("invoiceId");
+				}
+			});
+	}
+	
+	document.getElementById('buttonCancel').onclick = function (){
+		document.getElementById('editDialog').style.display = "none";
+	}
+}
+
 function backToLandingPage(){
 	window.location = "landing-invoice.html";
 }
+
+	function showAddLrNumberModal() {
+		document.getElementById('addLrNumberModal').style.display = "block";
+		document.getElementById('buttonConfirmAddLrNumber').onclick = function (){
+				if(document.getElementById('lrNumber').value == ''){
+					document.getElementById("errorNotificationForModal").innerHTML = "Please enter a valid Lorry Receipt Number<br/><br/>";
+					return;
+				} else {
+					document.getElementById("errorNotificationForModal").innerHTML = "";
+				}
+				var payload = new Object();
+				payload.lorryReceiptNumber = document.getElementById('lrNumber').value;
+				var request = new XMLHttpRequest();
+				NProgress.start();
+				request.onreadystatechange = function(){
+					NProgress.inc();
+					if(request.readyState == 4){
+						var response = JSON.parse(request.response);
+						if(request.status == 200){
+							window.location = "preview-invoice.html?invoiceId="+getParameterByName("invoiceId");
+						} else {
+							document.getElementById("errorNotificationForModal").innerHTML = response;
+						}
+						NProgress.done();
+					}
+				};
+				
+				request.open ("PUT", base_url + "/AdValoramAdmin/invoice/"+getParameterByName("invoiceId")+"/lrNo", true);
+				request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
+				request.setRequestHeader("content-type", "application/json");
+				request.send(JSON.stringify(payload));
+		}
+	}
+
+	function closeAddLrNumberModal(){
+		document.getElementById('addLrNumberModal').style.display = 'none';
+	}
+	
+	// Get the modal
+	var modal = document.getElementById('addLrNumberModal');
+	// Get the <span> element that closes the modal
+	var span = document.getElementById("closeAddLrNumberModal");
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
 </script>
 <body>
 
+<div id="editDialog" class="modal-outer-body">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">Edit Invoice</h3>
+    </div>
+    <div class="modal-body">
+		<span>Do you want to edit a confirmed Invoice ? This cannot be reversed.</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<button id="buttonConfirmEdit" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Yes</button>
+		<button id="buttonCancel" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="notificationDialog" class="modal-outer-body">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">Invoice Created</h3>
+    </div>
+    <div class="modal-body">
+		<span>Invoice has been created</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonNotificationAcknowledged" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">OK</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+</div>
+
+	<div id="addLrNumberModal" class="modal-outer-body">
+
+	  <!-- Modal content -->
+	  <div class="modal-content">
+		<div class="modal-header">
+			<h3 style="padding:5px;font-size:15px;">Add Lorry Receipt Number</h3>
+		</div>
+		<div class="modal-body">
+			<span id = "errorNotificationForModal" style = "margin-bottom:10px;;color:red"></span>	
+			<input id = "lrNumber" type = "text" style = "padding:8px 16px;font-size: 1rem; line-height: 1.5;border: 1px solid #ccc;border-radius: .25rem;width:90%;" placeholder = " Enter Lorry Receipt Number Here.."></input>
+		</div>
+		<div class="modal-footer" style="height:70px;">
+			<button id="buttonConfirmAddLrNumber" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Continue</button>
+			<button id="buttonCancel" style = "width:150px;height:40px;display:inline;" class="btn btn Primary" onclick = "closeAddLrNumberModal()">Cancel</button>
+		</div>
+	  </div>
+
+	</div>
 	<div id="page-wrap">
 	<button id="buttonBack" class = "no-print" onClick="backToLandingPage();">Back</button>
-	<!--<button class = "no-print" onClick="editInvoice();">Edit</button>-->
-	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
+	<button id = "buttonEdit" class = "no-print" onClick="editInvoice();">Edit</button>
+	<button id="buttonPrintPage" class = "no-print" onClick="window.print();" style = "display:none">Print</button>
+	<button id="buttonAddLrNumber" class = "no-print" onClick="showAddLrNumberModal()">Add LR Number</button>
 	<button id = "buttonConfirmInvoice" onclick = "confirmInvoice();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
 		<textarea id="header">INVOICE</textarea>
 		
@@ -442,7 +617,6 @@ Thane - 421 302
 		</div>
 		
 	</div>
-	
 </body>
 
 </html>

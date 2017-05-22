@@ -1,5 +1,5 @@
-<div class="page-content-inner">
 
+<div class="page-content-inner">
     <!-- Dashboard -->
     <div class="dashboard-container">
         <div class="row">
@@ -9,9 +9,9 @@
                         <div href="javascript: void(0);" class="widget-body-inner">
                             <h5 class="text-uppercase">Monthly Sales</h5>
                             <i class="counter-icon icmn-cash3"></i>
-                            <span class="counter-count">
+                            <span id = "monthlySalesWidget" class="counter-count">
                                 <i class="icmn-arrow-up5"></i>
-                                Rs.<span class="counter-init" data-from="25" data-to="942"></span>
+                                Rs.<span class="counter-init" data-from="0" data-to="0"></span>
                             </span>
                         </div>
                     </div>
@@ -23,9 +23,9 @@
                         <div href="javascript: void(0);" class="widget-body-inner">
                             <h5 class="text-uppercase">Open Sales Orders</h5>
                             <i class="counter-icon icmn-server"></i>
-                            <span class="counter-count">
+                            <span id = "openSalesOrderCount" class="counter-count">
                                 <i class="icmn-arrow-down5"></i>
-                                <span class="counter-init" data-from="0" data-to="99"></span>
+                                <span class="counter-init" data-from="0" data-to="0"></span>
                             </span>
                         </div>
                     </div>
@@ -36,10 +36,10 @@
                     <div class="widget-body">
                         <div href="javascript: void(0);" class="widget-body-inner">
                             <h5 class="text-uppercase">Open Invoices</h5>
-                            <i class="counter-icon icmn-users"></i>
-                            <span class="counter-count">
+                            <i class="counter-icon icmn-server"></i>
+                            <span id = "openInvoiceCount" class="counter-count">
                                 <i class="icmn-arrow-up5"></i>
-                                <span class="counter-init" data-from="0" data-to="67"></span>
+                                <span class="counter-init" data-from="0" data-to="0"></span>
                             </span>
                         </div>
                     </div>
@@ -51,9 +51,9 @@
                         <div href="javascript: void(0);" class="widget-body-inner">
                             <h5 class="text-uppercase">Number Of Customers</h5>
                             <i class="counter-icon icmn-users"></i>
-                            <span class="counter-count">
+                            <span id = "customerCount" class="counter-count">
                                 <i class="icmn-arrow-up5"></i>
-                                <span class="counter-init" data-from="0" data-to="356"></span>
+                                <span class="counter-init" data-from="0" data-to="0"></span>
                             </span>
                         </div>
                     </div>
@@ -233,7 +233,7 @@
                                 <a href="javascript: void(0);" class="widget-body">
                                     <h2>AdValoram</h2>
                                     <p>
-                                        Bussines Management Solution
+                                        Business Management Solution
                                     </p>
                                 </a>
                             </div>
@@ -889,9 +889,60 @@
         ///////////////////////////////////////////////////////////
         // COUNTERS
         $('.counter-init').countTo({
-            speed: 1500
+            speed: 500,
+			from:0,
+			to:0
         });
+		
+		$.ajaxSetup({
+			  headers : {
+				'Authorization' : 'Bearer ' + localStorage.getItem("token")
+			  }
+		});
+		
+		$.getJSON(base_url + "/AdValoramAdmin/invoice/monthlySales", function(data){
+			if(data.result=='error'){
+				return;
+			 }
+			$('#monthlySalesWidget').countTo({
+				speed: 500,
+				from: 0,
+				to: data.result
+			});
+		});
 
+		$.getJSON(base_url + "/AdValoramAdmin/salesOrder/open/count", function(data){
+			if(data.result=='error'){
+				return;
+			 }
+			$('#openSalesOrderCount').countTo({
+				speed: 500,
+				from: 0,
+				to: data.result
+			});
+		});
+		
+		$.getJSON(base_url + "/AdValoramAdmin/invoice/open/count", function(data){
+			if(data.result=='error'){
+				return;
+			 }
+			$('#openInvoiceCount').countTo({
+				speed: 500,
+				from: 0,
+				to: data.result
+			});
+		});
+		
+		$.getJSON(base_url + "/AdValoramAdmin/customer/count", function(data){
+			if(data.result=='error'){
+				return;
+			 }
+			$('#customerCount').countTo({
+				speed: 500,
+				from: 0,
+				to: data.result
+			});
+		});
         ///////////////////////////////////////////////////////////
         // ADJUSTABLE TEXTAREA
         autosize($('#textarea'));

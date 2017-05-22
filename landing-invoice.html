@@ -545,6 +545,7 @@
 					<th>City</th>					
                     <th>Invoice Quantity(Pcs)</th>
 					<th>Invoice Amount (INR)</th>
+					<th>Date</th>
 					<th>Status</th>
 					<th>Action</th>
                 </tr>
@@ -556,6 +557,7 @@
 					<th>City</th>					
                     <th>Invoice Quantity(Pcs)</th>
 					<th>Invoice Amount (INR)</th>
+					<th>Date</th>
 					<th>Status</th>
 					<th>Action</th>
                 </tr>
@@ -631,6 +633,7 @@
 					linkedPackingList.linkedCustomer.city.cityName,
 					quantity,
 					"Rs. "+numberWithCommas(orderAmount),
+					invoice.invoiceDate.split(" ")[0],
 					invoice.status,
 					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=viewInvoice("+invoice.invoiceId+",'"+invoice.status+"');><i class='icmn-pencil5'></i> View</a>"
 					//+ "<a href='javascript: void(0);' class='link-underlined' onclick=showDeleteSalesOrderDialog("+linkedPackingList.salesOrderId+");><i class='icmn-cross2'></i> Remove</a>;"

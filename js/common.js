@@ -10,7 +10,7 @@
 	var sizesArray = null;
 	var productCategoryArray = null;
 	var brandsArray = null;
-	var selectedStyleCode = null;
+	var selectedStyleCode = '';
 	
 	
 	function sendSignoutRequest(){

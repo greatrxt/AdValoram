@@ -739,8 +739,10 @@
 								</div>
 								<div class = "col-lg-3">	
 									<div class="form-group">
-										<label for="shortName">Short Name</label>
-										<input class="form-control" id="shortName" type="text">
+										<label for="shortName">Short Name*</label>
+										<input class="form-control" id="shortName" type="text" name="validation[Short Name]"
+																					   data-validation="[L>=1]"
+																					   data-validation-message="Please enter a valid $">
 									</div>
 								</div>
 								<div class = "col-lg-3">	
@@ -800,6 +802,7 @@ $(window).load(function() {
 	function createOrUpdateTax(){
 	
 		if((document.getElementById("taxName").value.length < 2 ||
+			document.getElementById("shortName").value.length < 1 ) ||
 			document.getElementById("taxRate").value.length < 1 )){
 			return;
 		}

@@ -545,8 +545,10 @@
                     <th>Packing List ID</th>
                     <th>Customer Name</th>
 					<th>City</th>					
+					<th>Sales Order ID</th>
                     <th>Order Quantity(Pcs)</th>
 					<th>Order Amount (INR)</th>
+					<th>Date</th>
 					<th>Status</th>
 					<th>Action</th>
                 </tr>
@@ -556,8 +558,10 @@
                     <th>Packing List ID</th>
                     <th>Customer Name</th>
 					<th>City</th>					
+					<th>Sales Order ID</th>
                     <th>Order Quantity(Pcs)</th>
 					<th>Order Amount (INR)</th>
+					<th>Date</th>
 					<th>Status</th>
 					<th>Action</th>
                 </tr>
@@ -617,8 +621,10 @@
 					packingListJson.packingListId,
 					packingListJson.clientNameOnPackingListDate,
 					packingListJson.linkedCustomer.city.cityName,
+					packingListJson.linkedSalesOrderId,
 					quantity,
 					"Rs. "+numberWithCommas(orderAmount),
+					packingListJson.packingListDate.split(" ")[0],
 					packingListJson.status.replace(/_/g, ' '),
 					"<a href='javascript: void(0)'; class='link-underlined margin-right-5' onclick=viewPackingList("+packingListJson.packingListId+",'"+packingListJson.status+"');><i class='icmn-pencil5'></i> View</a>"
 				]).draw(false);

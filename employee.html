@@ -828,7 +828,7 @@
 														
 							<div class="form-group">
                                 <label for="pinCode">Pin Code*</label>
-                                <input class="form-control" id="pinCode" type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="validation[pincode]"
+                                <input class="form-control" id="pinCode" type="text"  maxlength="6" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="validation[pincode]"
 																																							   data-validation="[L>=3]"
 																																							   data-validation-message="$ must be at least 3 characters">
                             </div>

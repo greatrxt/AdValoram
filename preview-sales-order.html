@@ -15,6 +15,7 @@
 	<script src="assets/vendors/nprogress/nprogress.js"></script>
 	<!--<script type='text/javascript' src='js/example.js'></script>-->
 	<link rel="stylesheet" type="text/css" href="assets/vendors/nprogress/nprogress.css">
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
 </head>
 <script>
 
@@ -162,20 +163,42 @@ $(window).load(function() {
 				
 				taxableAmount = productTotal - cashDiscount - promptPaymentDiscount - specialDiscount;
 				
-				var vatApplicable;
-				var cstApplicable;
+				var vatApplicable, vatRateApplicable = 0.1;
+				var cstApplicable, cstAgainstFormCApplicable = false, cstRateApplicable = 0.125;
+				var gstApplicable, gstRateApplicable = 0.1;
 				var grandTotal = taxableAmount;
-				if(linkedCustomer.vatIsApplicable){
-					vatApplicable = taxableAmount * 0.1;
+				if(salesOrder.vatIsApplicableOnSalesOrderDate){
+					if(salesOrder.vatRateApplicableOnSalesOrderDate != null){
+						if(salesOrder.vatRateApplicableOnSalesOrderDate > 0){
+							vatRateApplicable = salesOrder.vatRateApplicableOnSalesOrderDate/100; //special case where user has provided vat applicable rate in customer master
+						}
+					}
+					vatApplicable = taxableAmount * vatRateApplicable;	//default calculation
 					grandTotal+=vatApplicable;
-				} else if(linkedCustomer.cstIsApplicable){
-					vatApplicable = "N.A";
-					cstApplicable = taxableAmount * 0.125;
+				} else if(salesOrder.cstIsApplicableOnSalesOrderDate){
+					if(salesOrder.cstRateApplicableOnSalesOrderDate != null){
+						
+						if(salesOrder.cstRateAgainstFormCOnSalesOrderDate > 0){
+							cstRateApplicable = salesOrder.cstRateAgainstFormCOnSalesOrderDate/100; // Form C
+							cstAgainstFormCApplicable = true;
+						} else if(salesOrder.cstRateApplicableOnSalesOrderDate > 0){
+							cstRateApplicable = salesOrder.cstRateApplicableOnSalesOrderDate/100; //special case where user has provided cst applicable rate in customer master
+						}
+					}
+					cstApplicable = taxableAmount * cstRateApplicable;	//default calculation
 					grandTotal+=cstApplicable;
+				} else if(salesOrder.gstIsApplicableOnSalesOrderDate){
+					if(salesOrder.gstRateApplicableOnSalesOrderDate != null){
+						if(salesOrder.gstRateApplicableOnSalesOrderDate > 0){
+							gstRateApplicable = salesOrder.gstRateApplicableOnSalesOrderDate/100; //special case where user has provided gst applicable rate in customer master
+						}
+					}
+					gstApplicable = taxableAmount * gstRateApplicable;	//default calculation
+					grandTotal+=gstApplicable;
 				}
 				
 				tbody+='<tr>'+
-					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate' +
+					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate ' +
 					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ ' the sale of the goods ' +
 					  'specified in this tax invoice is made by me/us and that the transaction of sale covered by this tax invoice ' +
 					  'has been effected by me/us and it shall be accounted for'+ 
@@ -196,15 +219,28 @@ $(window).load(function() {
 					  '<td colspan="2" class="total-line">Taxable Amount</td>'+
 					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
 				  '</tr>';
-				  if(linkedCustomer.vatIsApplicable){
+				  if(salesOrder.vatIsApplicableOnSalesOrderDate){
 					tbody+='<tr>'+
-						  '<td colspan="2" class="total-line">VAT</td>'+
+						  '<td colspan="2" class="total-line">VAT@'+(vatRateApplicable*100)+'%</td>'+
 						  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
 					  '</tr>';
-				  } else if (linkedCustomer.cstIsApplicable){
-					  tbody+='<tr>'+
-							  '<td colspan="2" class="total-line">CST</td>'+
+				  } else if (salesOrder.cstIsApplicableOnSalesOrderDate){
+					if(cstAgainstFormCApplicable){
+						tbody+='<tr>'+
+							  '<td colspan="2" class="total-line">CST(Form C)@'+(cstRateApplicable*100)+'%</td>'+
 							  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
+						  '</tr>';
+
+					} else {
+						tbody+='<tr>'+
+								  '<td colspan="2" class="total-line">CST@'+(cstRateApplicable*100)+'%</td>'+
+								  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
+							  '</tr>';
+						  }
+				  } else if (salesOrder.gstIsApplicableOnSalesOrderDate){
+					tbody+='<tr>'+
+							  '<td colspan="2" class="total-line">GST@'+(gstRateApplicable*100)+'%</td>'+
+							  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(gstApplicable, 2));+'</div></td>'+
 						  '</tr>';
 				  }
 				  
@@ -244,17 +280,25 @@ $(window).load(function() {
 				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas(truncateDecimals(grandTotal, 2));
 				if(salesOrder.status == "OPEN" || salesOrder.status == "UNDER_REVISION"){
 					document.getElementById("buttonConfirmSalesOrder").style.visibility = "visible";
+					document.getElementById("buttonEdit").innerHTML = "Continue Editing";
+					document.getElementById('buttonEdit').onclick = function (){
+						window.location = "sales-order.html?id="+getParameterByName("id");
+					}
 				} else {
 					document.getElementById("buttonConfirmSalesOrder").style.visibility = "hidden";
 				}
 				
 				if(salesOrder.status == "CONFIRMED"){
+					document.getElementById("buttonPrintPage").style.visibility = "visible";
+					document.getElementById("buttonPrintPage").style.display = "inline-block";
 					document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
-					document.getElementById("buttonGeneratePackingList").style.display = "block";
+					document.getElementById("buttonGeneratePackingList").style.display = "inline-block";
 					document.getElementById("buttonConfirmSalesOrder").style.display = "none";
 				} else {
 					document.getElementById("buttonGeneratePackingList").style.visibility = "hidden";
 					document.getElementById("buttonGeneratePackingList").style.display = "none";
+					document.getElementById("buttonPrintPage").style.visibility = "hidden";
+					document.getElementById("buttonPrintPage").style.display = "none";
 				}
 
 			}
@@ -276,35 +320,81 @@ function confirmSalesOrder(){
 		url: base_url + '/AdValoramAdmin/salesOrder/'+getParameterByName("id")+'/confirm',
 		type: 'PUT',
 		success: function(result) {
-			window.location = "preview-sales-order.html?id="+getParameterByName("id");
+			document.getElementById('notificationDialog').style.display = "block";
+			document.getElementById('buttonNotificationAcknowledged').onclick = function (){
+				window.location = "preview-sales-order.html?id="+getParameterByName("id");
+			}
 		}
 	});
 }
 
 function editSalesOrder(){
-	$.ajaxSetup({
-		  headers : {
-			'Authorization' : 'Bearer ' + localStorage.getItem("token")
-		  }
-	});
-	$.ajax({
-		url: base_url + '/AdValoramAdmin/salesOrder/'+getParameterByName("id")+'/edit',
-		type: 'PUT',
-		success: function(result) {
-			window.location = "sales-order.html?id="+getParameterByName("id");
-		}
-	});
+	document.getElementById('editDialog').style.display = "block";
+	document.getElementById('buttonConfirmEdit').onclick = function (){
+			$.ajaxSetup({
+			  headers : {
+				'Authorization' : 'Bearer ' + localStorage.getItem("token")
+			  }
+			});
+			$.ajax({
+				url: base_url + '/AdValoramAdmin/salesOrder/'+getParameterByName("id")+'/edit',
+				type: 'PUT',
+				success: function(result) {
+					window.location = "sales-order.html?id="+getParameterByName("id");
+				}
+			});
+	}
+	
+	document.getElementById('buttonCancel').onclick = function (){
+		document.getElementById('editDialog').style.display = "none";
+	}
 }
+
 function backToLandingPage(){
 	window.location = "landing-sales-order.html";
 }
 </script>
 <body>
+<div id="editDialog" class="modal-outer-body">
 
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">Edit Sales Order</h3>
+    </div>
+    <div class="modal-body">
+		<span>Do you want to edit a confirmed Sales Order ? This cannot be reversed.</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<button id="buttonConfirmEdit" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Yes</button>
+		<button id="buttonCancel" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="notificationDialog" class="modal-outer-body">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">Sales Order Created</h3>
+    </div>
+    <div class="modal-body">
+		<span>Sales Order has been created</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonNotificationAcknowledged" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">OK</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+</div>
+</div>
 	<div id="page-wrap">
 	<button id="buttonBack" class = "no-print" onClick="backToLandingPage();">Back</button>
-	<button class = "no-print" onClick="editSalesOrder();">Edit</button>
-	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
+	<button id = "buttonEdit" class = "no-print" onClick="editSalesOrder();">Edit</button>
+	<button id = "buttonPrintPage" class = "no-print" onClick="window.print();" style = "display:none">Print</button>
 	<button id = "buttonConfirmSalesOrder" onclick = "confirmSalesOrder();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
 	<button id = "buttonGeneratePackingList" onclick = "generatePackingList();" class = "no-print green" style = "float:right; visibility:hidden">Generate Packing List</button>
 	<textarea id="header">SALES ORDER</textarea>

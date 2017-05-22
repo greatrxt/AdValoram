@@ -1322,7 +1322,7 @@
 				document.getElementById('contactPerson').value = salesOrder.clientContactPersonOnSalesOrderDate;
 				document.getElementById('contactNumber').value = salesOrder.clientContactPersonOnSalesOrderDate;
 				document.getElementById('emailAddress').value = salesOrder.clientEmailAddressOnSalesOrderDate;
-
+				document.getElementById('returnDate').min = data.result[0].invoiceDate.split(" ")[0];
 				
 				if(salesOrder.linkedCustomer.linkedTransporter.companyName!=null){
 					document.getElementById('transportName').value = salesOrder.linkedCustomer.linkedTransporter.companyName;		

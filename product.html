@@ -1104,7 +1104,7 @@
 							
 						}
 					</script>
-					</div>
+					
 					<div class="form-group" >
 						<div class="col-md-9" style="padding-bottom:20px;">
 							<button type="submit" class="btn width-150 btn-primary" id = "btnSave" style="margin:10px" onclick="createProductAndSku();">Save</button>
@@ -1113,6 +1113,7 @@
 							<button type="button" class="btn width-150 btn-default" style="margin:10px" onclick="goBackToLandingPage();">Cancel</button>
 						</div>
                     </div>
+					</div>
 					<div id="deleteFileModal" class="modal-outer-body">
 
 				  <!-- Modal content -->
@@ -1338,7 +1339,7 @@
 									for(var f = 0; f < fileDetailsArray.length; f++){
 										str+="<div class='preview-area' id = 'logo'>";
 										//str+="<div id='logoctr'><a id='delete-logo' title='Delete'>Delete</a></div>";
-										str+="<div id='logoctr'><i id='delete-logo' class='fa fa-trash fa-2x' onclick='showDeleteFileDialog("+fileDetailsArray[f].id+")'></i></div>"
+										str+="<div id='logoctr'><i style='color:white' id='delete-logo' class='fa fa-trash fa-3x' onclick='showDeleteFileDialog("+fileDetailsArray[f].id+")'></i></div>"
 										str+='<img style="width:100%" src="' + fileDetailsArray[f].fileLocation + '" />';
 										str+='</div></br>';
 									}

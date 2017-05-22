@@ -196,6 +196,11 @@ $(window).load(function() {
 				
 				if(data.result[0].status == "CONFIRMED"){
 					document.getElementById("buttonIssueInvoice").style.display = "none";
+					document.getElementById("buttonPrintPage").style.visibility = "visible";
+					document.getElementById("buttonPrintPage").style.display = "block";
+				} else {
+					document.getElementById("buttonPrintPage").style.visibility = "hidden";
+					document.getElementById("buttonPrintPage").style.display = "none";
 				}
 
 				var transporterName = salesOrder.linkedCustomer.linkedTransporter.companyName;
@@ -255,7 +260,7 @@ function backToLandingPage(){
 	<div id="page-wrap">
 	<button id="buttonBack" class = "no-print" onClick="backToLandingPage();">Back</button>
 	<button class = "no-print" onClick="editCreditNote();">Edit</button>
-	<button id="buttonPrintPage" class = "no-print" onClick="window.print();">Print</button>
+	<button id = "buttonPrintPage" class = "no-print" onClick="window.print();" style = "display:none">Print</button>
 	<button id = "buttonIssueInvoice" onclick = "issueInvoice();" class = "no-print" style = "float:right; visibility:hidden">Issue</button>
 		<textarea id="header">CREDIT NOTE</textarea>
 		

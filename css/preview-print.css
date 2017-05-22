@@ -6,4 +6,7 @@
   .no-print {
     display: none;
   }
+  .no-print .green{
+    display: none;
+  }
 }

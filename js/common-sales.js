@@ -99,11 +99,16 @@ function getProductCategories(){
 			});
 	}
 }
-//var cstRateApplicableOnSalesOrderDate = 0;
-//var vatRateApplicableOnSalesOrderDate = 0;
-//var cstRateAgainstFormCOnSalesOrderDate = 0;
-//var gstRateApplicableOnSalesOrderDate = 0;
-//var octroiLbtEntryTaxApplicableOnSalesOrderDate = 0;
+var cstRateApplicableOnSalesOrderDate = -1;
+var vatRateApplicableOnSalesOrderDate = -1;
+var cstRateAgainstFormCOnSalesOrderDate = -1;
+var gstRateApplicableOnSalesOrderDate = -1;
+var octroiLbtEntryTaxApplicableOnSalesOrderDate = -1;
+
+var vatIsApplicable = false;
+var cstIsApplicable = false;
+var gstIsApplicable = false;
+var octroiLbtEntryTaxIsApplicable = false;
 	
 function getClients(){
 	if(document.getElementById('clientName')!=null){
@@ -145,15 +150,48 @@ function getClients(){
 						document.getElementById('promptPaymentDiscount').value = data.result[0].promptPaymentDiscount;
 						document.getElementById('specialDiscount').value = data.result[0].specialDiscount;
 						
-						//cstRateApplicableOnSalesOrderDate = data.result[0].cstRateApplicable;
-						//vatRateApplicableOnSalesOrderDate = data.result[0].vatRateApplicable;
-						//cstRateAgainstFormCOnSalesOrderDate = data.result[0].cstRateAgainstFormC;
-						//gstRateApplicableOnSalesOrderDate = data.result[0].gstRateApplicable;
-						//octroiLbtEntryTaxApplicableOnSalesOrderDate = data.result[0].octroiLbtEntryTaxApplicable;
+						cstRateApplicableOnSalesOrderDate = data.result[0].cstRateApplicable;
+						vatRateApplicableOnSalesOrderDate = data.result[0].vatRateApplicable;
+						cstRateAgainstFormCOnSalesOrderDate = data.result[0].cstRateAgainstFormC;
+						gstRateApplicableOnSalesOrderDate = data.result[0].gstRateApplicable;
+						octroiLbtEntryTaxApplicableOnSalesOrderDate = data.result[0].octroiLbtEntryTaxApplicable;
+						
+						vatIsApplicable = data.result[0].vatIsApplicable;
+						cstIsApplicable = data.result[0].cstIsApplicable;
+						gstIsApplicable = data.result[0].gstIsApplicable;
+						octroiLbtEntryTaxIsApplicable = data.result[0].octroiLbtEntryTaxIsApplicable;
 						
 					});
 				}
 			});
+				
+				
+			if(document.getElementById('referredByCustomer')!=null){
+				var referredByCustomer = document.getElementById('referredByCustomer');
+				removeOptions(referredByCustomer);
+				for(var i = 0; i < customerArray.length; i++){
+					var customer = customerArray[i];
+						var opt = document.createElement('option');
+						opt.value = customer.id;
+						opt.innerHTML = customer.companyName;
+						referredByCustomer.appendChild(opt);
+				}
+				
+				document.getElementById("referredByCustomer").selectedIndex = -1;;
+			}
+			
+			if(document.getElementById('refereePartner')!=null){
+				var refereePartner = document.getElementById('refereePartner');
+				removeOptions(refereePartner);
+				for(var i = 0; i < customerArray.length; i++){
+					var customer = customerArray[i];
+						var opt = document.createElement('option');
+						opt.value = customer.id;
+						opt.innerHTML = customer.companyName;
+						refereePartner.appendChild(opt);
+				}
+				document.getElementById("refereePartner").selectedIndex = -1;
+			}
 		});
 	}
 }
