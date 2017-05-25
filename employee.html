@@ -1041,7 +1041,7 @@
 					}
 				};
 				
-				request.open ("DELETE", base_url + "/AdValoramAdmin/upload/employee/"+getParameterByName('id')+"/"+fileId, true);
+				request.open ("DELETE", base_url + "/AdValoramAdmin/fileService/employee/"+getParameterByName('id')+"/"+fileId, true);
 				request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 				request.send();
 		}
@@ -1226,7 +1226,7 @@
 
 					//send formData to server-side
 					$.ajax({
-						url : base_url + '/AdValoramAdmin/upload/employee/' + response.objectId,
+						url : base_url + '/AdValoramAdmin/fileService/employee/' + response.objectId,
 						type : 'post',
 						beforeSend: function(request) {
 							request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));

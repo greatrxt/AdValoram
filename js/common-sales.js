@@ -105,6 +105,12 @@ var cstRateAgainstFormCOnSalesOrderDate = -1;
 var gstRateApplicableOnSalesOrderDate = -1;
 var octroiLbtEntryTaxApplicableOnSalesOrderDate = -1;
 
+var vatTinNumber = null;
+var gstNumber = null;
+var cstTinNumber = null;
+var serviceTaxNumber = null;
+var panNumber = null;
+
 var vatIsApplicable = false;
 var cstIsApplicable = false;
 var gstIsApplicable = false;
@@ -160,6 +166,12 @@ function getClients(){
 						cstIsApplicable = data.result[0].cstIsApplicable;
 						gstIsApplicable = data.result[0].gstIsApplicable;
 						octroiLbtEntryTaxIsApplicable = data.result[0].octroiLbtEntryTaxIsApplicable;
+						
+						vatTinNumber = data.result[0].vatTinNumber;
+						gstNumber = data.result[0].gstNumber;
+						cstTinNumber = data.result[0].cstTinNumber;
+						serviceTaxNumber = data.result[0].serviceTaxNumber;
+						panNumber = data.result[0].panNumber;
 						
 					});
 				}

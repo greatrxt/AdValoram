@@ -780,17 +780,14 @@
 
 			</table>
 		</div>
-		
-		<div class="modal-right-body postServerRequest">
-			<div class = "modal-right-body-bottom">
-				<button id="buttonSaveEntryAndClose" style = "width:150px;height:40px; margin-bottom:5px;" class="btn btn Primary" onclick = "saveProductAndClose()">Save</button></br>
-				<!--<button id="buttonSaveEntryAndGotoNext" style = "width:150px;height:40px; margin-top:5px;" class="btn btn Primary" onclick = "saveProductAndGoToNext()">Save & Add New</button>-->
-			</div>
-		</div>
+
     </div>
-    <div class="modal-footer">
-		<span id="numberOfPrintCopies" style="float:left;color:#000000;padding:7px 40px 0px 35px;font-size:13px;"></span>
-      <!--<button id="closeBarCodeModal" onclick="closeBarCodeModal()">Close</button>-->
+    <div class="modal-footer" style="overflow:visible">				
+		<div class="postServerRequest">
+			<button id="buttonSaveEntryAndGotoNext" class="btn btn Primary" onclick = "saveProductAndClose();addProduct();">Save & Add New</button>
+			<button id="buttonSaveEntryAndClose" class="btn btn Primary" onclick = "saveProductAndClose()">Save</button>
+			<button onclick = "closeAddProductModal();resetAddProductModal();" class="btn btn Primary">Cancel</button>
+		</div>
     </div>
   </div>
 
@@ -901,16 +898,11 @@
                             </div>
 							
 							<div class="form-group">
-                                <label for="referredByCustomer">Referred By Client </label>
+                                <label for="referredByCustomer">Referred By Distributor / Broker / Retailer </label>
 								<select class="form-control" id="referredByCustomer">
 								</select>
                             </div>
 							
-							<div class="form-group">
-                                <label for="refereePartner">Referree Partner </label>
-								<select class="form-control" id="refereePartner">
-								</select>
-                            </div>
 						</div>
 						
 						
@@ -960,11 +952,16 @@
                             </div>
 							
 							<div class="form-group">
-                                <label for="referredByEmployee">Referred By</label>
+                                <label for="referredByEmployee">Referred By Employee</label>
 								<select class="form-control" id="referredByEmployee">
 								</select>
                             </div>
 							
+							<div class="form-group">
+                                <label for="refereePartner">Referee Partner Name</label>
+								<select class="form-control" id="refereePartner">
+								</select>
+                            </div>	
 						</div>
 					</div>
 					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
@@ -1165,7 +1162,7 @@
 					}
 				};
 				
-				request.open ("DELETE", base_url + "/AdValoramAdmin/upload/salesOrder/"+objectId+"/"+fileId, true);
+				request.open ("DELETE", base_url + "/AdValoramAdmin/fileService/salesOrder/"+objectId+"/"+fileId, true);
 				request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 				request.send();
 		}
@@ -1196,7 +1193,23 @@
 			if(result!='error'){
 				var salesOrder = result[0];
 			
-				console.log(salesOrder);
+				vatIsApplicable = salesOrder.vatIsApplicableOnSalesOrderDate;
+				cstIsApplicable = salesOrder.cstIsApplicableOnSalesOrderDate;
+				gstIsApplicable = salesOrder.gstIsApplicableOnSalesOrderDate;
+				octroiLbtEntryTaxIsApplicable = salesOrder.octroiLbtEntryTaxIsApplicableOnSalesOrderDate;		
+				
+				vatTinNumber = salesOrder.vatTinNumberOnSalesOrderDate;
+				gstNumber = salesOrder.gstNumberOnSalesOrderDate;
+				cstTinNumber = salesOrder.cstTinNumberOnSalesOrderDate;
+				serviceTaxNumber = salesOrder.serviceTaxNumberOnSalesOrderDate;
+				panNumber = salesOrder.panNumberOnSalesOrderDate;
+				
+				cstRateApplicableOnSalesOrderDate = salesOrder.cstRateApplicableOnSalesOrderDate;
+				vatRateApplicableOnSalesOrderDate = salesOrder.vatRateApplicableOnSalesOrderDate;
+				cstRateAgainstFormCOnSalesOrderDate = salesOrder.cstRateAgainstFormCOnSalesOrderDate;
+				gstRateApplicableOnSalesOrderDate = salesOrder.gstRateApplicableOnSalesOrderDate;
+				octroiLbtEntryTaxApplicableOnSalesOrderDate = salesOrder.octroiLbtEntryTaxApplicableOnSalesOrderDate;
+				
 				document.getElementById('title').innerHTML = "Edit Sales Order";
 				document.getElementById('salesOrderId').value = salesOrder.salesOrderId;
 				document.getElementById('salesOrderRevisionNumber').value = "R"+salesOrder.salesOrderRevisionNumber;
@@ -1218,6 +1231,7 @@
 				document.getElementById('specialDiscount').value = salesOrder.specialDiscountOnSalesOrderDate;
 				
 				document.getElementById('notes').value = salesOrder.notes;
+				
 
 				var fileDetailsArray = salesOrder.associatedFiles;
 				var uploadedFiles = document.getElementById('uploadedFiles');
@@ -1399,9 +1413,17 @@
 		}
 		salesOrder.linkedCustomer = clientName.options[clientName.selectedIndex].value;
 		var referredByCustomer = document.getElementById('referredByCustomer');
-		salesOrder.referredByCustomer = referredByCustomer.options[referredByCustomer.selectedIndex].value;
+		
+		if(referredByCustomer.options[referredByCustomer.selectedIndex]!=null){
+			var customerName = referredByCustomer.options[referredByCustomer.selectedIndex].value;
+			salesOrder.referredByCustomer = customerName;
+		}
 		var refereePartner = document.getElementById('refereePartner');
-		salesOrder.refereePartner = refereePartner.options[refereePartner.selectedIndex].value;
+		
+		if(refereePartner.options[refereePartner.selectedIndex]!=null){
+			var refereePartnerName = refereePartner.options[refereePartner.selectedIndex].value;
+			salesOrder.refereePartner = refereePartnerName;
+		}
 		if(productList.length < 1){					//VALIDATE - PRODUCT
 			$('.nav-tabs-horizontal li:eq(1) a').tab('show');
 			tabFunction(1);
@@ -1439,7 +1461,13 @@
 		salesOrder.vatIsApplicableOnSalesOrderDate = vatIsApplicable;
 		salesOrder.cstIsApplicableOnSalesOrderDate = cstIsApplicable;
 		salesOrder.gstIsApplicableOnSalesOrderDate = gstIsApplicable;
-		salesOrder.octroiLbtEntryTaxIsApplicableOnSalesOrderDate = octroiLbtEntryTaxIsApplicable;
+		salesOrder.octroiLbtEntryTaxIsApplicableOnSalesOrderDate = octroiLbtEntryTaxIsApplicable;		
+		
+		salesOrder.vatTinNumberOnSalesOrderDate = vatTinNumber;
+		salesOrder.gstNumberOnSalesOrderDate = gstNumber;
+		salesOrder.cstTinNumberOnSalesOrderDate = cstTinNumber;
+		salesOrder.serviceTaxNumberOnSalesOrderDate = serviceTaxNumber;
+		salesOrder.panNumberOnSalesOrderDate = panNumber;	
 
 		salesOrder.notes = document.getElementById('notes').value;
 		
@@ -1454,7 +1482,8 @@
 				var response = JSON.parse(request.response);
 				if(response.result == "success"){
 					if(document.getElementById('uploadDocuments').files.length==0){
-						window.location = "landing-sales-order.html";
+						//window.location = "landing-sales-order.html";
+						window.location = "sales-order.html?id="+response.salesOrderId;
 						return;
 					}
 					var uploadDocuments = document.getElementById("uploadDocuments");
@@ -1466,7 +1495,7 @@
 
 					//send formData to server-side
 					$.ajax({
-						url : base_url + '/AdValoramAdmin/upload/salesOrder/' + response.objectId,
+						url : base_url + '/AdValoramAdmin/fileService/salesOrder/' + response.objectId,
 						type : 'post',
 						beforeSend: function(request) {
 							request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
@@ -1483,7 +1512,8 @@
 						success : function(json){
 							//place your code here
 							NProgress.done();
-							window.location = "landing-sales-order.html";
+							//window.location = "landing-sales-order.html";
+							window.location = "sales-order.html?id="+response.salesOrderId;
 						}
 					});
 				}
@@ -1512,9 +1542,9 @@
 		return -1;
 	}
 	
-	function showErrorWhileAddingProductDialog(product, entryIdIfExists){
+	function showErrorWhileAddingProductDialog(errorMessage){
 		document.getElementById('errorWhileAddingProductModal').style.display = "block";
-		document.getElementById('errorWhileAddingProductText').innerHTML = "Entry for Style Code " + product.styleCode + ", ColorCode " + product.colorCode + ", Gender " + product.gender + " has already been made at " + entryIdIfExists;
+		document.getElementById('errorWhileAddingProductText').innerHTML = errorMessage;
 		
 		document.getElementById('buttonCloseErrorWhileAddingProductModal').onclick = function (){
 			document.getElementById('errorWhileAddingProductModal').style.display = "none";
@@ -1539,7 +1569,8 @@
 			//check if entry for SKU has already been made
 			var entryIdIfExists = entryExists(product);
 			if(entryIdIfExists > 0){
-				showErrorWhileAddingProductDialog(product, entryIdIfExists);
+				var errorMessage = "Entry for Style Code " + product.styleCode + ", ColorCode " + product.colorCode + ", Gender " + product.gender + " has already been made at " + entryIdIfExists;
+				showErrorWhileAddingProductDialog(errorMessage);
 				return;
 			}
 			
@@ -1577,6 +1608,20 @@
 			product.quantityForSize48 = (document.getElementById("quantityForSize48") == null 
 										|| document.getElementById("quantityForSize48").value == 0
 										|| !document.getElementById('productSize48').checked) ? "" : document.getElementById("quantityForSize48").value;
+			if((product.quantityForSize28 +
+			product.quantityForSize30 +
+			product.quantityForSize32 +
+			product.quantityForSize34 +
+			product.quantityForSize36 +
+			product.quantityForSize38 +
+			product.quantityForSize40 +
+			product.quantityForSize42 +
+			product.quantityForSize44 +
+			product.quantityForSize46 +
+			product.quantityForSize48) == 0){
+				showErrorWhileAddingProductDialog("Please add atleast 1 item");
+				return;
+			}
 			productList.push(product);
 			refreshProductsTable();
 		}

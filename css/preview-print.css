@@ -4,9 +4,9 @@
 }
 @media print {
   .no-print {
-    display: none;
+    display: none!important;
   }
   .no-print .green{
-    display: none;
+    display: none!important;
   }
 }

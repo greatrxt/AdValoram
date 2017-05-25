@@ -742,7 +742,7 @@
 						
 						<div class = "col-lg-5">
 							<div class="form-group">
-                                <label for="companyName">Customer / Company Name</label>
+                                <label for="companyName">Customer / Company Name*</label>
                                 <input class="form-control" id="companyName" type="text" name="validation[Company name]"
 																					   data-validation="[L>=3]"
 																					   data-validation-message="$ must contain atleast 3 characters">
@@ -912,12 +912,10 @@
                                 <label for="cstTinNumber">CST TIN No.</label>
                                 <input class="form-control" id="cstTinNumber" type="text" disabled>
                             </div>
-							
 							<div class="form-group">
-                                <label for="gstRateApplicable">GST Rate Applicable (%)</label>
-                                <input class="form-control" id="gstRateApplicable"  type="number" step="0.01" disabled>
+                                <label for="gstNumber">GST Number</label>
+                                <input class="form-control" id="gstNumber" type="number" step="0.01" disabled>
                             </div>
-							
 							
 							<div class="form-group">
                                 <label for="serviceTaxNumber">Service Tax No.</label>
@@ -1003,10 +1001,13 @@
 									</div>
 								</div>
 							</div>
+														
 							<div class="form-group">
-                                <label for="gstNumber">GST Number</label>
-                                <input class="form-control" id="gstNumber" type="number" step="0.01" disabled>
+                                <label for="gstRateApplicable">GST Rate Applicable (%)</label>
+                                <input class="form-control" id="gstRateApplicable"  type="number" step="0.01" disabled>
                             </div>
+							
+
 							<div class="form-group">
                                 <label for="octroiLbtEntryTaxIsApplicable">Octroi / LBT / Entry Tax Rate applicable (%)</label>
                                 <input class="form-control" id="octroiLbtEntryTaxApplicable" type="number" step="0.01" disabled>
@@ -1140,7 +1141,7 @@
 					}
 				};
 				
-				request.open ("DELETE", base_url + "/AdValoramAdmin/upload/customer/"+getParameterByName('id')+"/"+fileId, true);
+				request.open ("DELETE", base_url + "/AdValoramAdmin/fileService/customer/"+getParameterByName('id')+"/"+fileId, true);
 				request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 				request.send();
 		}
@@ -1442,7 +1443,7 @@ $(window).load(function() {
 					
 					//send formData to server-side
 					$.ajax({
-						url : base_url + '/AdValoramAdmin/upload/customer/' + response.objectId,
+						url : base_url + '/AdValoramAdmin/fileService/customer/' + response.objectId,
 						type : 'post',
 						beforeSend: function(request) {
 							request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));

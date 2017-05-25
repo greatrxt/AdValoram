@@ -201,17 +201,21 @@ $(window).load(function() {
 				var octroiLbt = 0;
 				
 				tbody+='<tr>'+
-					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate' +
+					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "2" class="blank">I/We hereby certify that my/our registration certificate ' +
 					  'under the Maharashtra Value Added Tax Act, 2002 is in force on the date on which'+ ' the sale of the goods ' +
 					  'specified in this tax invoice is made by me/us and that the transaction of sale covered by this tax invoice ' +
 					  'has been effected by me/us and it shall be accounted for'+ 
-					  'in the turnover of sales while filing of return  and the due tax, if any, payable on the sale has been paid or shall be paid<br><br></td>' +
-					  '<td colspan="2" class="total-line">Total</td>'+
-					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(productTotal, 2))+'</div></td>'+
-				  '</tr>'+
+					  'in the turnover of sales while filing of return  and the due tax, if any, payable on the sale has been paid or shall be paid<br><br></td>';
+					 // '<td colspan="2" class="total-line">Total</td>'+
+					 // '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(productTotal, 2))+'</div></td>'+
+					if((truncateDecimals((markDown + cashDiscount + promptPaymentDiscount + specialDiscount), 2)) > 0){
+					  tbody+='<td colspan="2" class="total-line">Discount</td>'+
+					  '<td class="total-value"><div id="total">'+numberWithCommas(truncateDecimals((markDown + cashDiscount + promptPaymentDiscount + specialDiscount), 2))+'</div></td>';
+					  }
+				  tbody+='</tr>'+
 				  '<tr>'+
-					  '<td colspan="2" class="total-line">Discount</td>'+
-					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals((markDown + cashDiscount + promptPaymentDiscount + specialDiscount), 2))+'</div></td>'+
+					  '<td colspan="2" class="total-line">Taxable Amount</td>'+
+					  '<td class="total-value"><div id="total"> '+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
 				  '</tr>'+
 				  '<tr>'+
 					  '<td colspan="'+(sizeArray.length+4)+'" rowspan = "3" class="blank"> '+
@@ -219,37 +223,37 @@ $(window).load(function() {
 					  '1. Our responsibility ceases after delivery of goods, from our premises<br>'+
 					  '2. Goods once sold will not be taken back, or exchanged, under any circumstances<br>'+
 					  '3. If payment is not received within 30 days, interest @ 18% p.a. will be charged on Invoice amount.</td>'+
-					  '<td colspan="2" class="total-line">Taxable Amount</td>'+
-					  '<td class="total-value"><div id="total">Rs '+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
+					  //'<td colspan="2" class="total-line">Taxable Amount</td>'+
+					 // '<td class="total-value"><div id="total">'+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
 				  '</tr>';
 				  if(salesOrder.vatIsApplicableOnSalesOrderDate){
 					tbody+='<tr>'+
 						  '<td colspan="2" class="total-line">VAT@'+(vatRateApplicable*100)+'%</td>'+
-						  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
+						  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
 					  '</tr>';
 				  } else if (salesOrder.cstIsApplicableOnSalesOrderDate){
 					if(cstAgainstFormCApplicable){
 						tbody+='<tr>'+
 							  '<td colspan="2" class="total-line">CST(Form C)@'+(cstRateApplicable*100)+'%</td>'+
-							  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
+							  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
 						  '</tr>';
 
 					} else {
 						tbody+='<tr>'+
 								  '<td colspan="2" class="total-line">CST@'+(cstRateApplicable*100)+'%</td>'+
-								  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
+								  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
 							  '</tr>';
 						  }
 				  } else if (salesOrder.gstIsApplicableOnSalesOrderDate){
 					tbody+='<tr>'+
 							  '<td colspan="2" class="total-line">GST@'+(gstRateApplicable*100)+'%</td>'+
-							  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(gstApplicable, 2));+'</div></td>'+
+							  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(gstApplicable, 2));+'</div></td>'+
 						  '</tr>';
 				  }
 				  
 				  tbody+= '<tr>'+
 					  '<td colspan="2" class="total-line">Transportation + Loading Charges</td>'+
-					  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(loadingAndTransportationCharges, 2));+'</div></td>'+
+					  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(loadingAndTransportationCharges, 2));+'</div></td>'+
 				  '</tr>';
 				  
 				  if(linkedCustomer.octroiLbtEntryTaxIsApplicable){
@@ -257,16 +261,23 @@ $(window).load(function() {
 					tbody+= '<tr>'+
 					  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
 						  '<td colspan="2" class="total-line">Octroi / LBT @5.5%</td>'+
-						  '<td class="total-value"><div class="due">Rs '+numberWithCommas(truncateDecimals(octroiLbt, 2));+'</div></td>'+
+						  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(octroiLbt, 2));+'</div></td>'+
 					  '</tr>';
 				  }
 				  
 				  var invoiceValue = postLoadingTransportationCharges + octroiLbt;
 				  
+				  if(truncateDecimals(invoiceValue, 2) - truncateDecimals(Math.round(invoiceValue), 2) != 0){
+					  tbody+= '<tr>'+
+						  '<td colspan="2" class="total-line">Rounded Off</td>'+
+						  '<td class="total-value"><div class="due">'+truncateDecimals((truncateDecimals(Math.round(invoiceValue), 2) - truncateDecimals(invoiceValue, 2)), 2) +'</div></td>'+
+					  '</tr>';
+				  }
+				  
 				  tbody+= '<tr>'+
 				  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
 					  '<td colspan="2" class="total-line balance">Grand Total</td>'+
-					  '<td class="total-value balance"><div class="due">Rs '+numberWithCommas(truncateDecimals(invoiceValue, 2));+'</div></td>'+
+					  '<td class="total-value balance"><div class="due"><b>'+numberWithCommas(truncateDecimals(Math.round(invoiceValue), 2))+'</b></div></td>'+
 				  '</tr>';
 		  
 		  
@@ -275,11 +286,15 @@ $(window).load(function() {
 				document.getElementById('customer-name').innerHTML = salesOrder.clientNameOnSalesOrderDate;
 				document.getElementById('billing-address').innerHTML = salesOrder.clientBillingAddressOnSalesOrderDate;
 				document.getElementById('delivery-address').innerHTML = salesOrder.clientDeliveryAddressOnSalesOrderDate;
+				document.getElementById('city').innerHTML = salesOrder.clientCityOnSalesOrderDate;
+				document.getElementById('state').innerHTML = salesOrder.clientStateOnSalesOrderDate;
+				document.getElementById('contactPerson').innerHTML = salesOrder.clientContactPersonOnSalesOrderDate;
+				document.getElementById('contactNumber').innerHTML = salesOrder.clientContactNumberOnSalesOrderDate;
 				document.getElementById('vat-no').innerHTML = salesOrder.linkedCustomer.vatTinNumber
 				document.getElementById('cst-no').innerHTML = salesOrder.linkedCustomer.cstTinNumber;
 				document.getElementById('pan-no').innerHTML = salesOrder.linkedCustomer.panNumber;
 				
-				document.getElementById('invoiceNo').innerHTML = data.result[0].invoiceId;
+				document.getElementById('invoiceNo').innerHTML = data.result[0].invoiceId + " - R" + data.result[0].invoiceRevisionNumber;
 				document.getElementById('invoiceDate').innerHTML = data.result[0].invoiceDate.split(" ")[0];
 				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
 				
@@ -484,7 +499,7 @@ function backToLandingPage(){
 	<button id="buttonAddLrNumber" class = "no-print" onClick="showAddLrNumberModal()">Add LR Number</button>
 	<button id = "buttonConfirmInvoice" onclick = "confirmInvoice();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
 		<textarea id="header">INVOICE</textarea>
-		
+		<hr>
 		<div id="identity">		
 			<table id="additionalInfo" class = "borderless-table" readonly>
 				<tr>
@@ -501,13 +516,17 @@ function backToLandingPage(){
 			<table class = "borderless-table" style="float:left;width:50%">
 				<tr>
 					<td>
-						<span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><span id="customer-name"></span>
+						<span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><b><span id="customer-name"></span></b>
 					</td>	
 				</tr>
 				<tr>
                     <td>
 						<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
 						<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
+						<span id="city"></span></br>
+						<span id="state"></span></br></br>
+						<span>Contact Person:</span></br><span id="contactPerson"></span></br></br>
+						<span>Contact Number:</span></br><span id="contactNumber"></span></br></br>
 						<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
 						<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
 						<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
@@ -517,13 +536,13 @@ function backToLandingPage(){
 			<table class = "borderless-table" style="float:right;width:40%">
 			<tr>
 					<td>
+					<b>AD VALORAM CLOTHING PVT LTD.</b>
 						<textarea id="address" readonly>				
-AD VALORAM CLOTHING PVT LTD.
-
 Head Office :
 102, Paresh Complex,
-Kaher Pipeline, Bhiwandi
+Kalher Pipeline, Bhiwandi
 Thane - 421 302
+Maharashtra
 						</textarea>	
 					</td>
 				</tr>
@@ -570,7 +589,7 @@ Thane - 421 302
 			</table>
 
 
-            <table id="meta" style="float:right;width:40%">
+            <table id="meta" style="float:right;width:40%; margin-bottom:25px;">
 			    <tr>
                     <td class="meta-head">Transport</td>
                     <td><span id = "transport"></span></td>
@@ -598,7 +617,6 @@ Thane - 421 302
             </table>
 		
 		</div>
-		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 		<table id="items" style="padding-top:20px">
 
 		</table>

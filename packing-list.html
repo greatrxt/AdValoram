@@ -1147,7 +1147,7 @@
 					}
 				};
 				
-				request.open ("DELETE", base_url + "/AdValoramAdmin/upload/packingList/"+objectId+"/"+fileId, true);
+				request.open ("DELETE", base_url + "/AdValoramAdmin/fileService/packingList/"+objectId+"/"+fileId, true);
 				request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 				request.send();
 		}
@@ -1616,7 +1616,8 @@
 				var response = JSON.parse(request.response);
 				if(response.result == "success"){
 					if(document.getElementById('uploadDocuments').files.length==0){
-						window.location = "landing-packing-list.html";
+						//window.location = "landing-packing-list.html";
+						window.location = "packing-list.html?packingListId=" + response.packingListId; //refresh
 						return;
 					}
 					var uploadDocuments = document.getElementById("uploadDocuments");
@@ -1628,7 +1629,7 @@
 
 					//send formData to server-side
 					$.ajax({
-						url : base_url + '/AdValoramAdmin/upload/packingList/' + response.objectId,
+						url : base_url + '/AdValoramAdmin/fileService/packingList/' + response.objectId,
 						type : 'post',
 						beforeSend: function(request) {
 							request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
@@ -1645,7 +1646,8 @@
 						success : function(json){
 							//place your code here
 							NProgress.done();
-							window.location = "landing-packing-list.html";
+							//window.location = "landing-packing-list.html";
+							window.location = "packing-list.html?packingListId=" + response.packingListId; //refresh
 						}
 					});
 				}

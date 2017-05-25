@@ -1322,7 +1322,7 @@
 									
 									document.getElementById('costPrice').value = product.costPrice;
 									/*	
-									$.getJSON(base_url + "/AdValoramAdmin/upload/product/" + product.styleCode, function(data){
+									$.getJSON(base_url + "/AdValoramAdmin/fileService/product/" + product.styleCode, function(data){
 										if(data.result=='error'){
 											return;
 										}
@@ -1376,7 +1376,7 @@
 									}
 								};
 								
-								request.open ("DELETE", base_url + "/AdValoramAdmin/upload/product/"+getParameterByName('id')+"/"+fileId, true);
+								request.open ("DELETE", base_url + "/AdValoramAdmin/fileService/product/"+getParameterByName('id')+"/"+fileId, true);
 								request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));
 								request.send();
 						}
@@ -1502,7 +1502,7 @@
 								
 								//send formData to server-side
 								$.ajax({
-									url : base_url + '/AdValoramAdmin/upload/product/' + response.objectId,
+									url : base_url + '/AdValoramAdmin/fileService/product/' + response.objectId,
 									type : 'post',
 									beforeSend: function(request) {
 										request.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("token"));

@@ -178,6 +178,7 @@
 							   onkeydown = "if (event.keyCode == 13)
 								document.getElementById('btnLogin').click()">
                     </div>
+					<b><span id = "userNotification" style = "color:red; font-size:15px;"></span></b>
                     <div class="form-actions">
                         <button type="submit" id="btnLogin" onclick = "login();" class="btn btn-primary width-150">Sign In</button>
                     </div>
@@ -265,6 +266,7 @@
 
     });
 	function login(){
+		document.getElementById('userNotification').innerHTML = "";
 		if(document.getElementById('validation-username').value.length > 2
 			&& document.getElementById('validation-password').value.length > 4){
 				var username = document.getElementById('validation-username').value;
@@ -276,7 +278,8 @@
 						localStorage.setItem("token", request.response);						
 						window.location = "home.html";
 					} else if(request.readyState == 4 && request.status == 401){
-						window.location = "index.html";
+						//window.location = "index.html";
+						document.getElementById('userNotification').innerHTML = "Incorrect Username Or Password";
 					}
 				};
 				request.open ("POST", base_url + "/AdValoramAdmin/authentication", true);				

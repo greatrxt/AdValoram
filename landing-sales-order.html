@@ -528,9 +528,11 @@
         <div class="panel-heading">
             <h2>
                 <div class="dropdown pull-right">
+				<a id = "linkReport">
 					<button type="button" class="btn btn-primary">
                         Export to Excel
                     </button>
+				</a>
 					<button type="button" class="btn btn-primary"  onclick = "createSalesOrder();">
                         Create Sales Order
                     </button>
@@ -585,6 +587,7 @@
 </div>
 
 <script>
+
 	function createSalesOrder(){
 		window.location = "sales-order.html";
 	}
@@ -593,7 +596,8 @@
 	$(window).load(function() {
 	 // executes when complete page is fully loaded, including all frames, objects and images
 	 //alert("window is loaded");
-	 NProgress.start();
+	document.getElementById("linkReport").href = base_url + "/AdValoramAdmin/fileService/basicSalesOrderReport/"+ localStorage.getItem("token");
+	NProgress.start();
 	$.ajaxSetup({
 		  headers : {
 			'Authorization' : 'Bearer ' + localStorage.getItem("token")

@@ -13,7 +13,7 @@ textarea:focus {outline: none !important;border:0px solid red;box-shadow: 0 0 0p
 table { border-collapse: collapse;}
 table td, table th { border: 1px solid; padding: 4px; }
 
-#header { height: 15px; width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Arial, Helvetica, sans-serif; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px; }
+#header { height: 15px; width: 100%; margin: 20px 0;/* background: #222;*/ text-align: center; color: #999; font: bold 15px Arial, Helvetica, sans-serif; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px; }
 
 #address { width: 250px; height: 150px; float: left; }
 #additionalInfo { width: 100%; }
@@ -37,7 +37,7 @@ table td, table th { border: 1px solid; padding: 4px; }
 #meta td.meta-head { text-align: left; background: #eee; }
 #meta td textarea { width: 100%; height: 20px; text-align: right; }
 
-#items { clear: both; width: 100%; margin: 0px 0 0 0; border: 1px solid black; }
+#items { clear: both; width: 100%; margin: 60px 0 0 0; border: 1px solid black; }
 #items th { background: #eee; }
 #items textarea { width: 80px; height: 50px; }
 #items tr.item-row td { border: 0; vertical-align: top; }

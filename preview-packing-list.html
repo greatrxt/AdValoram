@@ -143,7 +143,17 @@ $(window).load(function() {
 				document.getElementById('items').innerHTML = tbody;
 				
 				document.getElementById('customer-name').innerHTML = packingList.clientNameOnPackingListDate;
+				document.getElementById('billing-address').innerHTML = packingList.linkedSalesOrder.clientBillingAddressOnSalesOrderDate;
+				document.getElementById('delivery-address').innerHTML = packingList.linkedSalesOrder.clientDeliveryAddressOnSalesOrderDate;
 				
+				document.getElementById('city').innerHTML = packingList.linkedSalesOrder.clientCityOnSalesOrderDate;
+				document.getElementById('state').innerHTML = packingList.linkedSalesOrder.clientStateOnSalesOrderDate;
+				document.getElementById('contactPerson').innerHTML = packingList.linkedSalesOrder.clientContactPersonOnSalesOrderDate;
+				document.getElementById('contactNumber').innerHTML = packingList.linkedSalesOrder.clientContactNumberOnSalesOrderDate;
+				
+				document.getElementById('vat-no').innerHTML = packingList.linkedSalesOrder.vatTinNumberOnSalesOrderDate;
+				document.getElementById('cst-no').innerHTML = packingList.linkedSalesOrder.cstTinNumberOnSalesOrderDate;
+				document.getElementById('pan-no').innerHTML = packingList.linkedSalesOrder.panNumberOnSalesOrderDate;
 				document.getElementById('packingListNo').innerHTML = packingList.packingListId + " - " + "R" + packingList.packingListRevisionNumber;
 				document.getElementById('packingListDate').innerHTML = packingList.packingListDate;
 				document.getElementById('purchaseOrderReference').innerHTML = packingList.purchaseOrderReference;
@@ -151,7 +161,7 @@ $(window).load(function() {
 				if(parseInt(packingList.linkedSalesOrderId) < 0){
 					document.getElementById('linkedSalesOrderId').innerHTML = "Not Applicable";
 				} else {
-					document.getElementById('linkedSalesOrderId').innerHTML = packingList.linkedSalesOrderId;				
+					document.getElementById('linkedSalesOrderId').innerHTML = packingList.linkedSalesOrderId + " - R"+ packingList.linkedSalesOrder.salesOrderRevisionNumber;				
 				}
 				if(packingList.status == "OPEN" || packingList.status == "UNDER_REVISION"){
 					document.getElementById("buttonConfirmPackingList").style.visibility = "visible";
@@ -166,11 +176,11 @@ $(window).load(function() {
 				if(packingList.status == "CONFIRMED"){
 					document.getElementById("buttonPrintPage").style.visibility = "visible";
 					document.getElementById("buttonPrintPage").style.display = "inline-block";
-					showGeneratePackingListButtonIfInvoiceNotGenerated(packingList.id);
+					showGenerateInvoiceButtonIfInvoiceNotGenerated(packingList.id);
 					document.getElementById("buttonConfirmPackingList").style.display = "none";
 				} else {
-					document.getElementById("buttonGeneratePackingList").style.visibility = "hidden";
-					document.getElementById("buttonGeneratePackingList").style.display = "none";
+					document.getElementById("buttonGenerateInvoice").style.visibility = "hidden";
+					document.getElementById("buttonGenerateInvoice").style.display = "none";
 					document.getElementById("buttonPrintPage").style.visibility = "hidden";
 					document.getElementById("buttonPrintPage").style.display = "none";
 				}
@@ -181,7 +191,7 @@ $(window).load(function() {
 	}
 });
 
-function showGeneratePackingListButtonIfInvoiceNotGenerated(packingListInternalId){
+function showGenerateInvoiceButtonIfInvoiceNotGenerated(packingListInternalId){
 	 $.ajaxSetup({
 		  headers : {
 			'Authorization' : 'Bearer ' + localStorage.getItem("token")
@@ -192,8 +202,8 @@ function showGeneratePackingListButtonIfInvoiceNotGenerated(packingListInternalI
 		type: 'GET',
 		success: function(result) {
 			if(!result.result){
-				document.getElementById("buttonGeneratePackingList").style.visibility = "visible";
-				document.getElementById("buttonGeneratePackingList").style.display = "block";
+				document.getElementById("buttonGenerateInvoice").style.visibility = "visible";
+				document.getElementById("buttonGenerateInvoice").style.display = "block";
 			}
 		}
 	});
@@ -289,9 +299,9 @@ function generateInvoice(){
 	<button id = "buttonEdit" class = "no-print" onClick="editPackingList();">Edit</button>
 	<button id = "buttonPrintPage" class = "no-print" onClick="window.print();" style = "display:none">Print</button>
 	<button id = "buttonConfirmPackingList" onclick = "confirmPackingList();" class = "no-print" style = "float:right; visibility:hidden">Confirm</button>
-	<button id = "buttonGeneratePackingList" onclick = "generateInvoice();" class = "no-print green" style = "float:right; visibility:hidden">Generate Invoice</button>
+	<button id = "buttonGenerateInvoice" onclick = "generateInvoice();" class = "no-print green" style = "float:right; visibility:hidden">Generate Invoice</button>
 	<textarea id="header">PACKING LIST</textarea>
-		
+	<hr>
 <div id="identity">		
 			<table id="additionalInfo" class = "borderless-table" readonly>
 				<tr>
@@ -308,13 +318,17 @@ function generateInvoice(){
 			<table class = "borderless-table" style="float:left;width:50%">
 				<tr>
 					<td>
-						<span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><span id="customer-name"></span>
+						<span id="customer-title">NAME OF PARTY :&nbsp;&nbsp; </span><b><span id="customer-name"></span></b>
 					</td>	
 				</tr>
 				<tr>
                     <td>
 						<span>Billing Address :</span></br><span id="billing-address"></span></br></br>
 						<span>Delivery Address:</span></br><span id="delivery-address"></span></br></br>
+						<span id="city"></span></br>
+						<span id="state"></span></br></br>
+						<span>Contact Person:</span></br><span id="contactPerson"></span></br></br>
+						<span>Contact Number:</span></br><span id="contactNumber"></span></br></br>
 						<span>VAT No:</span>&nbsp;&nbsp;&nbsp;<span id="vat-no"></span></br></br>
 						<span>CST No:</span>&nbsp;&nbsp;&nbsp;<span id="cst-no"></span></br></br>
 						<span>PAN No:</span>&nbsp;&nbsp;&nbsp;<span id="pan-no"></span></br></br>
@@ -323,15 +337,13 @@ function generateInvoice(){
 			</table>
 			<table class = "borderless-table" style="float:right;width:40%">
 			<tr>
-					<td>
+					<td><b>AD VALORAM CLOTHING PVT LTD.</b>
 						<textarea id="address" readonly>				
-AD VALORAM CLOTHING PVT LTD.
-
 Head Office :
 102, Paresh Complex,
-Kaher Pipeline, Bhiwandi
-Thane - 421 302
-						</textarea>	
+Kalher Pipeline, Bhiwandi,
+Thane - 421 302,
+Maharashtra						</textarea>	
 					</td>
 				</tr>
 			    <tr>
@@ -357,7 +369,7 @@ Thane - 421 302
 		
 		<div id="lower-section">
 
-            <table id="meta" style="float:right; width:40%">
+            <table id="meta" style="float:right; width:40%; margin-bottom:25px;">
                 <tr>
                     <td class="meta-head">Packing List No.</td>
                     <td><span id="packingListNo"></span></td>
@@ -378,7 +390,7 @@ Thane - 421 302
             </table>
 		
 		</div>
-		<br/><br/><br/><br/><br/><br/><br/><br/>
+
 		<table id="items">
 
 		</table>
