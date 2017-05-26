@@ -694,9 +694,9 @@
 				
 				NProgress.inc();	
 				dataTable.row.add([
-					""+employeeJson.id,
+					"EMP"+employeeJson.id,
 					//"<img id='24' style='width:100px;height:100px;' src='" + barcodeImage.src + "'/>",
-					employeeJson.firstName,
+					employeeJson.firstName + " " + employeeJson.lastName,
 					employeeJson.department,
 					employeeJson.designation,
 					employeeJson.city.cityName,

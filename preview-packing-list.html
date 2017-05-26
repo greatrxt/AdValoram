@@ -155,7 +155,7 @@ $(window).load(function() {
 				document.getElementById('cst-no').innerHTML = packingList.linkedSalesOrder.cstTinNumberOnSalesOrderDate;
 				document.getElementById('pan-no').innerHTML = packingList.linkedSalesOrder.panNumberOnSalesOrderDate;
 				document.getElementById('packingListNo').innerHTML = packingList.packingListId + " - " + "R" + packingList.packingListRevisionNumber;
-				document.getElementById('packingListDate').innerHTML = packingList.packingListDate;
+				document.getElementById('packingListDate').innerHTML = packingList.packingListDate.split(" ")[0];
 				document.getElementById('purchaseOrderReference').innerHTML = packingList.purchaseOrderReference;
 				
 				if(parseInt(packingList.linkedSalesOrderId) < 0){
