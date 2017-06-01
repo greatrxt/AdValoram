@@ -102,7 +102,7 @@
     <script src="assets/vendors/angular/angular.min.js"></script>
     <script src="assets/vendors/angular-route/angular-route.min.js"></script>
     <script src="assets/common/js/version_angular/app.js"></script>
-
+	<link rel="stylesheet" type="text/css" href="css/float-modal.css">
     <!-- Angular Version Controllers -->
 <!--    <script src="pages/register.ctrl.js"></script>
     <script src="pages/login.ctrl.js"></script>
@@ -113,6 +113,7 @@
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
+	<script src="js/common-sales.js"></script>
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations();fetchTransporters();">
@@ -569,11 +570,11 @@
     <section class="panel panel-with-borders" style="overflow:auto">
         <div class="panel-heading">
             <h2>
-				<!--<div class="dropdown pull-right">
+				<div class="dropdown pull-right">
 					<button id = "buttonAddProduct" type="button" class="btn btn-primary" style = "display:none" onclick = "addColorToTable();" >
                         Add Product
                     </button>
-					</div>-->
+					</div>
                 <span id = "title">Create New Credit Note</span>
             </h2>
         </div>
@@ -584,10 +585,13 @@
 						<a id = "0" class="nav-link active" href="javascript: void(0);" data-toggle="tab" data-target="#tab1" role="tab" aria-expanded="false">Billing Details</a>
 					</li>
 					<li class="nav-item" id = "tab-add-product">
-						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">Add Product</a>
+						<a id = "1" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab2" role="tab" aria-expanded="true">By Product</a>
+					</li>
+					<li class="nav-item" id = "tab-by-invoice">
+						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">By Invoice</a>
 					</li>
 					<li class="nav-item" id = "tab-others">
-						<a id = "2" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab3" role="tab" aria-expanded="true">Others</a>
+						<a id = "3" class="nav-link" href="javascript: void(0);" data-toggle="tab" data-target="#tab4" role="tab" aria-expanded="true">Others</a>
 					</li>
 				</ul>
 				<script>
@@ -598,9 +602,11 @@
 						});
 
 						$('#tab-add-product').click(function(){
+							$('#buttonAddProduct').hide();
+						});
+						$('#tab-by-invoice').click(function(){
 							$('#buttonAddProduct').show();
 						});
-
 						$('#tab-others').click(function(){
 							$('#buttonAddProduct').hide();
 						});
@@ -610,19 +616,14 @@
 				<div id = "form-validation" class="tab-content padding-vertical-20">
 					<div class="tab-pane active" id="tab1" role="tabpanel" aria-expanded="false">
 						
-						<div class = "col-lg-5">
+						<div class = "col-lg-5">				
 							<div class="form-group">
-                                <label for="selectInvoice">Select Invoice For Returns*</label>
-								<select class="form-control" id="selectInvoice" name="validation[invoice]"
+                                <label for="clientName">Client Name</label>
+								<select class="form-control" id="clientName" name="validation[city name]"
 																					   data-validation="[L>=1]"
-																					   data-validation-message="Please choose a valid $">
+																					   data-validation-message="Please select $">
 								</select>
                             </div>
-							<div class="form-group">
-                                <label for="purchaseOrderReference">Purchase Order Reference</label>
-                                <input class="form-control" id="purchaseOrderReference" type="text" readonly>
-                            </div>
-
 							<div class="form-group">
 								<label class="form-control-label" for="billingAddress">Billing Address</label>
 								<textarea class="form-control" rows="3" id="billingAddress" readonly></textarea>
@@ -651,24 +652,10 @@
 						
 						
 						<div class = "col-lg-5" style="padding-left:100px;">
-							<div class = "row">	
-								<div class = "col-lg-6">	
-									<div class="form-group">
-										<label for="invoiceRevisionNumber">Invoice Revision Number</label>
-										<input class="form-control" id="invoiceRevisionNumber" type="number" readonly>
-									</div>
-								</div>
-								<div class = "col-lg-6">	
-									<div class="form-group">
-										<label for="invoiceDate">Invoice Date</label>
-										<input class="form-control" id="invoiceDate" type="text" readonly>
-									</div>
-								</div>
-							</div>
-							
 							<div class="form-group">
-                                <label for="clientName">Client Name</label>
-								<input class="form-control" id="clientName" type="text" readonly>
+								<label class="form-control-label" for="returnType" >Return Type*</label><br/>
+                                <input id="radioRetailer" name = "returnType" type="radio" value="By Product" style="margin:11px" checked onclick="">By Product
+								<input id="radioDistributor" name = "returnType" type="radio" value="By Invoice" style="margin:11px" onclick="">By Invoice
                             </div>
 							
 							<div class="form-group">
@@ -692,7 +679,35 @@
                             </div>							
 						</div>
 					</div>
-					<div class="tab-pane" id="tab2" role="tabpanel" aria-expanded="true">
+					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
+						<div class = "col-lg-6">
+						<div class="form-group">
+							<label for="selectInvoice">Select Invoice For Returns*</label>
+							<select class="form-control" id="selectInvoice" name="validation[invoice]"
+																				   data-validation="[L>=1]"
+																				   data-validation-message="Please choose a valid $">
+							</select>
+						</div>
+						</div>
+						
+												
+						<div class = "col-lg-6" style="padding-left:100px;">
+							<div class = "row">	
+								<div class = "col-lg-6">	
+									<div class="form-group">
+										<label for="invoiceRevisionNumber">Invoice Revision Number</label>
+										<input class="form-control" id="invoiceRevisionNumber" type="number" readonly>
+									</div>
+								</div>
+								<div class = "col-lg-6">	
+									<div class="form-group">
+										<label for="invoiceDate">Invoice Date</label>
+										<input class="form-control" id="invoiceDate" type="text" readonly>
+									</div>
+								</div>
+							</div>
+						</div>
+						<br/><br/><br/><br/>
 						<div class = "col-lg-12">
 						<div id = "productErrorDiv" style = "display:none"><span style="color:#FF0000; margin:20px;">Please add atleast 1 product</span></br></br></div>
 							<table class="table table-hover nowrap" id="productsTable" width="100%">
@@ -768,7 +783,7 @@
 							dataTable = $('#productsTable').DataTable();
 						});
 					</script>
-					<div class="tab-pane" id="tab3" role="tabpanel" aria-expanded="true">
+					<div class="tab-pane" id="tab4" role="tabpanel" aria-expanded="true">
 						<div class = "col-lg-5">
 							<div class="form-group">
                                 <label for="transportName">Transport Name</label>
@@ -828,7 +843,24 @@
 	</section>
 </div>	
 </section>
-
+<div id="notificationDialog" class="modal-outer-body">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+		<h3 style="padding:5px;font-size:15px;">No Invoice Found</h3>
+    </div>
+    <div class="modal-body">
+		<span>No Invoice found for the selected customer</span>	
+    </div>
+    <div class="modal-footer" style="height:70px;">
+		<table>
+		<tr>
+			<td><button id="buttonNotificationAcknowledged" style = "width:150px;height:40px;display:inline;" class="btn btn Primary">OK</button></td>
+		</tr>
+		</table>
+    </div>
+  </div>
+</div>
 <script>
 	var creditNoteId = -1;
 	function goBackToLandingPage(){
@@ -841,7 +873,7 @@
 	
 	$(window).load(function() {
 		if(getParameterByName('creditNoteId')==null){
-			getInvoiceIds();
+			//getInvoiceIds();
 			//document.getElementById('returnDate').value = print_today();
 		} else {
 			document.getElementById('title').innerHTML = "Edit Credit Note";
@@ -1121,16 +1153,30 @@
 		request.send(JSON.stringify(creditNote));
 	}
 	
-	function getInvoiceIds(){
+	onCustomerSelectedFunction = function(clientId){
+		getInvoiceIdsFor(clientId);
+	}
+	
+	function getInvoiceIdsFor(clientId){
 		$.ajaxSetup({
 			  headers : {
 				'Authorization' : 'Bearer ' + localStorage.getItem("token")
 			  }
 		}); 
-		$.getJSON(base_url + "/AdValoramAdmin/invoice/idlist", function(data){
+
+		$.getJSON(base_url + "/AdValoramAdmin/invoice/customer/" + clientId + "/idlist", function(data){
 		
 			var selectInvoice = document.getElementById('selectInvoice');
 			removeOptions(selectInvoice);
+			productList = [];
+			refreshProductsTable();
+			if(data.result == 'error'){
+				document.getElementById('notificationDialog').style.display = "block";
+				document.getElementById('buttonNotificationAcknowledged').onclick = function (){
+					document.getElementById('notificationDialog').style.display = "none";
+				}
+				return;
+			}
 			for(var i = 0; i < data.result.length; i++){
 				var id = data.result[i];
 				var opt = document.createElement('option');
@@ -1162,7 +1208,7 @@
 				document.getElementById('invoiceRevisionNumber').disabled = true;
 				//document.getElementById('grossWeight').disabled = true;
 				//document.getElementById('lorryReceiptNumber').disabled = true;
-				
+				/*
 				linkedCustomer = salesOrder.linkedCustomer;				
 
 				document.getElementById('clientName').value = linkedCustomer.companyName;		
@@ -1184,7 +1230,7 @@
 				if(salesOrder.linkedCustomer.linkedTransporter.companyName!=null){
 					document.getElementById('transportName').value = salesOrder.linkedCustomer.linkedTransporter.companyName;		
 				}
-				
+				*/
 				<!---------- ------------------!>
 				
 				var packingListEntryJson =	data.result[0].linkedPackingList.entry;

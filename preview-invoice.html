@@ -35,7 +35,7 @@ $(window).load(function() {
 				}
 				var salesOrder = data.result[0].linkedSalesOrder;
 				var packingList = data.result[0].linkedPackingList;
-				console.log(packingList);
+
 				//entry
 				var entries = packingList.entry;
 				var minSize = 999;
@@ -115,7 +115,7 @@ $(window).load(function() {
 				tbody+='</tr><tbody>';
 				var sorted_keys = Object.keys(packingListEntries).sort()
 				//for(var p = 0; p < packingListEntries.length; p++){
-				var markDown = (salesOrder.markDownOnSalesOrderDate/100);
+				var markDown = (invoice.markDownOnInvoiceDate/100);
 				var productTotal = 0;
 				for(var p = 0; p < sorted_keys.length; p++){
 					var quantity = 0;
@@ -150,15 +150,15 @@ $(window).load(function() {
 					'<td colspan="'+(sizeArray.length+7)+'"></td>'+
 					'</tr>';
 				NProgress.set(0.8);	
-				var linkedCustomer = salesOrder.linkedCustomer;
+				//var linkedCustomer = salesOrder.linkedCustomer; NEVER USE VALUE FROM MASTER SINCE THEY CAN BE EDITED
 				/**
 				Calculations for discount, tax, grandtotal
 				*/
 				
-				//var markDown = (salesOrder.markDownOnSalesOrderDate/100) * productTotal;
-				var cashDiscount = (salesOrder.cashDiscountOnSalesOrderDate/100) * (productTotal);
-				var promptPaymentDiscount = (salesOrder.promptPaymentDiscountOnSalesOrderDate/100) * (productTotal - cashDiscount);
-				var specialDiscount = (salesOrder.specialDiscountOnSalesOrderDate/100) * (productTotal - cashDiscount - promptPaymentDiscount);
+				//var markDown = (invoice.markDownOnInvoiceDate/100) * productTotal;
+				var cashDiscount = (invoice.cashDiscountOnInvoiceDate/100) * (productTotal);
+				var promptPaymentDiscount = (invoice.promptPaymentDiscountOnInvoiceDate/100) * (productTotal - cashDiscount);
+				var specialDiscount = (invoice.specialDiscountOnInvoiceDate/100) * (productTotal - cashDiscount - promptPaymentDiscount);
 				
 				taxableAmount = productTotal - cashDiscount - promptPaymentDiscount - specialDiscount;
 				
@@ -166,30 +166,30 @@ $(window).load(function() {
 				var cstApplicable, cstAgainstFormCApplicable = false, cstRateApplicable = 0.125;
 				var gstApplicable, gstRateApplicable = 0.1;
 				var grandTotal = taxableAmount;
-				if(salesOrder.vatIsApplicableOnSalesOrderDate){
-					if(salesOrder.vatRateApplicableOnSalesOrderDate != null){
-						if(salesOrder.vatRateApplicableOnSalesOrderDate > 0){
-							vatRateApplicable = salesOrder.vatRateApplicableOnSalesOrderDate/100; //special case where user has provided vat applicable rate in customer master
+				if(invoice.vatIsApplicableOnInvoiceDate){
+					if(invoice.vatRateApplicableOnInvoiceDate != null){
+						if(invoice.vatRateApplicableOnInvoiceDate > 0){
+							vatRateApplicable = invoice.vatRateApplicableOnInvoiceDate/100; //special case where user has provided vat applicable rate in customer master
 						}
 					}
 					vatApplicable = taxableAmount * vatRateApplicable;	//default calculation
 					grandTotal+=vatApplicable;
-				} else if(salesOrder.cstIsApplicableOnSalesOrderDate){
-					if(salesOrder.cstRateApplicableOnSalesOrderDate != null){
+				} else if(invoice.cstIsApplicableOnInvoiceDate){
+					if(invoice.cstRateApplicableOnInvoiceDate != null){
 						
-						if(salesOrder.cstRateAgainstFormCOnSalesOrderDate > 0){
-							cstRateApplicable = salesOrder.cstRateAgainstFormCOnSalesOrderDate/100; // Form C
+						if(invoice.cstRateAgainstFormCOnInvoiceDate > 0){
+							cstRateApplicable = invoice.cstRateAgainstFormCOnInvoiceDate/100; // Form C
 							cstAgainstFormCApplicable = true;
-						} else if(salesOrder.cstRateApplicableOnSalesOrderDate > 0){
-							cstRateApplicable = salesOrder.cstRateApplicableOnSalesOrderDate/100; //special case where user has provided cst applicable rate in customer master
+						} else if(invoice.cstRateApplicableOnInvoiceDate > 0){
+							cstRateApplicable = invoice.cstRateApplicableOnInvoiceDate/100; //special case where user has provided cst applicable rate in customer master
 						}
 					}
 					cstApplicable = taxableAmount * cstRateApplicable;	//default calculation
 					grandTotal+=cstApplicable;
-				} else if(salesOrder.gstIsApplicableOnSalesOrderDate){
-					if(salesOrder.gstRateApplicableOnSalesOrderDate != null){
-						if(salesOrder.gstRateApplicableOnSalesOrderDate > 0){
-							gstRateApplicable = salesOrder.gstRateApplicableOnSalesOrderDate/100; //special case where user has provided gst applicable rate in customer master
+				} else if(invoice.gstIsApplicableOnInvoiceDate){
+					if(invoice.gstRateApplicableOnInvoiceDate != null){
+						if(invoice.gstRateApplicableOnInvoiceDate > 0){
+							gstRateApplicable = invoice.gstRateApplicableOnInvoiceDate/100; //special case where user has provided gst applicable rate in customer master
 						}
 					}
 					gstApplicable = taxableAmount * gstRateApplicable;	//default calculation
@@ -226,27 +226,27 @@ $(window).load(function() {
 					  //'<td colspan="2" class="total-line">Taxable Amount</td>'+
 					 // '<td class="total-value"><div id="total">'+numberWithCommas(truncateDecimals(taxableAmount, 2))+'</div></td>'+
 				  '</tr>';
-				  if(salesOrder.vatIsApplicableOnSalesOrderDate){
+				  if(invoice.vatIsApplicableOnInvoiceDate){
 					tbody+='<tr>'+
-						  '<td colspan="2" class="total-line">VAT@'+(vatRateApplicable*100)+'%</td>'+
+						  '<td colspan="2" class="total-line">VAT@'+(vatRateApplicable * 100)+'%</td>'+
 						  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(vatApplicable, 2));+'</div></td>'+
 					  '</tr>';
-				  } else if (salesOrder.cstIsApplicableOnSalesOrderDate){
+				  } else if (invoice.cstIsApplicableOnInvoiceDate){
 					if(cstAgainstFormCApplicable){
 						tbody+='<tr>'+
-							  '<td colspan="2" class="total-line">CST(Form C)@'+(cstRateApplicable*100)+'%</td>'+
+							  '<td colspan="2" class="total-line">CST(Form C)@'+(cstRateApplicable * 100)+'%</td>'+
 							  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
 						  '</tr>';
 
 					} else {
 						tbody+='<tr>'+
-								  '<td colspan="2" class="total-line">CST@'+(cstRateApplicable*100)+'%</td>'+
+								  '<td colspan="2" class="total-line">CST@'+(cstRateApplicable * 100)+'%</td>'+
 								  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(cstApplicable, 2));+'</div></td>'+
 							  '</tr>';
 						  }
-				  } else if (salesOrder.gstIsApplicableOnSalesOrderDate){
+				  } else if (invoice.gstIsApplicableOnInvoiceDate){
 					tbody+='<tr>'+
-							  '<td colspan="2" class="total-line">GST@'+(gstRateApplicable*100)+'%</td>'+
+							  '<td colspan="2" class="total-line">GST@'+(gstRateApplicable * 100)+'%</td>'+
 							  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(gstApplicable, 2));+'</div></td>'+
 						  '</tr>';
 				  }
@@ -256,8 +256,14 @@ $(window).load(function() {
 					  '<td class="total-value"><div class="due">'+numberWithCommas(truncateDecimals(loadingAndTransportationCharges, 2));+'</div></td>'+
 				  '</tr>';
 				  
-				  if(linkedCustomer.octroiLbtEntryTaxIsApplicable){
-					octroiLbt = (postLoadingTransportationCharges) * (5.5/100)
+				  var octroiRate = 5.5;
+				  if(invoice.octroiLbtEntryTaxIsApplicableOnInvoiceDate){
+					if(invoice.octroiLbtEntryTaxApplicableOnInvoiceDate!=null){
+						if(invoice.octroiLbtEntryTaxApplicableOnInvoiceDate > 0){
+							octroiRate = invoice.octroiLbtEntryTaxApplicableOnInvoiceDate;
+						}
+					}
+					octroiLbt = (postLoadingTransportationCharges) * (octroiRate/100)
 					tbody+= '<tr>'+
 					  '<td colspan="'+(sizeArray.length+4)+'" class="blank"> '+
 						  '<td colspan="2" class="total-line">Octroi / LBT @5.5%</td>'+
@@ -283,20 +289,20 @@ $(window).load(function() {
 		  
 				document.getElementById('items').innerHTML = tbody;
 				
-				document.getElementById('customer-name').innerHTML = salesOrder.clientNameOnSalesOrderDate;
-				document.getElementById('billing-address').innerHTML = salesOrder.clientBillingAddressOnSalesOrderDate;
-				document.getElementById('delivery-address').innerHTML = salesOrder.clientDeliveryAddressOnSalesOrderDate;
-				document.getElementById('city').innerHTML = salesOrder.clientCityOnSalesOrderDate;
-				document.getElementById('state').innerHTML = salesOrder.clientStateOnSalesOrderDate;
-				document.getElementById('contactPerson').innerHTML = salesOrder.clientContactPersonOnSalesOrderDate;
-				document.getElementById('contactNumber').innerHTML = salesOrder.clientContactNumberOnSalesOrderDate;
-				document.getElementById('vat-no').innerHTML = salesOrder.linkedCustomer.vatTinNumber
-				document.getElementById('cst-no').innerHTML = salesOrder.linkedCustomer.cstTinNumber;
-				document.getElementById('pan-no').innerHTML = salesOrder.linkedCustomer.panNumber;
+				document.getElementById('customer-name').innerHTML = invoice.clientNameOnInvoiceDate;
+				document.getElementById('billing-address').innerHTML = invoice.clientBillingAddressOnInvoiceDate;
+				document.getElementById('delivery-address').innerHTML = invoice.clientDeliveryAddressOnInvoiceDate;
+				document.getElementById('city').innerHTML = invoice.clientCityOnInvoiceDate;
+				document.getElementById('state').innerHTML = invoice.clientStateOnInvoiceDate;
+				document.getElementById('contactPerson').innerHTML = invoice.clientContactPersonOnInvoiceDate;
+				document.getElementById('contactNumber').innerHTML = invoice.clientContactNumberOnInvoiceDate;
+				document.getElementById('vat-no').innerHTML = invoice.vatTinNumberOnInvoiceDate
+				document.getElementById('cst-no').innerHTML = invoice.cstTinNumberOnInvoiceDate;
+				document.getElementById('pan-no').innerHTML = invoice.panNumberOnInvoiceDate;
 				
 				document.getElementById('invoiceNo').innerHTML = data.result[0].invoiceId + " - R" + data.result[0].invoiceRevisionNumber;
 				document.getElementById('invoiceDate').innerHTML = data.result[0].invoiceDate.split(" ")[0];
-				document.getElementById('purchaseOrderReference').innerHTML = salesOrder.purchaseOrderReference;
+				if(invoice.purchaseOrderReference!=null) document.getElementById('purchaseOrderReference').innerHTML = invoice.purchaseOrderReference;
 				
 				document.getElementById('amountDue').innerHTML = 'Rs '+numberWithCommas(truncateDecimals(invoiceValue, 2));
 				if(data.result[0].status == "OPEN" || data.result[0].status == "UNDER_REVISION"){
@@ -358,7 +364,11 @@ function confirmInvoice(){
 		url: base_url + '/AdValoramAdmin/invoice/'+getParameterByName("invoiceId")+'/confirm',
 		type: 'PUT',
 		success: function(result) {
-			window.location = "preview-invoice.html?invoiceId="+getParameterByName("invoiceId");
+			document.getElementById('notificationDialog').style.display = "block";
+			document.getElementById('buttonNotificationAcknowledged').onclick = function (){
+				window.location = "preview-invoice.html?invoiceId="+getParameterByName("invoiceId");
+			}
+			
 		}
 	});
 }

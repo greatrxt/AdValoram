@@ -99,11 +99,11 @@ function getProductCategories(){
 			});
 	}
 }
-var cstRateApplicableOnSalesOrderDate = -1;
-var vatRateApplicableOnSalesOrderDate = -1;
-var cstRateAgainstFormCOnSalesOrderDate = -1;
-var gstRateApplicableOnSalesOrderDate = -1;
-var octroiLbtEntryTaxApplicableOnSalesOrderDate = -1;
+var cstRateApplicableOnCurrentDate = -1;
+var vatRateApplicableOnCurrentDate = -1;
+var cstRateAgainstFormCOnCurrentDate = -1;
+var gstRateApplicableOnCurrentDate = -1;
+var octroiLbtEntryTaxApplicableOnCurrentDate = -1;
 
 var vatTinNumber = null;
 var gstNumber = null;
@@ -115,7 +115,9 @@ var vatIsApplicable = false;
 var cstIsApplicable = false;
 var gstIsApplicable = false;
 var octroiLbtEntryTaxIsApplicable = false;
-	
+
+var onCustomerSelectedFunction = null;
+
 function getClients(){
 	if(document.getElementById('clientName')!=null){
 	 $.getJSON(base_url + "/AdValoramAdmin/customer/idNameList", function(data){
@@ -136,45 +138,7 @@ function getClients(){
 			clientNames.selectedIndex = -1;
 			clientNames.addEventListener("change", function() {
 				var clientId = clientNames.value;
-				if(clientId > 0){
-					$.getJSON(base_url + "/AdValoramAdmin/common/customer/"+clientId, function(data){
-						if(data.result=='error'){
-							return;
-						}
-						document.getElementById('billingAddress').value = data.result[0].billingAddress;
-						document.getElementById('deliveryAddress').value = data.result[0].deliveryAddress;
-						document.getElementById('city').value = data.result[0].city.cityName;
-						document.getElementById('district').value = data.result[0].city.district;
-						document.getElementById('state').value = data.result[0].city.state;
-						document.getElementById('pinCode').value = data.result[0].pinCode;
-						document.getElementById('contactPerson').value = data.result[0].contactPerson;
-						document.getElementById('contactNumber').value = data.result[0].contactNumber;
-						document.getElementById('emailAddress').value = data.result[0].emailAddress;
-						
-						document.getElementById('markDown').value = data.result[0].markDown;
-						document.getElementById('cashDiscount').value = data.result[0].cashDiscount;
-						document.getElementById('promptPaymentDiscount').value = data.result[0].promptPaymentDiscount;
-						document.getElementById('specialDiscount').value = data.result[0].specialDiscount;
-						
-						cstRateApplicableOnSalesOrderDate = data.result[0].cstRateApplicable;
-						vatRateApplicableOnSalesOrderDate = data.result[0].vatRateApplicable;
-						cstRateAgainstFormCOnSalesOrderDate = data.result[0].cstRateAgainstFormC;
-						gstRateApplicableOnSalesOrderDate = data.result[0].gstRateApplicable;
-						octroiLbtEntryTaxApplicableOnSalesOrderDate = data.result[0].octroiLbtEntryTaxApplicable;
-						
-						vatIsApplicable = data.result[0].vatIsApplicable;
-						cstIsApplicable = data.result[0].cstIsApplicable;
-						gstIsApplicable = data.result[0].gstIsApplicable;
-						octroiLbtEntryTaxIsApplicable = data.result[0].octroiLbtEntryTaxIsApplicable;
-						
-						vatTinNumber = data.result[0].vatTinNumber;
-						gstNumber = data.result[0].gstNumber;
-						cstTinNumber = data.result[0].cstTinNumber;
-						serviceTaxNumber = data.result[0].serviceTaxNumber;
-						panNumber = data.result[0].panNumber;
-						
-					});
-				}
+				retrieveAndShowClientData(clientId);
 			});
 				
 				
@@ -208,6 +172,52 @@ function getClients(){
 	}
 }
 
+	function retrieveAndShowClientData(clientId){
+		
+			if(clientId > 0){
+			$.getJSON(base_url + "/AdValoramAdmin/common/customer/"+clientId, function(data){
+				if(data.result=='error'){
+					return;
+				}
+				if(document.getElementById('billingAddress')!=null) document.getElementById('billingAddress').value = data.result[0].billingAddress;
+				if(document.getElementById('deliveryAddress')!=null) document.getElementById('deliveryAddress').value = data.result[0].deliveryAddress;
+				if(document.getElementById('city')!=null) document.getElementById('city').value = data.result[0].city.cityName;
+				if(document.getElementById('district')!=null) document.getElementById('district').value = data.result[0].city.district;
+				if(document.getElementById('state')!=null) document.getElementById('state').value = data.result[0].city.state;
+				if(document.getElementById('pinCode')!=null) document.getElementById('pinCode').value = data.result[0].pinCode;
+				if(document.getElementById('contactPerson')!=null) document.getElementById('contactPerson').value = data.result[0].contactPerson;
+				if(document.getElementById('contactNumber')!=null) document.getElementById('contactNumber').value = data.result[0].contactNumber;
+				if(document.getElementById('emailAddress')!=null) document.getElementById('emailAddress').value = data.result[0].emailAddress;
+				
+				if(document.getElementById('markDown')!=null) document.getElementById('markDown').value = data.result[0].markDown;
+				if(document.getElementById('cashDiscount')!=null) document.getElementById('cashDiscount').value = data.result[0].cashDiscount;
+				if(document.getElementById('promptPaymentDiscount')!=null) document.getElementById('promptPaymentDiscount').value = data.result[0].promptPaymentDiscount;
+				if(document.getElementById('specialDiscount')!=null) document.getElementById('specialDiscount').value = data.result[0].specialDiscount;
+				
+				cstRateApplicableOnCurrentDate = data.result[0].cstRateApplicable;
+				vatRateApplicableOnCurrentDate = data.result[0].vatRateApplicable;
+				cstRateAgainstFormCOnCurrentDate = data.result[0].cstRateAgainstFormC;
+				gstRateApplicableOnCurrentDate = data.result[0].gstRateApplicable;
+				octroiLbtEntryTaxApplicableOnCurrentDate = data.result[0].octroiLbtEntryTaxApplicable;
+				
+				vatIsApplicable = data.result[0].vatIsApplicable;
+				cstIsApplicable = data.result[0].cstIsApplicable;
+				gstIsApplicable = data.result[0].gstIsApplicable;
+				octroiLbtEntryTaxIsApplicable = data.result[0].octroiLbtEntryTaxIsApplicable;
+				
+				vatTinNumber = data.result[0].vatTinNumber;
+				gstNumber = data.result[0].gstNumber;
+				cstTinNumber = data.result[0].cstTinNumber;
+				serviceTaxNumber = data.result[0].serviceTaxNumber;
+				panNumber = data.result[0].panNumber;
+				
+				if(onCustomerSelectedFunction!=null){
+					onCustomerSelectedFunction(clientId);
+				}
+				
+			});
+		}
+	}
 
 /*
 Adds Product in Sales order

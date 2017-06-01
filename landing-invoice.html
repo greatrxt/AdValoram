@@ -617,14 +617,16 @@
 				var invoice = data.result[i];
 				var dataTable = $('#displayInvoicesTable').DataTable();
 				var linkedPackingList = invoice.linkedPackingList;
-
+				
 				var entries = linkedPackingList.entry;
 				var quantity = 0;
 				var orderAmount = 0;
-				for(var q = 0; q < entries.length; q++){
-					var entryJson = entries[q];
-					quantity+=entryJson.quantity;
-					orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
+				if(entries!=null){
+					for(var q = 0; q < entries.length; q++){
+						var entryJson = entries[q];
+						quantity+=entryJson.quantity;
+						orderAmount+=(entryJson.quantity*entryJson.stockKeepingUnit.mrp);
+					}
 				}
 				NProgress.inc();
 				dataTable.row.add([

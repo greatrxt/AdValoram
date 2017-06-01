@@ -113,7 +113,7 @@
     <script src="assets/common/js/common.js"></script>
     <script src="assets/common/js/demo.temp.js"></script>
 	<script src="js/common.js"></script>
-
+	<script src="js/common-sales.js"></script>
 </head>
 
 <body class="theme-blue menu-top menu-top-compact menu-static colorful-enabled" ng-controller="MainCtrl" onload="fetchLocations();fetchTransporters();">
@@ -778,13 +778,14 @@
 		  }
 		});
 		getNextInvoiceId();
+		getClients();
 		document.getElementById("invoiceDate").value = print_today();
 		if(getParameterByName('packingListId')!=null 
 			||getParameterByName('invoiceId')!=null ) {
 			getLinkedPackingListAndSalesOrder();
-		} else {
+		} /*else {
 			getClients();
-		}
+		}*/
 	});
 	
 	function print_today() {
@@ -798,7 +799,7 @@
 	  return today;
 	}
 
-	function getClients(){
+	/*function getClients(){
 		if(document.getElementById('clientName')!=null){
 		NProgress.start();
 		$.getJSON(base_url + "/AdValoramAdmin/customer/idNameList", function(data){
@@ -847,7 +848,7 @@
 				NProgress.done();
 			});
 		}
-	}
+	}*/
 	
 	function getNextInvoiceId(){
 		if(document.getElementById('invoiceId')!=null){
@@ -914,17 +915,34 @@
 				}
 			}
 			
-			var clientName = document.getElementById("clientName");
+			/*var clientName = document.getElementById("clientName");
 			removeOptions(clientName);
 			
 			var opt = document.createElement('option');
 			opt.value = linkedCustomer.id;
 			opt.innerHTML = linkedCustomer.companyName;
 			clientName.appendChild(opt);
+			clientName.disabled = true;	*/
+			
+							
+			var waitToSelectClient = setInterval(function(){
+				if(customerArray!=null){
+					var clientName = document.getElementById("clientName");
+					for(var i = 0; i < clientName.length; i++){
+						if(clientName.options[i].value == linkedCustomer.id){
+							clientName.selectedIndex = i;
+							clearInterval(waitToSelectClient);
+							retrieveAndShowClientData(linkedCustomer.id);
+							break;
+						}
+					}
+				}
+			}, 100);
+			
 			clientName.disabled = true;		
 			 
 			linkedSalesOrderInternalId = salesOrder.id;			
-			document.getElementById("purchaseOrderReference").value = salesOrder.purchaseOrderReference;
+			/*document.getElementById("purchaseOrderReference").value = salesOrder.purchaseOrderReference;
 			
 			document.getElementById('billingAddress').value = salesOrder.clientBillingAddressOnSalesOrderDate;
 			document.getElementById('deliveryAddress').value = salesOrder.clientDeliveryAddressOnSalesOrderDate;
@@ -940,10 +958,7 @@
 			document.getElementById('cashDiscount').value = salesOrder.cashDiscountOnSalesOrderDate;
 			document.getElementById('promptPaymentDiscount').value = salesOrder.promptPaymentDiscountOnSalesOrderDate;
 			document.getElementById('specialDiscount').value = salesOrder.specialDiscountOnSalesOrderDate;
-			
-			if(salesOrder.linkedCustomer.linkedTransporter.companyName!=null){
-				document.getElementById('transportName').value = salesOrder.linkedCustomer.linkedTransporter.companyName;		
-			}
+			*/
 			
 			var referredByEmployee = document.getElementById("referredBy");
 			referredByEmployee.disabled = true;	
@@ -956,6 +971,9 @@
 				referredByEmployee.appendChild(opt);
 			}
 			referredByEmployee.disabled = true;	
+			if(salesOrder.linkedCustomer.linkedTransporter.companyName!=null){
+				document.getElementById('transportName').value = salesOrder.linkedCustomer.linkedTransporter.companyName;		
+			}
 			NProgress.done();
 		});
 	}
@@ -1000,6 +1018,45 @@
 		invoice.transportationCharges = document.getElementById('transportationCharges').value;
 		invoice.loadingCharges = document.getElementById('loadingCharges').value;
 		invoice.lorryReceiptNumber = document.getElementById('lorryReceiptNumber').value;
+		
+		// new fields added on 31/05/2017
+		var clientName = document.getElementById("clientName");
+		invoice.clientNameOnInvoiceDate = clientName.options[clientName.selectedIndex].innerHTML; 	
+		invoice.clientBillingAddressOnInvoiceDate = document.getElementById('billingAddress').value;		
+		invoice.clientDeliveryAddressOnInvoiceDate = document.getElementById('deliveryAddress').value;		
+		invoice.clientCityOnInvoiceDate = document.getElementById('city').value;		
+		invoice.clientPinCodeOnInvoiceDate = document.getElementById('pinCode').value;		
+		invoice.clientDistrictOnInvoiceDate = document.getElementById('district').value;		
+		invoice.clientStateOnInvoiceDate = document.getElementById('state').value;	
+		invoice.clientContactPersonOnInvoiceDate = document.getElementById('contactPerson').value;		
+		invoice.clientContactNumberOnInvoiceDate = document.getElementById('contactNumber').value;		
+		invoice.clientEmailAddressOnInvoiceDate = document.getElementById('emailAddress').value;
+			
+		invoice.transportName = document.getElementById('transportName').value;
+		
+		invoice.markDownOnInvoiceDate = document.getElementById('markDown').value;		
+		invoice.cashDiscountOnInvoiceDate = document.getElementById('cashDiscount').value;		
+		invoice.promptPaymentDiscountOnInvoiceDate = document.getElementById('promptPaymentDiscount').value;		
+		invoice.specialDiscountOnInvoiceDate = document.getElementById('specialDiscount').value;
+		
+		invoice.cstRateApplicableOnInvoiceDate = cstRateApplicableOnCurrentDate;
+		invoice.vatRateApplicableOnInvoiceDate = vatRateApplicableOnCurrentDate;
+		invoice.cstRateAgainstFormCOnInvoiceDate = cstRateAgainstFormCOnCurrentDate;
+		invoice.gstRateApplicableOnInvoiceDate = gstRateApplicableOnCurrentDate;
+		invoice.octroiLbtEntryTaxApplicableOnInvoiceDate = octroiLbtEntryTaxApplicableOnCurrentDate;
+		
+		invoice.vatIsApplicableOnInvoiceDate = vatIsApplicable;
+		invoice.cstIsApplicableOnInvoiceDate = cstIsApplicable;
+		invoice.gstIsApplicableOnInvoiceDate = gstIsApplicable;
+		invoice.octroiLbtEntryTaxIsApplicableOnInvoiceDate = octroiLbtEntryTaxIsApplicable;
+		
+		invoice.vatTinNumberOnInvoiceDate = vatTinNumber;
+		invoice.gstNumberOnInvoiceDate = gstNumber;
+		invoice.cstTinNumberOnInvoiceDate = cstTinNumber;
+		invoice.serviceTaxNumberOnInvoiceDate = serviceTaxNumber;
+		invoice.panNumberOnInvoiceDate = panNumber;
+		
+		// new fields on 31/05/2017 end here
 		
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
